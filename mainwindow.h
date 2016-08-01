@@ -20,7 +20,7 @@ public:
 private slots:
     void on_actionChagne_triggered();
 
-
+    void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);

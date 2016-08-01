@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     adc102.cpp \
     cmdhandler.cpp \
     scanhandler.cpp \
-    weighthandler.cpp
+    weighthandler.cpp \
+    parahandler.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/qextserialport/qextserialport.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     adc102.h \
     cmdhandler.h \
     scanhandler.h \
-    weighthandler.h
+    weighthandler.h \
+    parahandler.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src 3rdparty/qextserialport
 

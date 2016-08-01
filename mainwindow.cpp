@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->cbxBaud->setCurrentIndex(1);
     connect(&adc102,SIGNAL(scanResult(int , int )),this,SLOT(onScanResult(int,int)));
     connect(&adc102,SIGNAL(weightResult(int , quint16 )),this,SLOT(onWeightResult(int,quint16)));
+    connect(&adc102,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
     //this->setStyleSheet(res);
 }
 
@@ -37,6 +38,11 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionChagne_triggered()
 {
     QMessageBox::about(this,"title","click write parameter");
+}
+
+void MainWindow::onParaReadResult(Para _para)
+{
+
 }
 
 
@@ -91,5 +97,9 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     else if(index == 1)
     {
         adc102.startReadWeight();
+    }
+    else if(index == 2)
+    {
+        adc102.startReadPara();
     }
 }

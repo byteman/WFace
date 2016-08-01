@@ -5,6 +5,7 @@
 #include "mymodbus.h"
 #include <QTimer>
 #include "cmdhandler.h"
+#include "parahandler.h"
 #include <QList>
 class ADC102 : public QObject
 {
@@ -15,11 +16,17 @@ public:
 signals:
     void scanResult(int type, int addr);
     void weightResult(int weight, quint16 state);
+    void paraReadResult(Para _para);
 public slots:
+    bool paraSave(Para _para);
     bool startScan(QString port,int baud, char parity, char databit, char stopbit);
     bool startReadWeight();
+    bool startReadPara();
+    bool stopReadPara();
+
     bool stopReadWeight();
     bool stop();
+    void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state);
     void timerHandler();
