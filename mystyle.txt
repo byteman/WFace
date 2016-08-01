@@ -1,0 +1,33 @@
+
+QMainWindow { 
+	background: rgb(0, 0, 128);  
+	
+} 
+QCheckBox,QGroupBox,QLabel{
+	color: rgb(255, 255, 255);
+	font: 75 12pt "黑体";
+}
+QTableWidget{
+	background: rgb(0, 0, 128)  
+}
+QPushButton{
+	color: rgb(0, 0, 0);
+	font: 75 12pt "黑体";
+}
+
+QFrame#frametop{
+	border-width: 1px 0px 0px 0px;
+	border-style: solid;
+	border-color: white;
+}
+QComboBox{
+	#background-color: rgb(0, 0, 128);
+	color:white;
+	font: 75 12pt "黑体";
+}
+
+QTabWidget#tabWidget_2 > QComboBox{
+	color: red;
+	font: 75 12pt "黑体";
+	
+}
