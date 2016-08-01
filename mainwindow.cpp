@@ -42,7 +42,14 @@ void MainWindow::on_actionChagne_triggered()
 
 void MainWindow::onParaReadResult(Para _para)
 {
-
+    ui->edtFullLow->setText(QString("%1").arg(_para.span_low));
+    ui->edtFullHigh->setText(QString("%1").arg(_para.span_high));
+    ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
+    ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
+    ui->cbxUnit->setCurrentIndex(_para.unit);
+    ui->edtZeroSpan->setText(QString("%1").arg(_para.zero_track_span));
+    ui->edtStableSpan->setText(QString("%1").arg(_para.stable_span));
+    ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
 }
 
 

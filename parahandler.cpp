@@ -32,12 +32,22 @@ bool ParaHandler::run()
     if(_rtu && !m_ok)
     {
         quint16 values[17];
-        if(2 == _rtu->read_registers(3,17,values))
+        if(17 == _rtu->read_registers(3,17,values))
         {
 
             //m_para.dot = values[0];
-
-            memcpy(&m_para,&values[0],sizeof(values));
+            m_para.dot = values[0];
+            m_para.div_high = values[5];
+            m_para.div_low = values[6];
+            m_para.span_high = values[7]+(values[8]<<16);
+            m_para.span_low = values[9]+(values[10]<<16);
+            m_para.unit = values[11];
+            m_para.pwr_zero_span = values[12];
+            m_para.hand_zero_span = values[13];
+            m_para.zero_track_span = values[14];
+            m_para.stable_span = values[15];
+            m_para.filter_level = values[16];
+            //memcpy(&m_para,&values[0],sizeof(values));
             m_ok = true;
             emit paraReadResult(m_para);
         }
