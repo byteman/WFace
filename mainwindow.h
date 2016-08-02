@@ -19,7 +19,7 @@ public:
 
 private slots:
     void on_actionChagne_triggered();
-
+    void calibrate_click(int id);
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state);
@@ -34,6 +34,7 @@ private slots:
     void on_btnTare_clicked();
 
 private:
+    void initCalibPoints();
     Ui::MainWindow *ui;
     ADC102 adc102;
 

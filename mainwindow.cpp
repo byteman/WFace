@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include <qdebug.h>
 #include "3rdparty/qextserialport/qextserialenumerator.h"
-
+#include <QSignalMapper>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btnTare,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
     connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
     connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
+    initCalibPoints();
     //connect(ui->btnGN,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
     //this->setStyleSheet(res);
 }
@@ -44,6 +45,11 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionChagne_triggered()
 {
     QMessageBox::about(this,"title","click write parameter");
+}
+
+void MainWindow::calibrate_click(int id)
+{
+    qDebug() << id << "---clicked";
 }
 
 void MainWindow::onParaReadResult(Para _para)
@@ -157,4 +163,34 @@ void MainWindow::on_btnSave_clicked()
 void MainWindow::on_btnTare_clicked()
 {
 
+}
+
+void MainWindow::initCalibPoints()
+{
+
+    ui->tblCalib->setRowCount(6);
+    ui->tblCalib->setColumnCount(3);
+    QStringList col_headers;
+    col_headers.push_back(tr("ad"));
+    col_headers.push_back(tr("weight"));
+    col_headers.push_back(tr("calibrate"));
+
+    ui->tblCalib->setHorizontalHeaderLabels(col_headers);
+
+    QStringList row_headers;
+    //row_headers<<"0" <<"1" << "2" << "3" << "4" << "5";
+
+    QSignalMapper *signalMapper = new QSignalMapper(this);
+    for(int i = 0; i <=  5; i++)
+    {
+        QPushButton* button = new QPushButton(tr("calib"),ui->tblCalib);
+        connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
+        signalMapper->setMapping(button, i);
+        ui->tblCalib->setCellWidget(i,2,button);
+        row_headers.push_back(QString("%1").arg(i));
+
+    }
+    ui->tblCalib->setVerticalHeaderLabels(row_headers);
+    connect(signalMapper, SIGNAL(mapped(int)),
+                this, SLOT(calibrate_click(int)));
 }
