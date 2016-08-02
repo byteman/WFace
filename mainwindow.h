@@ -29,6 +29,10 @@ private slots:
 
     void on_tabWidget_currentChanged(int index);
 
+    void on_btnSave_clicked();
+
+    void on_btnTare_clicked();
+
 private:
     Ui::MainWindow *ui;
     ADC102 adc102;

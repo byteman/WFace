@@ -5,7 +5,8 @@
 ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handler(NULL),
     m_interval(100),
-    m_slaveAddr(32)
+    m_slaveAddr(32),
+    m_connect(false)
 {
     ScanHandler* handler_scan = new ScanHandler(&modbus);
     connect(handler_scan,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
@@ -22,6 +23,28 @@ void ADC102::setSlaveAddr(int addr)
 {
     m_slaveAddr = addr;
     modbus.setDeviceAddr(addr);
+    m_connect = true;
+}
+
+bool ADC102::hasConnect()
+{
+    return m_connect;
+}
+
+bool ADC102::discardTare()
+{
+    return modbus.write_register(2,2)==1?true:false;
+
+}
+
+bool ADC102::setZero()
+{
+    return modbus.write_register(2,1)==1?true:false;
+}
+
+bool ADC102::zoom10X()
+{
+     return modbus.write_register(2,4)==1?true:false;
 }
 
 bool ADC102::paraSave(Para _para)

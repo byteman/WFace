@@ -44,6 +44,7 @@ int  RTU_Modbus::write_registers(int reg_addr, int nb,quint16* value)
     return ret;
 }
 
+
 int  RTU_Modbus::write_register(int reg_addr, int value)
 {
     int ret = modbus_write_register( m_modbus, reg_addr,value );
