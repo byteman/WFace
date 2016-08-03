@@ -5,8 +5,10 @@
 #include <qdebug.h>
 #include "3rdparty/qextserialport/qextserialenumerator.h"
 #include <QSignalMapper>
-MainWindow::MainWindow(QWidget *parent) :
+#include <QTranslator>
+MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QMainWindow(parent),
+    _app(app),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -32,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btnTare,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
     connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
     connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
+    connect(&adc102,SIGNAL(calibProcessResult(int,int)),SLOT(onCalibProcessResult(int,int)));
+    connect(&adc102,SIGNAL(calibPointResult(int,int,int)),SLOT(onReadCalibPointResult(int,int,int)));
+
     initCalibPoints();
     //connect(ui->btnGN,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
     //this->setStyleSheet(res);
@@ -50,16 +55,27 @@ void MainWindow::on_actionChagne_triggered()
 void MainWindow::calibrate_click(int id)
 {
     qDebug() << id << "---clicked";
+    int weight = ui->tblCalib->item(id,1)->text().toInt();
+
+    adc102.startCalib(id,weight);
 }
 
 void MainWindow::onParaReadResult(Para _para)
 {
     ui->cbxDot->setCurrentIndex(_para.dot);
     ui->edtFullLow->setText(QString("%1").arg(_para.span_low));
+    ui->lbl_display_wet_2->setText(QString("Max1: %1").arg(_para.span_low));
     ui->edtFullHigh->setText(QString("%1").arg(_para.span_high));
+    ui->lbl_display_wet_3->setText(QString("Max2: %1").arg(_para.span_high));
     ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
+    ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_high));
     ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
+    ui->lbl_display_wet_4->setText(QString("d1: %1").arg(_para.div_low));
     ui->cbxUnit->setCurrentIndex(_para.unit);
+    if(_para.unit == 0) ui->lblunit->setText("kg");
+    else if(_para.unit == 1) ui->lblunit->setText("g");
+    else if(_para.unit == 2) ui->lblunit->setText("t");
+
     ui->edtZeroSpan->setText(QString("%1").arg(_para.zero_track_span));
     ui->edtStableSpan->setText(QString("%1").arg(_para.stable_span));
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
@@ -93,6 +109,37 @@ void MainWindow::onWeightResult(int weight, quint16 state)
     ui->lbl_display_wet->setText(QString("%1").arg(weight));
 
 }
+//标定过程....
+void MainWindow::onCalibProcessResult(int index, int result)
+{
+    if(result > 0)
+    {
+        ui->statusBar->showMessage(QString("left time %1S").arg(result));
+    }
+    else if(result == 0)
+    {
+        QMessageBox::information(this,tr("info"),tr("calib ok"));
+    }
+    else
+    {
+        QMessageBox::information(this,tr("info"),tr("calib failed"));
+    }
+}
+
+void MainWindow::onReadCalibPointResult(int index, int weight, int ad)
+{
+    QTableWidgetItem *itemAd = ui->tblCalib->item(index,0);
+    if(itemAd!=NULL)
+    {
+        itemAd->setText(QString("%1").arg(ad));
+    }
+    QTableWidgetItem *itemWt = ui->tblCalib->item(index,1);
+    if(itemWt!=NULL)
+    {
+        itemWt->setText(QString("%1").arg(weight));
+    }
+
+}
 
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
@@ -105,7 +152,7 @@ void MainWindow::on_btnSearch_clicked()
     QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
     if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1))
     {
-        QMessageBox::information(this,tr("错误"),tr("串口打开失败"));
+        QMessageBox::information(this,tr("error"),tr("uart open failed"));
         return ;
     }
     ui->btnSearch->setEnabled(false);
@@ -132,11 +179,16 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     }
     else if(index == 1)
     {
+
         adc102.startReadWeight();
     }
     else if(index == 2)
     {
         adc102.startReadPara();
+    }
+    else if(index == 3)
+    {
+        adc102.readCalibPoints();
     }
 }
 
@@ -157,7 +209,14 @@ void MainWindow::on_btnSave_clicked()
     p.stable_span = ui->edtStableSpan->text().toInt();
     p.unit = ui->cbxUnit->currentIndex();
     p.zero_track_span = ui->edtZeroSpan->text().toInt();
-    adc102.paraSave(p);
+    if(adc102.paraSave(p))
+    {
+        QMessageBox::information(this,tr("info"),tr("save successful"));
+    }
+    else
+    {
+        QMessageBox::information(this,tr("info"),tr("save failed"));
+    }
 }
 
 void MainWindow::on_btnTare_clicked()
@@ -184,13 +243,39 @@ void MainWindow::initCalibPoints()
     for(int i = 0; i <=  5; i++)
     {
         QPushButton* button = new QPushButton(tr("calib"),ui->tblCalib);
+        button->setGeometry(0,0,80,50);
         connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
         signalMapper->setMapping(button, i);
         ui->tblCalib->setCellWidget(i,2,button);
+        for(int j = 0 ; j < 2; j++)
+        {
+            QTableWidgetItem* item = new QTableWidgetItem("");
+            item->setTextAlignment(Qt::AlignHCenter);
+            ui->tblCalib->setItem(i,j,item);
+        }
         row_headers.push_back(QString("%1").arg(i));
 
     }
     ui->tblCalib->setVerticalHeaderLabels(row_headers);
     connect(signalMapper, SIGNAL(mapped(int)),
                 this, SLOT(calibrate_click(int)));
+}
+
+void MainWindow::on_actionEnglish_triggered()
+{
+   QTranslator translator;
+   bool b = false;
+
+   b = translator.load(QCoreApplication::applicationDirPath() + "/cn.qm");
+   _app.installTranslator(&translator);
+
+}
+
+void MainWindow::on_actionChinese_triggered()
+{
+   QTranslator translator;
+   bool b = false;
+   b = translator.load(QCoreApplication::applicationDirPath() + "/en.qm");
+   _app.installTranslator(&translator);
+
 }

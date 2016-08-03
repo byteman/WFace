@@ -8,8 +8,11 @@ class WeightHandler : public CmdHandler
 public:
     WeightHandler(RTU_Modbus*  rtu);
     bool run();
+    bool stop();
 signals:
     void weightResult(int weight, quint16 state);
+private:
+
 };
 
 #endif // WEIGHTHANDLER_H

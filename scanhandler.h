@@ -15,6 +15,7 @@ private:
     // CmdHandler interface
 public:
     bool run();
+    bool stop();
 };
 
 #endif // SCANHANDLER_H

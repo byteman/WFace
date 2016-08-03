@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = mydemo
+TARGET = WFace
 TEMPLATE = app
 
 
@@ -55,3 +55,6 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     myrc.qrc
+TRANSLATIONS+=cn.ts
+
+DISTFILES +=

@@ -18,6 +18,8 @@ signals:
     void scanResult(int type, int addr);
     void weightResult(int weight, quint16 state);
     void paraReadResult(Para _para);
+    void calibProcessResult(int index, int result);
+    void calibPointResult(int index, int weight, int ad);
 public slots:
     bool discardTare();
     bool setZero();
@@ -29,8 +31,12 @@ public slots:
     bool startReadPara();
     bool stopReadPara();
 
+    bool startCalib(int index, int weight);
+    bool readCalibPoints(int index = -1);
     bool stopReadWeight();
     bool stop();
+    void onCalibProcessResult(int index, int result);
+    void onCalibPointResult(int index, int weight, int ad);
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state);
@@ -44,6 +50,7 @@ private:
     QList<CmdHandler*> m_handlers;
     int m_interval;
     int m_slaveAddr;
+    Para m_para;
 };
 
 #endif // ADC102_H

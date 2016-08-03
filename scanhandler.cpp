@@ -32,3 +32,9 @@ bool ScanHandler::run()
      emit scanResult(1,m_addr);
     return false;
 }
+
+bool ScanHandler::stop()
+{
+    m_addr = 32;
+    return true;
+}

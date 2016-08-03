@@ -2,7 +2,7 @@
 
 ParaHandler::ParaHandler(RTU_Modbus *rtu):
     CmdHandler(rtu),
-    m_ok(false)
+    m_ok(true)
 {
 
 }
@@ -37,19 +37,59 @@ bool ParaHandler::paraSave(Para _para)
         values[11] = _para.stable_span;
         values[12] = _para.filter_level;
 
-
-       if(13 == _rtu->write_registers(3,13,values))
+       if(1 == _rtu->write_registers(3,1,values))
        {
+           if(_rtu->write_registers(8,2,values+1) != 2)return false;
+           if(_rtu->write_registers(10,2,values+3) != 2)return false;
+           if(_rtu->write_registers(12,2,values+5) != 2)return false;
+           if(_rtu->write_registers(14,6,values+7) != 6)return false;
+
+
            values[0] = (_para.sensor_full_span&0xFFFF);
            values[1] = (_para.sensor_full_span>>16)&0xFFFF;
            values[2] = (_para.sensor_mv&0xFFFF);
            values[3] = (_para.sensor_mv>>16)&0xFFFF;
            values[4] = _para.slave_addr;
-           if(13 == _rtu->write_registers(3,13,values))
+           if(5 == _rtu->write_registers(26,5,values))
            {
                return true;
            }
+
        }
+
+    }
+    return false;
+}
+
+bool ParaHandler::paraRead(Para &_para)
+{
+    quint16 values[17];
+    if(17 == _rtu->read_registers(3,17,values))
+    {
+
+        //m_para.dot = values[0];
+        _para.dot = values[0];
+        _para.div_high = values[5];
+        _para.div_low = values[6];
+        _para.span_high = values[7]+(values[8]<<16);
+        _para.span_low = values[9]+(values[10]<<16);
+        _para.unit = values[11];
+        _para.pwr_zero_span = values[12];
+        _para.hand_zero_span = values[13];
+        _para.zero_track_span = values[14];
+        _para.stable_span = values[15];
+        _para.filter_level = values[16];
+        //memcpy(&m_para,&values[0],sizeof(values));
+        if(6 == _rtu->read_registers(26,6,values))
+        {
+            _para.sensor_full_span = values[0]+(values[1]<<16);
+            _para.sensor_mv = values[2]+(values[3]<<16);
+            _para.slave_addr = values[4];
+            _para.version = values[5];
+            emit paraReadResult(_para);
+            return true;
+        }
+
     }
     return false;
 }
@@ -58,35 +98,11 @@ bool ParaHandler::run()
 {
     if(_rtu && !m_ok)
     {
-        quint16 values[17];
-        if(17 == _rtu->read_registers(3,17,values))
-        {
+       if(paraRead(m_para))
+       {
+           m_ok = true;
 
-            //m_para.dot = values[0];
-            m_para.dot = values[0];
-            m_para.div_high = values[5];
-            m_para.div_low = values[6];
-            m_para.span_high = values[7]+(values[8]<<16);
-            m_para.span_low = values[9]+(values[10]<<16);
-            m_para.unit = values[11];
-            m_para.pwr_zero_span = values[12];
-            m_para.hand_zero_span = values[13];
-            m_para.zero_track_span = values[14];
-            m_para.stable_span = values[15];
-            m_para.filter_level = values[16];
-            //memcpy(&m_para,&values[0],sizeof(values));
-            if(6 == _rtu->read_registers(26,6,values))
-            {
-                m_para.sensor_full_span = values[0]+(values[1]<<16);
-                m_para.sensor_mv = values[2]+(values[3]<<16);
-                m_para.slave_addr = values[4];
-                m_para.version = values[5];
-                m_ok = true;
-                emit paraReadResult(m_para);
-            }
-
-        }
-
+       }
     }
 
     return !m_ok;

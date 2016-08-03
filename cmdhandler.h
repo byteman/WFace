@@ -10,6 +10,7 @@ public:
     {
 
     }
+    virtual bool stop();
     virtual bool run();
 protected:
     RTU_Modbus* _rtu;

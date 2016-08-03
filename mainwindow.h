@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QApplication& app,QWidget *parent = 0);
     ~MainWindow();
 
 private slots:
@@ -23,6 +23,8 @@ private slots:
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state);
+    void onCalibProcessResult(int index, int result);
+    void onReadCalibPointResult(int index, int weight, int ad);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
 
     void on_btnSearch_clicked();
@@ -33,10 +35,15 @@ private slots:
 
     void on_btnTare_clicked();
 
+    void on_actionEnglish_triggered();
+
+    void on_actionChinese_triggered();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
     ADC102 adc102;
+    QApplication &_app;
 
 };
 

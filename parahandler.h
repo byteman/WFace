@@ -32,6 +32,7 @@ signals:
     void paraReadResult(Para _para);
 public slots:
     bool paraSave(Para _para);
+    bool paraRead(Para &_para);
 public:
     bool run();
 

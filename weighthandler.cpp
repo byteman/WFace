@@ -24,3 +24,8 @@ bool WeightHandler::run()
     }
     return true;
 }
+
+bool WeightHandler::stop()
+{
+    return true;
+}

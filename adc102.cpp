@@ -1,6 +1,7 @@
 #include "adc102.h"
 #include "scanhandler.h"
 #include "weighthandler.h"
+#include "calibhandler.h"
 #include <qdebug>
 ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handler(NULL),
@@ -14,9 +15,13 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     connect(handler_weight,SIGNAL(weightResult(int,quint16)),this,SLOT(onWeightResult(int,quint16)));
     ParaHandler* handler_para = new ParaHandler(&modbus);
     connect(handler_para,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
+    CalibHandler* handler_calib = new CalibHandler(&modbus);
+    connect(handler_calib,SIGNAL(calibProcessResult(int,int)),this,SLOT(onCalibProcessResult(int,int)));
+    connect(handler_calib,SIGNAL(calibReadResult(int,qint32,qint32)),this,SLOT(onCalibPointResult(int,int,int)));
     m_handlers.push_back(handler_scan);
     m_handlers.push_back(handler_weight);
     m_handlers.push_back(handler_para);
+    m_handlers.push_back(handler_calib);
 }
 
 void ADC102::setSlaveAddr(int addr)
@@ -59,6 +64,10 @@ bool ADC102::paraSave(Para _para)
 
 bool ADC102::startScan(QString port, int baud, char parity, char databit, char stopbit)
 {
+    if(m_handler!=NULL)
+    {
+        m_handler->stop();
+    }
     if(!modbus.open(port.toStdString().c_str(),baud,parity,databit,stopbit))
     {
 
@@ -74,8 +83,20 @@ bool ADC102::startScan(QString port, int baud, char parity, char databit, char s
 
 bool ADC102::startReadWeight()
 {
-
+    if(m_handler!=NULL)
+    {
+        m_handler->stop();
+    }
     //m_handlers.push_back();
+    ParaHandler* handler = (ParaHandler*)m_handlers[2];
+    if(handler!=NULL)
+    {
+
+        if(!handler->paraRead(m_para))
+        {
+            return false;
+        }
+    }
     m_handler = m_handlers[1];
     m_interval = 100;
     QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
@@ -84,7 +105,16 @@ bool ADC102::startReadWeight()
 
 bool ADC102::startReadPara()
 {
+    if(m_handler!=NULL)
+    {
+        m_handler->stop();
+    }
     m_handler = m_handlers[2];
+    ParaHandler* handler = (ParaHandler*)m_handler;
+    if(handler!=NULL)
+    {
+        handler->start();
+    }
     m_interval = 1000;
     QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
     return true;
@@ -100,6 +130,29 @@ bool ADC102::stopReadPara()
     return false;
 }
 
+bool ADC102::startCalib(int index, int weight)
+{
+
+    CalibHandler* handler = (CalibHandler*)m_handlers[3];
+    return handler->calibSet(index,weight,0);
+
+}
+
+bool ADC102::readCalibPoints(int index)
+{
+
+    if(m_handler!=NULL)
+    {
+        m_handler->stop();
+    }
+    CalibHandler* handler = (CalibHandler*)m_handlers[3];
+    m_handler = m_handlers[3];
+    handler->readPara(index);
+    m_interval = 500;
+    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    return true;
+}
+
 bool ADC102::stopReadWeight()
 {
     return true;
@@ -110,11 +163,19 @@ bool ADC102::stop()
     return true;
 }
 
+void ADC102::onCalibPointResult(int index, int weight, int ad)
+{
+    emit calibPointResult(index,weight,ad);
+}
+
 void ADC102::onParaReadResult(Para _para)
 {
     emit paraReadResult(_para);
 }
-
+void ADC102::onCalibProcessResult(int index, int result)
+{
+    emit calibProcessResult(index,result);
+}
 void ADC102::onScanResult(int type, int addr)
 {
     emit scanResult(type,addr);

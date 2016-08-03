@@ -9,10 +9,12 @@ class CalibHandler : public CmdHandler
 public:
     CalibHandler(RTU_Modbus*  rtu);
     bool run();
+    bool readPara(int index=-1);
+    bool stop();
     bool calibSet(int  index, qint32 weight,qint32 ad);
 signals:
     void calibReadResult(int index, qint32 weight,qint32 ad);
-    void calibProcessResult(int  index, int leftS, int result);
+    void calibProcessResult(int  index, int result);
 private:
     bool m_set_calib_points[6];
     bool m_read_calib_points[6];

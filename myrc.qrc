@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>mystyle.txt</file>
         <file>monitor.png</file>
+        <file>cn.qm</file>
     </qresource>
 </RCC>
