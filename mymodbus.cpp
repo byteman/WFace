@@ -33,6 +33,11 @@ bool RTU_Modbus::close()
     return true;
 }
 
+bool RTU_Modbus::setByteTimeout(int ms)
+{
+    return (modbus_set_byte_timeout(m_modbus,ms/1000,ms%1000)==0)?true:false;
+}
+
 void RTU_Modbus::setDeviceAddr(int _addr)
 {
     m_slave_addr = _addr;

@@ -7,11 +7,12 @@ class ScanHandler : public CmdHandler
      Q_OBJECT
 public:
     ScanHandler(RTU_Modbus*  rtu);
+    bool startScan(bool findOne=true);
 signals:
     void scanResult(int type, int addr);
 private:
     int m_addr;
-
+    bool m_findone;
     // CmdHandler interface
 public:
     bool run();

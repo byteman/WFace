@@ -24,11 +24,14 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handlers.push_back(handler_calib);
 }
 
-void ADC102::setSlaveAddr(int addr)
+bool ADC102::setSlaveAddr(int addr)
 {
+    bool ret = true;
     m_slaveAddr = addr;
+    //ret = modbus.setByteTimeout(100);
     modbus.setDeviceAddr(addr);
-    m_connect = true;
+    m_connect = ret;
+    return m_connect;
 }
 
 bool ADC102::hasConnect()
@@ -49,7 +52,12 @@ bool ADC102::setZero()
 
 bool ADC102::zoom10X()
 {
-     return modbus.write_register(2,4)==1?true:false;
+    return modbus.write_register(2,4)==1?true:false;
+}
+
+bool ADC102::changeGN()
+{
+    return modbus.write_register(2,5)==1?true:false;
 }
 
 bool ADC102::paraSave(Para _para)
@@ -62,7 +70,7 @@ bool ADC102::paraSave(Para _para)
     return false;
 }
 
-bool ADC102::startScan(QString port, int baud, char parity, char databit, char stopbit)
+bool ADC102::startScan(QString port, int baud, char parity, char databit, char stopbit,bool findOne)
 {
     if(m_handler!=NULL)
     {
@@ -73,9 +81,10 @@ bool ADC102::startScan(QString port, int baud, char parity, char databit, char s
 
         return false;
     }
-
+    ScanHandler* handler = (ScanHandler*)m_handlers[0];
+    handler->startScan(findOne);
     //m_handlers.push_back();
-    m_handler = m_handlers[0];
+    m_handler = handler;
     m_interval = 100;
     QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
     return true;
@@ -202,5 +211,15 @@ void ADC102::timerHandler()
 
     }
 
+}
+
+bool ADC102::modifyAddr(quint16 oldAddr, quint16 newAddr)
+{
+    modbus.setDeviceAddr(oldAddr);
+    if(1  == modbus.write_register(30,newAddr) )
+    {
+        return true;
+    }
+    return false;
 }
 

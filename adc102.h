@@ -12,7 +12,7 @@ class ADC102 : public QObject
     Q_OBJECT
 public:
     explicit ADC102(QObject *parent = 0);
-    void setSlaveAddr(int addr);
+    bool setSlaveAddr(int addr);
     bool hasConnect();
 signals:
     void scanResult(int type, int addr);
@@ -24,9 +24,9 @@ public slots:
     bool discardTare();
     bool setZero();
     bool zoom10X();
-
+    bool changeGN();
     bool paraSave(Para _para);
-    bool startScan(QString port,int baud, char parity, char databit, char stopbit);
+    bool startScan(QString port,int baud, char parity, char databit, char stopbit,bool findOne=true);
     bool startReadWeight();
     bool startReadPara();
     bool stopReadPara();
@@ -41,6 +41,7 @@ public slots:
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state);
     void timerHandler();
+    bool modifyAddr(quint16 oldAddr, quint16 newAddr);
 private:
 
     RTU_Modbus modbus;

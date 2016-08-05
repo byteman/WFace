@@ -12,7 +12,7 @@ public:
 
     bool open(const char* port, int baud, char parity, char databit, char stopbit);
     bool close();
-
+    bool setByteTimeout(int ms);
     void setDeviceAddr(int _addr);
     int  write_register(int reg_addr, int value);
     int  write_registers(int reg_addr, int nb,quint16* value);
