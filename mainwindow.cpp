@@ -168,8 +168,9 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         if(index != 0)
         {
             ui->tabWidget->setCurrentIndex(0);
+            QMessageBox::information(this,tr("info"),tr("please scan device first"));
         }
-        QMessageBox::information(this,tr("info"),tr("please scan device first"));
+
         return ;
     }
 
