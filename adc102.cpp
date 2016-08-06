@@ -12,7 +12,7 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     ScanHandler* handler_scan = new ScanHandler(&modbus);
     connect(handler_scan,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
     WeightHandler* handler_weight = new WeightHandler(&modbus);
-    connect(handler_weight,SIGNAL(weightResult(int,quint16)),this,SLOT(onWeightResult(int,quint16)));
+    connect(handler_weight,SIGNAL(weightResult(int,quint16,quint16,qint32,qint32)),this,SLOT(onWeightResult(int,quint16,quint16,qint32,qint32)));
     ParaHandler* handler_para = new ParaHandler(&modbus);
     connect(handler_para,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
     CalibHandler* handler_calib = new CalibHandler(&modbus);
@@ -190,9 +190,9 @@ void ADC102::onScanResult(int type, int addr)
     emit scanResult(type,addr);
 }
 
-void ADC102::onWeightResult(int weight, quint16 state)
+void ADC102::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare)
 {
-    emit weightResult(weight,state);
+    emit weightResult(weight,state,dot,gross,tare);
 }
 
 void ADC102::timerHandler()

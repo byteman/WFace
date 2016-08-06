@@ -6,6 +6,7 @@
 #include "3rdparty/qextserialport/qextserialenumerator.h"
 #include <QSignalMapper>
 #include <QTranslator>
+static QString unit="g";
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QMainWindow(parent),
     _app(app),
@@ -29,7 +30,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     //int version = 21101;
     //ui->edtVersion->setText(QString("V%1.%2.%3").arg(version/10000).arg((version%10000)/100).arg(version%100));
     connect(&adc102,SIGNAL(scanResult(int , int )),this,SLOT(onScanResult(int,int)));
-    connect(&adc102,SIGNAL(weightResult(int , quint16 )),this,SLOT(onWeightResult(int,quint16)));
+    connect(&adc102,SIGNAL(weightResult(int , quint16,quint16, qint32,qint32 )),this,SLOT(onWeightResult(int,quint16,quint16, qint32,qint32)));
     connect(&adc102,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
     connect(ui->btnTare,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
     connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
@@ -38,6 +39,8 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     connect(&adc102,SIGNAL(calibPointResult(int,int,int)),SLOT(onReadCalibPointResult(int,int,int)));
 
     initCalibPoints();
+
+
     //connect(ui->btnGN,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
     //this->setStyleSheet(res);
 }
@@ -72,10 +75,18 @@ void MainWindow::onParaReadResult(Para _para)
     ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
     ui->lbl_display_wet_4->setText(QString("d1: %1").arg(_para.div_low));
     ui->cbxUnit->setCurrentIndex(_para.unit);
-    if(_para.unit == 0) ui->lblunit->setText("kg");
-    else if(_para.unit == 1) ui->lblunit->setText("g");
-    else if(_para.unit == 2) ui->lblunit->setText("t");
-
+    if(_para.unit == 0) {
+        ui->lblunit->setText("kg");
+        unit = "kg";
+    }
+    else if(_para.unit == 1) {
+        ui->lblunit->setText("g");
+        unit = "g";
+    }
+    else if(_para.unit == 2) {
+        unit = "t";
+        ui->lblunit->setText("t");
+    }
     ui->edtZeroSpan->setText(QString("%1").arg(_para.zero_track_span));
     ui->edtStableSpan->setText(QString("%1").arg(_para.stable_span));
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
@@ -84,6 +95,7 @@ void MainWindow::onParaReadResult(Para _para)
     ui->edtSlaveAddr->setText(QString("%1").arg(_para.slave_addr));
     ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
     ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
+    ui->cbxAdRate->setCurrentIndex(_para.adRate);
     ui->edtVersion->setText(QString("V%1.%2.%3").arg(_para.version/10000).arg((_para.version%10000)/100).arg(_para.version%100));
 }
 
@@ -103,11 +115,78 @@ void MainWindow::onScanResult(int type,int addr)
         ui->listWidget->setEnabled(true);
     }
 }
-
-void MainWindow::onWeightResult(int weight, quint16 state)
+#include <cstdio>
+void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare)
 {
-    ui->lbl_display_wet->setText(QString("%1").arg(weight));
+    double wf = (double)weight;
+    char buf[64] = {0,};
+    switch(dot)
+    {
 
+        case 1:
+            qsnprintf(buf,64,"%0.1f",wf/10);
+            break;
+        case 2:
+            qsnprintf(buf,64,"%0.2f",wf/100);
+            break;
+        case 3:
+            qsnprintf(buf,64,"%0.3f",wf/1000);
+            break;
+        case 4:
+            qsnprintf(buf,64,"%0.4f",wf/10000);
+            break;
+        default:
+            qsnprintf(buf,64,"%d",weight);
+            break;
+    }
+    QString ws(buf);
+//    if(ws.length() < dot)
+//    int pos = (ws.length() >= dot)?(ws.length()-dot):0;
+//    if(dot > 0)
+//        ws.insert(pos,".");
+    ui->lbl_display_wet->setText(ws);
+    QString strState = "";
+    //state = 0xFF;
+    if(state&1)
+    {
+        strState += tr("stable  ") ;
+    }
+    if(state&2)
+    {
+       strState += "|" +tr("zero  ");
+    }
+    if(state&4)
+    {
+       strState += "|" +tr("net ");
+    }
+    if(state&8)
+    {
+       strState += "|" +tr("upflow ");
+    }
+    if(state&16)
+    {
+       strState += "|" +tr("underflow ");
+    }
+    if(state&32)
+    {
+       strState += "|" +tr("highspan ");
+    }
+    if(state&64)
+    {
+       strState += "|" +tr("zoom10x ");
+    }
+    if(state&64)
+    {
+       strState += "|" +tr("menumode ");
+    }
+    if(strState.length() > 0)
+    {
+        strState += "|";
+        ui->lblstate->setText("|"+strState);
+    }
+
+    //ui->lblgross->setText(QString(tr("gross %1 " )).arg(gross) + unit);
+    //ui->lbltare->setText(QString(tr("tare %1 " )).arg(tare) + unit);
 }
 //标定过程....
 void MainWindow::onCalibProcessResult(int index, int result)
@@ -210,6 +289,7 @@ void MainWindow::on_btnSave_clicked()
     p.stable_span = ui->edtStableSpan->text().toInt();
     p.unit = ui->cbxUnit->currentIndex();
     p.zero_track_span = ui->edtZeroSpan->text().toInt();
+    p.adRate = ui->cbxAdRate->currentIndex();
     if(adc102.paraSave(p))
     {
         QMessageBox::information(this,tr("info"),tr("save successful"));
@@ -276,8 +356,8 @@ void MainWindow::on_actionChinese_triggered()
 {
    QTranslator translator;
    bool b = false;
-   b = translator.load(QCoreApplication::applicationDirPath() + "/en.qm");
-   _app.installTranslator(&translator);
+   b = translator.load(QCoreApplication::applicationDirPath() + "/cn.qm");
+   _app.removeTranslator(&translator);
 
 }
 

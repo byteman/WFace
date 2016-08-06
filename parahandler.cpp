@@ -52,7 +52,12 @@ bool ParaHandler::paraSave(Para _para)
            values[4] = _para.slave_addr;
            if(5 == _rtu->write_registers(26,5,values))
            {
-               return true;
+               int err = _rtu->write_registers(96,1,&_para.adRate);
+               _rtu->read_registers(96,1,values);
+               if(_para.adRate == values[0])
+               {
+                    return true;
+               }
            }
 
        }
@@ -86,8 +91,12 @@ bool ParaHandler::paraRead(Para &_para)
             _para.sensor_mv = values[2]+(values[3]<<16);
             _para.slave_addr = values[4];
             _para.version = values[5];
-            emit paraReadResult(_para);
-            return true;
+            if(1 == _rtu->read_registers(96,1,&_para.adRate))
+            {
+                emit paraReadResult(_para);
+                return true;
+            }
+
         }
 
     }

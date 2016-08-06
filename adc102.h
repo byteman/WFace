@@ -16,7 +16,7 @@ public:
     bool hasConnect();
 signals:
     void scanResult(int type, int addr);
-    void weightResult(int weight, quint16 state);
+    void weightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
     void paraReadResult(Para _para);
     void calibProcessResult(int index, int result);
     void calibPointResult(int index, int weight, int ad);
@@ -39,7 +39,8 @@ public slots:
     void onCalibPointResult(int index, int weight, int ad);
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
-    void onWeightResult(int weight, quint16 state);
+    void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
+
     void timerHandler();
     bool modifyAddr(quint16 oldAddr, quint16 newAddr);
 private:

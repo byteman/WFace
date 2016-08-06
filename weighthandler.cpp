@@ -14,12 +14,10 @@ bool WeightHandler::run()
 {
     if(_rtu)
     {
-        quint16 weight[3];
-        if(2 == _rtu->read_registers(0,2,weight))
+        quint16 values[8];
+        if(4 == _rtu->read_registers(0,4,values))
         {
-            qint32 w = 0;
-            memcpy(&w,&weight[0],sizeof(qint16)*2);
-            emit weightResult(w,weight[2]);
+            emit weightResult(values[0]+(values[1]<<16),values[2],values[3],values[4]+(values[5]<<16),values[6] +( values[7]<<16 ) );
         }
     }
     return true;

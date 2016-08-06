@@ -20,6 +20,7 @@ public:
     quint32 sensor_mv; //传感器平均灵敏度，200000 代表 2.00000mV/V
     quint16 slave_addr; //从机地址（自己的地址）：1～32
     quint16 version; //万位是产品编号，百位和千位是发行版本号，个位和十位是临时版本号
+    quint16 adRate; //AD采样率.
 };
 class ParaHandler : public CmdHandler
 {
