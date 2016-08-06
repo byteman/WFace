@@ -1,3 +1,8 @@
 *.o
 *.bak
 *.pro.user
+debug
+Makefile
+Makefile.Release
+*.Debug
+ui_mainwindow.h

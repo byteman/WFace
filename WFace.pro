@@ -56,5 +56,5 @@ FORMS    += mainwindow.ui
 RESOURCES += \
     myrc.qrc
 TRANSLATIONS+=cn.ts
-
+RC_FILE=icon.rc
 DISTFILES +=
