@@ -39,6 +39,10 @@ private slots:
 
     void on_actionChinese_triggered();
 
+    void on_btnAddr_clicked();
+
+    void on_btnGN_clicked();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;

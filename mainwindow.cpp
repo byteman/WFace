@@ -150,7 +150,7 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 void MainWindow::on_btnSearch_clicked()
 {
     QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
-    if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1))
+    if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1,!ui->cbxFindAll->isChecked()))
     {
         QMessageBox::information(this,tr("error"),tr("uart open failed"));
         return ;
@@ -279,4 +279,34 @@ void MainWindow::on_actionChinese_triggered()
    b = translator.load(QCoreApplication::applicationDirPath() + "/en.qm");
    _app.installTranslator(&translator);
 
+}
+
+void MainWindow::on_btnAddr_clicked()
+{
+   QListWidgetItem* sel = ui->listWidget->currentItem();
+   if(sel == NULL)
+   {
+        QMessageBox::information(this,tr("info"),tr("please select one device"));
+        return;
+   }
+   quint16 oldAddr = sel->text().toInt();
+   quint16 newAddr = ui->edtAddr->text().toInt();
+
+   if(adc102.modifyAddr(oldAddr,newAddr))
+   {
+        QMessageBox::information(this,tr("info"),tr("modify address successful"));
+   }
+   else
+   {
+
+       QMessageBox::information(this,tr("error"),tr("modify address failed"));
+   }
+}
+
+void MainWindow::on_btnGN_clicked()
+{
+    if(!adc102.changeGN())
+    {
+        QMessageBox::information(this,tr("error"),tr("change groos net failed"));
+    }
 }
