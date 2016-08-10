@@ -24,6 +24,7 @@ bool RTU_Modbus::open(const char* port, int baud, char parity, char databit, cha
     {
         return false;
     }
+    m_port = port;
     return true;
 }
 
@@ -68,3 +69,8 @@ int  RTU_Modbus::read_input_registers(int reg_addr, int nb,quint16* value)
     int ret = modbus_read_input_registers( m_modbus, reg_addr,nb,value );
     return ret;
 }
+QString RTU_Modbus::port() const
+{
+    return m_port;
+}
+

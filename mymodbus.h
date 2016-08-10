@@ -2,6 +2,7 @@
 #define MYMODBUS_H
 
 #include <QtGlobal>
+#include <QString>
 #include "modbus.h"
 
 class RTU_Modbus
@@ -19,9 +20,12 @@ public:
 
     int  read_registers(int reg_addr, int nb,quint16* value);
     int  read_input_registers(int reg_addr, int nb,quint16* value);
+    QString port() const;
+
 private:
     modbus_t * m_modbus;
     int m_slave_addr;
+    QString m_port;
 };
 
 class Modbus_Factory

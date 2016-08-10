@@ -6,6 +6,9 @@
 #include "3rdparty/qextserialport/qextserialenumerator.h"
 #include <QSignalMapper>
 #include <QTranslator>
+#include "pcomm.h"
+#include <QFileDialog>
+#include <QFile>
 static QString unit="g";
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QMainWindow(parent),
@@ -27,6 +30,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
         ui->cbxPort->addItem(port.portName);
     }
     ui->cbxBaud->setCurrentIndex(1);
+    ui->progressBar->hide();
     //int version = 21101;
     //ui->edtVersion->setText(QString("V%1.%2.%3").arg(version/10000).arg((version%10000)/100).arg(version%100));
     connect(&adc102,SIGNAL(scanResult(int , int )),this,SLOT(onScanResult(int,int)));
@@ -37,7 +41,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
     connect(&adc102,SIGNAL(calibProcessResult(int,int)),SLOT(onCalibProcessResult(int,int)));
     connect(&adc102,SIGNAL(calibPointResult(int,int,int)),SLOT(onReadCalibPointResult(int,int,int)));
-
+    connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
     initCalibPoints();
 
 
@@ -113,6 +117,43 @@ void MainWindow::onScanResult(int type,int addr)
     {
         ui->btnSearch->setEnabled(true);
         ui->listWidget->setEnabled(true);
+    }
+}
+
+void MainWindow::onUpdateResult(int result, int pos, int total)
+{
+    switch(result)
+    {
+    case -1:
+        QMessageBox::information(this,tr("error"),tr("start update failed"));
+        ui->progressBar->hide();
+        break;
+    case 1:
+
+        ui->statusBar->showMessage(tr("wait device reset,please reset..."));
+        break;
+    case 2:
+        ui->statusBar->showMessage(tr("wait return key.."));
+        break;
+    case 3:
+        ui->statusBar->showMessage(tr("enter update mode,start send files.."));
+        break;
+    case 4:
+        ui->statusBar->showMessage(tr("ready send file.."));
+        ui->progressBar->show();
+        if(total > 0)
+            ui->progressBar->setValue(pos*100/total);
+        break;
+    case 5:
+        ui->statusBar->showMessage(tr("send file complete.."),2000);
+        QMessageBox::information(this,tr("info"),tr("update complete"));
+        ui->progressBar->setValue(0);
+        ui->progressBar->hide();
+        break;
+    default:
+        ui->statusBar->showMessage(tr("update unkown error"));
+        ui->progressBar->hide();
+        break;
     }
 }
 #include <cstdio>
@@ -389,4 +430,40 @@ void MainWindow::on_btnGN_clicked()
     {
         QMessageBox::information(this,tr("error"),tr("change groos net failed"));
     }
+}
+
+void MainWindow::on_btnUpdate_clicked()
+{
+    QString file = ui->edtFile->text();
+    QFile f(file);
+    if(!f.exists())
+    {
+        QMessageBox::information(this,tr("error"),tr("file do not exist"));
+        return;
+    }
+    if(!adc102.startUpdate(file))
+    {
+         QMessageBox::information(this,tr("error"),tr("file update failed"));
+    }
+    else
+    {
+        QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
+    }
+}
+
+void MainWindow::on_btnSelFile_clicked()
+{
+   QFileDialog *fileDialog = new QFileDialog(this);
+   fileDialog->setWindowTitle(tr("Open Image"));
+   fileDialog->setDirectory(".");
+   //fileDialog->setFilter(tr("Image Files(*.jpg *.png)"));
+   if(fileDialog->exec() == QDialog::Accepted) {
+           QString path = fileDialog->selectedFiles()[0];
+           ui->edtFile->setText(path);
+           //QMessageBox::information(NULL, tr("Path"), tr("You selected ") + path);
+   } else {
+           QMessageBox::information(NULL, tr("Path"), tr("You didn't select any files."));
+   }
+   delete fileDialog;
+
 }

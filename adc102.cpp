@@ -2,6 +2,7 @@
 #include "scanhandler.h"
 #include "weighthandler.h"
 #include "calibhandler.h"
+#include "updatehandler.h"
 #include <qdebug>
 ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handler(NULL),
@@ -18,10 +19,13 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     CalibHandler* handler_calib = new CalibHandler(&modbus);
     connect(handler_calib,SIGNAL(calibProcessResult(int,int)),this,SLOT(onCalibProcessResult(int,int)));
     connect(handler_calib,SIGNAL(calibReadResult(int,qint32,qint32)),this,SLOT(onCalibPointResult(int,int,int)));
+    handler_update = new UpdateHandler(&modbus);
+    connect(handler_update,SIGNAL(updateResult(int,int,int)),this,SLOT(onUpdateResult(int,int,int)));
     m_handlers.push_back(handler_scan);
     m_handlers.push_back(handler_weight);
     m_handlers.push_back(handler_para);
     m_handlers.push_back(handler_calib);
+    //m_handlers.push_back(handler_update);
 }
 
 bool ADC102::setSlaveAddr(int addr)
@@ -195,9 +199,14 @@ void ADC102::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,
     emit weightResult(weight,state,dot,gross,tare);
 }
 
+void ADC102::onUpdateResult(int result, int pos, int total)
+{
+    emit updateResult(result,pos,total);
+}
+
 void ADC102::timerHandler()
 {
-    qDebug() <<    "adc102 timer";
+    //qDebug() <<    "adc102 timer";
     if(m_handler != NULL)
     {
         if(m_handler->run())
@@ -221,5 +230,27 @@ bool ADC102::modifyAddr(quint16 oldAddr, quint16 newAddr)
         return true;
     }
     return false;
+}
+
+bool ADC102::startUpdate(QString file)
+{
+    if(m_handler!=NULL)
+    {
+        m_handler->stop();
+    }
+    m_handler = NULL;
+    //m_handlers.push_back();
+    modbus.close();
+
+    if(handler_update!=NULL)
+    {
+
+        if(!handler_update->startUpdate(file))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 

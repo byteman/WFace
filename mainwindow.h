@@ -22,7 +22,7 @@ private slots:
     void calibrate_click(int id);
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
-
+    void onUpdateResult(int result, int pos, int total);
     void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
     void onCalibProcessResult(int index, int result);
     void onReadCalibPointResult(int index, int weight, int ad);
@@ -43,6 +43,10 @@ private slots:
     void on_btnAddr_clicked();
 
     void on_btnGN_clicked();
+
+    void on_btnUpdate_clicked();
+
+    void on_btnSelFile_clicked();
 
 private:
     void initCalibPoints();

@@ -7,6 +7,7 @@
 #include "cmdhandler.h"
 #include "parahandler.h"
 #include <QList>
+#include "updatehandler.h"
 class ADC102 : public QObject
 {
     Q_OBJECT
@@ -15,6 +16,7 @@ public:
     bool setSlaveAddr(int addr);
     bool hasConnect();
 signals:
+    void updateResult(int result, int pos, int total);
     void scanResult(int type, int addr);
     void weightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
     void paraReadResult(Para _para);
@@ -40,11 +42,12 @@ public slots:
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
-
+    void onUpdateResult(int result, int pos, int total);
     void timerHandler();
     bool modifyAddr(quint16 oldAddr, quint16 newAddr);
+    bool startUpdate(QString file);
 private:
-
+    UpdateHandler* handler_update;
     RTU_Modbus modbus;
     QTimer timer;
     CmdHandler* m_handler;
