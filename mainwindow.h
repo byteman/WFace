@@ -48,6 +48,12 @@ private slots:
 
     void on_btnSelFile_clicked();
 
+    void on_btnReset_clicked();
+
+    void on_btnZero_clicked();
+
+    void on_btnZoom10_clicked();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;

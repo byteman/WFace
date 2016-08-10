@@ -227,9 +227,18 @@ bool ADC102::modifyAddr(quint16 oldAddr, quint16 newAddr)
     modbus.setDeviceAddr(oldAddr);
     if(1  == modbus.write_register(30,newAddr) )
     {
-        return true;
+        //这里修改了地址后，设备就是以新的地址返回数据，所以这里判断返回值就不对了，让用户直接去搜索，不用管返回值了.
+        //return true;
     }
-    return false;
+    return true;
+}
+
+bool ADC102::reset()
+{
+
+    return modbus.write_register(2,99)==1?true:false;
+    //modbus.write_register(2,99);
+    //return true;
 }
 
 bool ADC102::startUpdate(QString file)
@@ -240,11 +249,12 @@ bool ADC102::startUpdate(QString file)
     }
     m_handler = NULL;
     //m_handlers.push_back();
-    modbus.close();
+
 
     if(handler_update!=NULL)
     {
 
+        modbus.close();
         if(!handler_update->startUpdate(file))
         {
             return false;

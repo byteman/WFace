@@ -130,10 +130,10 @@
                 </property>
                 <property name="font">
                  <font>
-                  <family>隶书</family>
+                  <family>黑体</family>
                   <pointsize>12</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
+                  <weight>50</weight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="styleSheet">
@@ -1290,8 +1290,8 @@
          <rect>
           <x>130</x>
           <y>120</y>
-          <width>431</width>
-          <height>21</height>
+          <width>451</width>
+          <height>31</height>
          </rect>
         </property>
        </widget>
@@ -1332,7 +1332,7 @@
      <x>0</x>
      <y>0</y>
      <width>835</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuChange">

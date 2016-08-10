@@ -36,9 +36,9 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     connect(&adc102,SIGNAL(scanResult(int , int )),this,SLOT(onScanResult(int,int)));
     connect(&adc102,SIGNAL(weightResult(int , quint16,quint16, qint32,qint32 )),this,SLOT(onWeightResult(int,quint16,quint16, qint32,qint32)));
     connect(&adc102,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
-    connect(ui->btnTare,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
-    connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
-    connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
+    //connect(ui->btnTare,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
+    //connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
+    //connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
     connect(&adc102,SIGNAL(calibProcessResult(int,int)),SLOT(onCalibProcessResult(int,int)));
     connect(&adc102,SIGNAL(calibPointResult(int,int,int)),SLOT(onReadCalibPointResult(int,int,int)));
     connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
@@ -190,7 +190,7 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
     //state = 0xFF;
     if(state&1)
     {
-        strState += tr("stable  ") ;
+        strState += "|" + tr("stable  ") ;
     }
     if(state&2)
     {
@@ -223,7 +223,7 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
     if(strState.length() > 0)
     {
         strState += "|";
-        ui->lblstate->setText("|"+strState);
+        ui->lblstate->setText(strState);
     }
 
     //ui->lblgross->setText(QString(tr("gross %1 " )).arg(gross) + unit);
@@ -343,7 +343,10 @@ void MainWindow::on_btnSave_clicked()
 
 void MainWindow::on_btnTare_clicked()
 {
-
+    if(!adc102.discardTare())
+    {
+        QMessageBox::information(this,tr("error"),tr("discard tare failed"));
+    }
 }
 
 void MainWindow::initCalibPoints()
@@ -441,13 +444,18 @@ void MainWindow::on_btnUpdate_clicked()
         QMessageBox::information(this,tr("error"),tr("file do not exist"));
         return;
     }
+    if(!adc102.reset())
+    {
+        //自动复位失败，则提示手动复位...,程序还是一直发送空格...
+        QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
+    }
     if(!adc102.startUpdate(file))
     {
          QMessageBox::information(this,tr("error"),tr("file update failed"));
     }
     else
     {
-        QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
+        //QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
     }
 }
 
@@ -466,4 +474,27 @@ void MainWindow::on_btnSelFile_clicked()
    }
    delete fileDialog;
 
+}
+
+void MainWindow::on_btnReset_clicked()
+{
+    adc102.reset();
+}
+
+void MainWindow::on_btnZero_clicked()
+{
+
+    if(!adc102.setZero())
+    {
+        QMessageBox::information(this,tr("error"),tr("set zero failed"));
+    }
+}
+
+void MainWindow::on_btnZoom10_clicked()
+{
+
+    if(!adc102.zoom10X())
+    {
+        QMessageBox::information(this,tr("error"),tr("zomm10x failed"));
+    }
 }

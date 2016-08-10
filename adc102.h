@@ -45,6 +45,7 @@ public slots:
     void onUpdateResult(int result, int pos, int total);
     void timerHandler();
     bool modifyAddr(quint16 oldAddr, quint16 newAddr);
+    bool reset();
     bool startUpdate(QString file);
 private:
     UpdateHandler* handler_update;
