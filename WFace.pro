@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-
+QT += xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = WFace
@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     weighthandler.cpp \
     parahandler.cpp \
     calibhandler.cpp \
-    updatehandler.cpp
+    updatehandler.cpp \
+    paramconfig.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/qextserialport/qextserialport.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     weighthandler.h \
     parahandler.h \
     calibhandler.h \
-    updatehandler.h
+    updatehandler.h \
+    paramconfig.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src 3rdparty/qextserialport
 

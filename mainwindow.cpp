@@ -58,13 +58,29 @@ void MainWindow::on_actionChagne_triggered()
 {
     QMessageBox::about(this,"title","click write parameter");
 }
+void MainWindow::calibrate_click_zero(int id)
+{
+    qDebug() << id << "---zero clicked";
+    bool ok = false;
 
+    int weight = ui->tblCalib->item(id,2)->text().toInt(&ok);
+    if(!ok)
+    {
+        return;
+    }
+    adc102.startZeroCalib(id);
+}
 void MainWindow::calibrate_click(int id)
 {
-    qDebug() << id << "---clicked";
-    int weight = ui->tblCalib->item(id,1)->text().toInt();
+    qDebug() << id << "---k clicked";
+    bool ok = false;
 
-    adc102.startCalib(id,weight);
+    int weight = ui->tblCalib->item(id,1)->text().toInt(&ok);
+    if(!ok)
+    {
+        return;
+    }
+    adc102.startCalib(true,id,weight);
 }
 
 void MainWindow::onParaReadResult(Para _para)
@@ -339,7 +355,7 @@ void MainWindow::on_btnTare_clicked()
 void MainWindow::initCalibPoints(int count)
 {
 
-    ui->tblCalib->setRowCount(count+1);
+    ui->tblCalib->setRowCount(count);
     ui->tblCalib->setColumnCount(7);
 
     QStringList col_headers;
@@ -358,15 +374,16 @@ void MainWindow::initCalibPoints(int count)
     //row_headers<<"0" <<"1" << "2" << "3" << "4" << "5";
 
     QSignalMapper *signalMapper = new QSignalMapper(this);
-    for(int i = 0; i <=  count; i++)
+    QSignalMapper *signalMapper2 = new QSignalMapper(this);
+    for(int i = 0; i <  count; i++)
     {
         QPushButton* button = new QPushButton(tr("calib"),ui->tblCalib);
         QPushButton* button2 = new QPushButton(tr("zero"),ui->tblCalib);
         button->setGeometry(0,0,30,20);
         connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
-        connect(button2, SIGNAL(clicked()), signalMapper, SLOT(map()));
+        connect(button2, SIGNAL(clicked()), signalMapper2, SLOT(map()));
         signalMapper->setMapping(button, i);
-        signalMapper->setMapping(button2, i+count);
+        signalMapper2->setMapping(button2, i);
         ui->tblCalib->setCellWidget(i,6,button);
         ui->tblCalib->setCellWidget(i,5,button2);
         for(int j = 0 ; j < 5; j++)
@@ -382,6 +399,8 @@ void MainWindow::initCalibPoints(int count)
     ui->tblCalib->setVerticalHeaderLabels(row_headers);
     connect(signalMapper, SIGNAL(mapped(int)),
                 this, SLOT(calibrate_click(int)));
+    connect(signalMapper2, SIGNAL(mapped(int)),
+                this, SLOT(calibrate_click_zero(int)));
 }
 
 void MainWindow::on_actionEnglish_triggered()

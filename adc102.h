@@ -33,7 +33,8 @@ public slots:
     bool startReadPara();
     bool stopReadPara();
 
-    bool startCalib(int index, int weight);
+    bool startCalib(bool hand, int index, int weight);
+    bool startZeroCalib(int index);
     bool readCalibPoints(int index = -1);
     bool stopReadWeight();
     bool stop();

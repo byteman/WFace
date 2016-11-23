@@ -56,7 +56,8 @@ bool CalibHandler::run()
     }
     return true;
 }
-
+//实时读取mv,ad,weight.k值
+//标定零点和重量设置.
 bool CalibHandler::readPara(int index)
 {
     if(index == -1)
@@ -83,7 +84,7 @@ bool CalibHandler::stop()
     return true;
 }
 
-bool CalibHandler::calibSet(int index, qint32 weight, qint32 ad)
+bool CalibHandler::calibSet(bool hand,int index, qint32 weight, qint32 ad)
 {
     quint16 values[4];
     values[0] = index;
@@ -97,4 +98,9 @@ bool CalibHandler::calibSet(int index, qint32 weight, qint32 ad)
         return true;
     }
     return false;
+}
+
+bool CalibHandler::calibZeroSet(int index)
+{
+    return true;
 }

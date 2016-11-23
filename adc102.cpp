@@ -143,11 +143,17 @@ bool ADC102::stopReadPara()
     return false;
 }
 
-bool ADC102::startCalib(int index, int weight)
+bool ADC102::startZeroCalib(int index)
+{
+    CalibHandler* handler = (CalibHandler*)m_handlers[3];
+    return handler->calibZeroSet(index);
+}
+
+bool ADC102::startCalib(bool hand,int index, int weight)
 {
 
     CalibHandler* handler = (CalibHandler*)m_handlers[3];
-    return handler->calibSet(index,weight,0);
+    return handler->calibSet(hand,index,weight,0);
 
 }
 

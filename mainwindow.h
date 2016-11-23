@@ -17,9 +17,11 @@ public:
     explicit MainWindow(QApplication& app,QWidget *parent = 0);
     ~MainWindow();
 
+
 private slots:
     void on_actionChagne_triggered();
     void calibrate_click(int id);
+    void calibrate_click_zero(int id);
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onUpdateResult(int result, int pos, int total);

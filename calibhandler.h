@@ -11,7 +11,8 @@ public:
     bool run();
     bool readPara(int index=-1);
     bool stop();
-    bool calibSet(int  index, qint32 weight,qint32 ad);
+    bool calibSet(bool hand,int  index, qint32 weight,qint32 ad);
+    bool calibZeroSet(int  index);
 signals:
     void calibReadResult(int index, qint32 weight,qint32 ad);
     void calibProcessResult(int  index, int result);
