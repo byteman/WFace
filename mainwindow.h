@@ -55,7 +55,7 @@ private slots:
     void on_btnZoom10_clicked();
 
 private:
-    void initCalibPoints();
+    void initCalibPoints(int count);
     Ui::MainWindow *ui;
     ADC102 adc102;
     QApplication &_app;

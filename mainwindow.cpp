@@ -42,7 +42,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     connect(&adc102,SIGNAL(calibProcessResult(int,int)),SLOT(onCalibProcessResult(int,int)));
     connect(&adc102,SIGNAL(calibPointResult(int,int,int)),SLOT(onReadCalibPointResult(int,int,int)));
     connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
-    initCalibPoints();
+    initCalibPoints(6);
 
 
     //connect(ui->btnGN,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
@@ -69,37 +69,22 @@ void MainWindow::calibrate_click(int id)
 
 void MainWindow::onParaReadResult(Para _para)
 {
-    ui->cbxDot->setCurrentIndex(_para.dot);
-    ui->edtFullLow->setText(QString("%1").arg(_para.span_low));
+   // ui->cbxDot->setCurrentIndex(_para.dot);
+    //ui->edtFullLow->setText(QString("%1").arg(_para.span_low));
     ui->lbl_display_wet_2->setText(QString("Max1: %1").arg(_para.span_low));
     ui->edtFullHigh->setText(QString("%1").arg(_para.span_high));
     ui->lbl_display_wet_3->setText(QString("Max2: %1").arg(_para.span_high));
     ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
     ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_high));
-    ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
+    //ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
     ui->lbl_display_wet_4->setText(QString("d1: %1").arg(_para.div_low));
-    ui->cbxUnit->setCurrentIndex(_para.unit);
-    if(_para.unit == 0) {
-        ui->lblunit->setText("kg");
-        unit = "kg";
-    }
-    else if(_para.unit == 1) {
-        ui->lblunit->setText("g");
-        unit = "g";
-    }
-    else if(_para.unit == 2) {
-        unit = "t";
-        ui->lblunit->setText("t");
-    }
+
     ui->edtZeroSpan->setText(QString("%1").arg(_para.zero_track_span));
-    ui->edtStableSpan->setText(QString("%1").arg(_para.stable_span));
+
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
-    ui->edtSensorFullSpan->setText(QString("%1").arg(_para.sensor_full_span));
-    ui->edtSensorMv->setText(QString("%1").arg(_para.sensor_mv));
-    ui->edtSlaveAddr->setText(QString("%1").arg(_para.slave_addr));
-    ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
+
     ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
-    ui->cbxAdRate->setCurrentIndex(_para.adRate);
+
     ui->edtVersion->setText(QString("V%1.%2.%3").arg(_para.version/10000).arg((_para.version%10000)/100).arg(_para.version%100));
 }
 
@@ -283,16 +268,16 @@ void MainWindow::on_btnSearch_clicked()
 
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    if(!adc102.hasConnect())
-    {
-        if(index != 0)
-        {
-            ui->tabWidget->setCurrentIndex(0);
-            QMessageBox::information(this,tr("info"),tr("please scan device first"));
-        }
+//    if(!adc102.hasConnect())
+//    {
+//        if(index != 0)
+//        {
+//            ui->tabWidget->setCurrentIndex(0);
+//            QMessageBox::information(this,tr("info"),tr("please scan device first"));
+//        }
 
-        return ;
-    }
+//        return ;
+//    }
 
     if(index == 0)
     {
@@ -309,6 +294,8 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     }
     else if(index == 3)
     {
+        //read points first;
+        initCalibPoints(6);
         adc102.readCalibPoints();
     }
 }
@@ -318,19 +305,19 @@ void MainWindow::on_btnSave_clicked()
     Para p;
     p.filter_level = ui->cbxFilterLvl->currentIndex();
     p.div_high = ui->cbxDivHigh->currentText().toInt();
-    p.div_low = ui->cbxDivLow->currentText().toInt();
-    p.dot = ui->cbxDot->currentIndex();
+    //p.div_low = ui->cbxDivLow->currentText().toInt();
+    //p.dot = ui->cbxDot->currentIndex();
     p.hand_zero_span = ui->edtHandZeroSpan->text().toInt();
-    p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt();
-    p.sensor_full_span = ui->edtSensorFullSpan->text().toInt();
-    p.sensor_mv = ui->edtSensorMv->text().toInt();
-    p.slave_addr = ui->edtSlaveAddr->text().toInt();
+//    p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt();
+//    p.sensor_full_span = ui->edtSensorFullSpan->text().toInt();
+//    p.sensor_mv = ui->edtSensorMv->text().toInt();
+//    p.slave_addr = ui->edtSlaveAddr->text().toInt();
     p.span_high = ui->edtFullHigh->text().toInt();
-    p.span_low = ui->edtFullLow->text().toInt();
-    p.stable_span = ui->edtStableSpan->text().toInt();
-    p.unit = ui->cbxUnit->currentIndex();
+//    p.span_low = ui->edtFullLow->text().toInt();
+//    p.stable_span = ui->edtStableSpan->text().toInt();
+//    p.unit = ui->cbxUnit->currentIndex();
     p.zero_track_span = ui->edtZeroSpan->text().toInt();
-    p.adRate = ui->cbxAdRate->currentIndex();
+    //p.adRate = ui->cbxAdRate->currentIndex();
     if(adc102.paraSave(p))
     {
         QMessageBox::information(this,tr("info"),tr("save successful"));
@@ -349,14 +336,20 @@ void MainWindow::on_btnTare_clicked()
     }
 }
 
-void MainWindow::initCalibPoints()
+void MainWindow::initCalibPoints(int count)
 {
 
-    ui->tblCalib->setRowCount(6);
-    ui->tblCalib->setColumnCount(3);
+    ui->tblCalib->setRowCount(count+1);
+    ui->tblCalib->setColumnCount(7);
+
     QStringList col_headers;
+    col_headers.push_back(tr("mv"));
     col_headers.push_back(tr("ad"));
+
+    col_headers.push_back(tr("k"));
     col_headers.push_back(tr("weight"));
+    col_headers.push_back(tr("input"));
+    col_headers.push_back(tr("zero"));
     col_headers.push_back(tr("calibrate"));
 
     ui->tblCalib->setHorizontalHeaderLabels(col_headers);
@@ -365,20 +358,25 @@ void MainWindow::initCalibPoints()
     //row_headers<<"0" <<"1" << "2" << "3" << "4" << "5";
 
     QSignalMapper *signalMapper = new QSignalMapper(this);
-    for(int i = 0; i <=  5; i++)
+    for(int i = 0; i <=  count; i++)
     {
         QPushButton* button = new QPushButton(tr("calib"),ui->tblCalib);
-        button->setGeometry(0,0,80,50);
+        QPushButton* button2 = new QPushButton(tr("zero"),ui->tblCalib);
+        button->setGeometry(0,0,30,20);
         connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
+        connect(button2, SIGNAL(clicked()), signalMapper, SLOT(map()));
         signalMapper->setMapping(button, i);
-        ui->tblCalib->setCellWidget(i,2,button);
-        for(int j = 0 ; j < 2; j++)
+        signalMapper->setMapping(button2, i+count);
+        ui->tblCalib->setCellWidget(i,6,button);
+        ui->tblCalib->setCellWidget(i,5,button2);
+        for(int j = 0 ; j < 5; j++)
         {
             QTableWidgetItem* item = new QTableWidgetItem("");
             item->setTextAlignment(Qt::AlignHCenter);
             ui->tblCalib->setItem(i,j,item);
         }
         row_headers.push_back(QString("%1").arg(i));
+        ui->tblCalib->setColumnWidth(i,100);
 
     }
     ui->tblCalib->setVerticalHeaderLabels(row_headers);
