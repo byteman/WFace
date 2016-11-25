@@ -724,7 +724,7 @@
            <string/>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="label_2">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -737,10 +737,10 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="1" column="1">
             <widget class="QLineEdit" name="edtSensorNum"/>
            </item>
-           <item row="2" column="0">
+           <item row="3" column="0">
             <widget class="QLabel" name="label_11">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -753,13 +753,13 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="5">
+           <item row="2" column="5">
             <widget class="QLineEdit" name="edtFullHigh"/>
            </item>
-           <item row="2" column="5">
+           <item row="3" column="5">
             <widget class="QLineEdit" name="edtZeroSpan"/>
            </item>
-           <item row="0" column="5">
+           <item row="1" column="5">
             <widget class="QComboBox" name="cbxDivHigh">
              <item>
               <property name="text">
@@ -783,7 +783,7 @@
              </item>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="QLabel" name="label_3">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -796,10 +796,10 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="2" column="1">
             <widget class="QLineEdit" name="edtHandZeroSpan"/>
            </item>
-           <item row="2" column="4">
+           <item row="3" column="4">
             <widget class="QLabel" name="label_4">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -812,7 +812,7 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="3" column="1">
             <widget class="QComboBox" name="cbxFilterLvl">
              <item>
               <property name="text">
@@ -846,17 +846,17 @@
              </item>
             </widget>
            </item>
-           <item row="3" column="5">
+           <item row="4" column="5">
             <widget class="QLineEdit" name="edtServerPort"/>
            </item>
-           <item row="3" column="4">
+           <item row="4" column="4">
             <widget class="QLabel" name="label_6">
              <property name="text">
               <string>SererPort</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="4">
+           <item row="2" column="4">
             <widget class="QLabel" name="label_5">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -872,7 +872,7 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="4">
+           <item row="1" column="4">
             <widget class="QLabel" name="label_8">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -888,14 +888,14 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
+           <item row="4" column="1">
             <widget class="QLineEdit" name="edtVersion">
              <property name="readOnly">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="4" column="0">
             <widget class="QLabel" name="label_16">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -907,6 +907,26 @@
               <string>Version</string>
              </property>
             </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>车牌号</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit"/>
+           </item>
+           <item row="0" column="4">
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>SIM卡号</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="5">
+            <widget class="QLineEdit" name="lineEdit_2"/>
            </item>
           </layout>
          </widget>
