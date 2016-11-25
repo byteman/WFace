@@ -15,7 +15,11 @@ CalibHandler::CalibHandler(RTU_Modbus *rtu):
     }
 }
 
+bool CalibHandler::readRtParas()
+{
 
+
+}
 bool CalibHandler::run()
 {
     if(_rtu)
@@ -51,7 +55,10 @@ bool CalibHandler::run()
                 }
 
             }
+            //read realtime params
+
         }
+        readRtParas();
 
     }
     return true;
