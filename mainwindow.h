@@ -5,6 +5,8 @@
 #include "adc102.h"
 #include <QListWidgetItem>
 #include <bitset>
+#include <QSignalMapper>
+#include <QTableWidgetItem>
 namespace Ui {
 class MainWindow;
 }
@@ -27,7 +29,7 @@ private slots:
     void onUpdateResult(int result, int pos, int total);
     void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
     void onCalibProcessResult(int index, int result);
-    void onReadCalibPointResult(int index, int weight, int ad);
+    void onReadCalibPointResult(Sensor *sensors, int num);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
 
     void on_btnSearch_clicked();
@@ -56,11 +58,21 @@ private slots:
 
     void on_btnZoom10_clicked();
 
+    void on_btnCalibAllZero_clicked();
+
+    void on_btnCalibAllWt_clicked();
+
+
+
+    void on_btnModifyK_clicked();
+
 private:
     void initCalibPoints(int count);
     Ui::MainWindow *ui;
     ADC102 adc102;
     QApplication &_app;
+    QSignalMapper *signalMapper;
+    QSignalMapper *signalMapper2;
 
 };
 

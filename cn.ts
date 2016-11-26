@@ -544,12 +544,12 @@
     <message>
         <location filename="mainwindow.cpp" line="350"/>
         <source>weight</source>
-        <translation>砝码重量</translation>
+        <translation>砝码重量(kg)</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="351"/>
         <source>input</source>
-        <translation>输入重量</translation>
+        <translation>输入重量(kg)</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="352"/>

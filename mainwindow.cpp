@@ -29,7 +29,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     foreach(port,ports){
         ui->cbxPort->addItem(port.portName);
     }
-    ui->cbxBaud->setCurrentIndex(1);
+    ui->cbxBaud->setCurrentIndex(4);
     ui->progressBar->hide();
     //int version = 21101;
     //ui->edtVersion->setText(QString("V%1.%2.%3").arg(version/10000).arg((version%10000)/100).arg(version%100));
@@ -40,11 +40,13 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     //connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
     //connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
     connect(&adc102,SIGNAL(calibProcessResult(int,int)),SLOT(onCalibProcessResult(int,int)));
-    connect(&adc102,SIGNAL(calibPointResult(int,int,int)),SLOT(onReadCalibPointResult(int,int,int)));
+    connect(&adc102,SIGNAL(calibPointResult(Sensor*,int)),SLOT(onReadCalibPointResult(Sensor*,int)));
     connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
-    initCalibPoints(6);
 
 
+    signalMapper  = new QSignalMapper(this);
+    signalMapper2 = new QSignalMapper(this);
+    //connect(ui->btn)
     //connect(ui->btnGN,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
     //this->setStyleSheet(res);
 }
@@ -61,13 +63,7 @@ void MainWindow::on_actionChagne_triggered()
 void MainWindow::calibrate_click_zero(int id)
 {
     qDebug() << id << "---zero clicked";
-    bool ok = false;
 
-    int weight = ui->tblCalib->item(id,2)->text().toInt(&ok);
-    if(!ok)
-    {
-        return;
-    }
     adc102.startZeroCalib(id);
 }
 void MainWindow::calibrate_click(int id)
@@ -75,7 +71,7 @@ void MainWindow::calibrate_click(int id)
     qDebug() << id << "---k clicked";
     bool ok = false;
 
-    int weight = ui->tblCalib->item(id,1)->text().toInt(&ok);
+    int weight = ui->tblCalib->item(id,3)->text().toInt(&ok);
     if(!ok)
     {
         return;
@@ -233,32 +229,48 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
 //标定过程....
 void MainWindow::onCalibProcessResult(int index, int result)
 {
-    if(result > 0)
+//    if(result > 0)
+//    {
+//        ui->statusBar->showMessage(QString("left time %1S").arg(result));
+//    }
+//    else if(result == 0)
+//    {
+//        QMessageBox::information(this,tr("info"),tr("calib ok"));
+//    }
+//    else
+//    {
+//        QMessageBox::information(this,tr("info"),tr("calib failed"));
+//    }
+    if(index >= ui->tblCalib->rowCount())
     {
-        ui->statusBar->showMessage(QString("left time %1S").arg(result));
+        //adc102.readCalibPoints();
+        return;
     }
-    else if(result == 0)
-    {
-        QMessageBox::information(this,tr("info"),tr("calib ok"));
-    }
-    else
-    {
-        QMessageBox::information(this,tr("info"),tr("calib failed"));
-    }
+    float k = (float)result/1000000.0f;
+    ui->tblCalib->item(index,2)->setText(QString("%1").arg(k));
 }
 
-void MainWindow::onReadCalibPointResult(int index, int weight, int ad)
+void MainWindow::onReadCalibPointResult(Sensor* sensors, int num)
 {
-    QTableWidgetItem *itemAd = ui->tblCalib->item(index,0);
-    if(itemAd!=NULL)
+    if(ui->tblCalib->rowCount() != num)
     {
-        itemAd->setText(QString("%1").arg(ad));
+        initCalibPoints(6);
     }
-    QTableWidgetItem *itemWt = ui->tblCalib->item(index,1);
-    if(itemWt!=NULL)
+
+    for(int i = 0; i < num; i++)
     {
-        itemWt->setText(QString("%1").arg(weight));
+        QTableWidgetItem *itemMv = ui->tblCalib->item(i,0);
+        if(itemMv!=NULL)
+        {
+            itemMv->setText(QString("%1").arg(sensors[i].mv/1000));
+        }
+        QTableWidgetItem *itemWt = ui->tblCalib->item(i,1);
+        if(itemWt!=NULL)
+        {
+            itemWt->setText(QString("%1").arg(sensors[i].wt));
+        }
     }
+
 
 }
 
@@ -311,7 +323,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     else if(index == 3)
     {
         //read points first;
-        initCalibPoints(6);
+        //initCalibPoints(6);
         adc102.readCalibPoints();
     }
 }
@@ -354,16 +366,17 @@ void MainWindow::on_btnTare_clicked()
 
 void MainWindow::initCalibPoints(int count)
 {
-
+    ui->tblCalib->clear();
     ui->tblCalib->setRowCount(count);
-    ui->tblCalib->setColumnCount(7);
+    ui->tblCalib->setColumnCount(6);
 
     QStringList col_headers;
     col_headers.push_back(tr("mv"));
-    col_headers.push_back(tr("ad"));
+    col_headers.push_back(tr("weight"));
+    //col_headers.push_back(tr("ad"));
 
     col_headers.push_back(tr("k"));
-    col_headers.push_back(tr("weight"));
+
     col_headers.push_back(tr("input"));
     col_headers.push_back(tr("zero"));
     col_headers.push_back(tr("calibrate"));
@@ -373,27 +386,26 @@ void MainWindow::initCalibPoints(int count)
     QStringList row_headers;
     //row_headers<<"0" <<"1" << "2" << "3" << "4" << "5";
 
-    QSignalMapper *signalMapper = new QSignalMapper(this);
-    QSignalMapper *signalMapper2 = new QSignalMapper(this);
+
     for(int i = 0; i <  count; i++)
     {
         QPushButton* button = new QPushButton(tr("calib"),ui->tblCalib);
         QPushButton* button2 = new QPushButton(tr("zero"),ui->tblCalib);
-        button->setGeometry(0,0,30,20);
+        //button->setGeometry(0,0,30,20);
         connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
         connect(button2, SIGNAL(clicked()), signalMapper2, SLOT(map()));
         signalMapper->setMapping(button, i);
         signalMapper2->setMapping(button2, i);
-        ui->tblCalib->setCellWidget(i,6,button);
-        ui->tblCalib->setCellWidget(i,5,button2);
-        for(int j = 0 ; j < 5; j++)
+        ui->tblCalib->setCellWidget(i,5,button);
+        ui->tblCalib->setCellWidget(i,4,button2);
+        for(int j = 0 ; j < 4; j++)
         {
             QTableWidgetItem* item = new QTableWidgetItem("");
             item->setTextAlignment(Qt::AlignHCenter);
             ui->tblCalib->setItem(i,j,item);
         }
         row_headers.push_back(QString("%1").arg(i));
-        ui->tblCalib->setColumnWidth(i,100);
+        ui->tblCalib->setColumnWidth(i,120);
 
     }
     ui->tblCalib->setVerticalHeaderLabels(row_headers);
@@ -401,6 +413,7 @@ void MainWindow::initCalibPoints(int count)
                 this, SLOT(calibrate_click(int)));
     connect(signalMapper2, SIGNAL(mapped(int)),
                 this, SLOT(calibrate_click_zero(int)));
+
 }
 
 void MainWindow::on_actionEnglish_triggered()
@@ -514,4 +527,64 @@ void MainWindow::on_btnZoom10_clicked()
     {
         QMessageBox::information(this,tr("error"),tr("zomm10x failed"));
     }
+}
+
+void MainWindow::on_btnCalibAllZero_clicked()
+{
+    int num = ui->tblCalib->rowCount();
+    if(!adc102.calibAllZero(num))
+    {
+        QMessageBox::information(this,"error","can not calib");
+    }
+}
+
+void MainWindow::on_btnCalibAllWt_clicked()
+{
+    int num = ui->tblCalib->rowCount();
+    std::vector<int> weights;
+    for(int i = 0; i < num ;i++)
+    {
+        bool ok = false;
+
+        int weight = ui->tblCalib->item(i,3)->text().toInt(&ok);
+        if(!ok)
+        {
+            QMessageBox::information(this,"error","input all weights");
+            return;
+        }
+
+        weights.push_back(weight);
+    }
+    if(!adc102.calibAllWeight(weights))
+    {
+        QMessageBox::information(this,"error","can not calib");
+    }
+}
+
+void MainWindow::on_btnModifyK_clicked()
+{
+    int num = ui->tblCalib->rowCount();
+    if(num < 1 ) return;
+    std::vector<qint32> ks;
+    for(int i = 0; i < num; i++)
+    {
+        bool ok = false;
+        float k = ui->tblCalib->item(i,2)->text().toFloat(&ok);
+        if(!ok)
+        {
+            QMessageBox::information(this,"error","invalid param");
+            return;
+        }
+        int intk = (int)(k*1000000);
+        ks.push_back(intk);
+    }
+    if(!adc102.modifyKs(ks))
+    {
+        QMessageBox::information(this,"error","modify failed");
+    }
+    else
+    {
+        QMessageBox::information(this,"title","modify ok");
+    }
+
 }

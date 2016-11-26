@@ -8,6 +8,7 @@
 #include "parahandler.h"
 #include <QList>
 #include "updatehandler.h"
+#include "calibhandler.h"
 class ADC102 : public QObject
 {
     Q_OBJECT
@@ -21,7 +22,7 @@ signals:
     void weightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
     void paraReadResult(Para _para);
     void calibProcessResult(int index, int result);
-    void calibPointResult(int index, int weight, int ad);
+    void calibPointResult(Sensor* ss,int num);
 public slots:
     bool discardTare();
     bool setZero();
@@ -36,16 +37,22 @@ public slots:
     bool startCalib(bool hand, int index, int weight);
     bool startZeroCalib(int index);
     bool readCalibPoints(int index = -1);
+
+    bool calibAllZero(int num);
+    bool calibAllWeight(std::vector<int> weights,bool hand=true);
+
     bool stopReadWeight();
     bool stop();
     void onCalibProcessResult(int index, int result);
-    void onCalibPointResult(int index, int weight, int ad);
+    void onCalibPointResult(Sensor* ss,int num);
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
     void onUpdateResult(int result, int pos, int total);
     void timerHandler();
     bool modifyAddr(quint16 oldAddr, quint16 newAddr);
+    bool modifyK(int addr, qint32 k);
+    bool modifyKs(std::vector<qint32> ks);
     bool reset();
     bool startUpdate(QString file);
 private:

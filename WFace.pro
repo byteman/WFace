@@ -41,7 +41,8 @@ HEADERS  += mainwindow.h \
     parahandler.h \
     calibhandler.h \
     updatehandler.h \
-    paramconfig.h
+    paramconfig.h \
+    wcommon.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src 3rdparty/qextserialport
 

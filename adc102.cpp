@@ -18,7 +18,7 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     connect(handler_para,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
     CalibHandler* handler_calib = new CalibHandler(&modbus);
     connect(handler_calib,SIGNAL(calibProcessResult(int,int)),this,SLOT(onCalibProcessResult(int,int)));
-    connect(handler_calib,SIGNAL(calibReadResult(int,qint32,qint32)),this,SLOT(onCalibPointResult(int,int,int)));
+    connect(handler_calib,SIGNAL(calibReadResult(Sensor*,int)),this,SLOT(onCalibPointResult(Sensor*,int)));
     handler_update = new UpdateHandler(&modbus);
     connect(handler_update,SIGNAL(updateResult(int,int,int)),this,SLOT(onUpdateResult(int,int,int)));
     m_handlers.push_back(handler_scan);
@@ -172,6 +172,18 @@ bool ADC102::readCalibPoints(int index)
     return true;
 }
 
+bool ADC102::calibAllZero(int num)
+{
+    CalibHandler* handler = (CalibHandler*)m_handlers[3];
+    return handler->calibAllZero(num);
+}
+
+bool ADC102::calibAllWeight(std::vector<int> weights,bool hand)
+{
+    CalibHandler* handler = (CalibHandler*)m_handlers[3];
+    return handler->calibSetAll(weights,hand);
+}
+
 bool ADC102::stopReadWeight()
 {
     return true;
@@ -182,9 +194,9 @@ bool ADC102::stop()
     return true;
 }
 
-void ADC102::onCalibPointResult(int index, int weight, int ad)
+void ADC102::onCalibPointResult(Sensor* ss,int num)
 {
-    emit calibPointResult(index,weight,ad);
+    emit calibPointResult(ss,num);
 }
 
 void ADC102::onParaReadResult(Para _para)
@@ -237,6 +249,27 @@ bool ADC102::modifyAddr(quint16 oldAddr, quint16 newAddr)
         //return true;
     }
     return true;
+}
+#include "wcommon.h"
+bool ADC102::modifyK(int addr, qint32 k)
+{
+    quint16 values[2];
+    values[0] = k&0xffff;
+    values[1] = (k>>16)&0xffff;
+    if(1  == modbus.write_registers(REG_SENSOR_K+addr*2,2,values) )
+    {
+        CalibHandler* handler = (CalibHandler*)m_handlers[3];
+        m_handler = m_handlers[3];
+        handler->readPara(addr);
+        return true;
+    }
+    return false;
+}
+
+bool ADC102::modifyKs(std::vector<qint32> ks)
+{
+    CalibHandler* handler = (CalibHandler*)m_handlers[3];
+    return handler->modifyKs(ks);
 }
 
 bool ADC102::reset()

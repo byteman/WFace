@@ -4,7 +4,7 @@
 
 ScanHandler::ScanHandler(RTU_Modbus *rtu):
     CmdHandler(rtu),
-    m_addr(1),
+    m_addr(10),
     m_findone(true)
 {
 
@@ -19,7 +19,7 @@ bool ScanHandler::startScan(bool findOne)
 
 bool ScanHandler::run()
 {
-    if(m_addr < 33)
+    if(m_addr < 11)
     {
         if(_rtu)
         {
@@ -33,7 +33,7 @@ bool ScanHandler::run()
                 emit scanResult(0,m_addr);
                 if(m_findone)
                 {
-                    m_addr = 1;
+                    m_addr = 10;
                     emit scanResult(1,m_addr);
                     return false;
                 }
@@ -42,13 +42,13 @@ bool ScanHandler::run()
         m_addr++;
         return true;
     }
-    m_addr = 1;
+    m_addr = 10;
      emit scanResult(1,m_addr);
     return false;
 }
 
 bool ScanHandler::stop()
 {
-    m_addr = 32;
+    m_addr = 10;
     return true;
 }
