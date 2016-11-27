@@ -24,7 +24,7 @@ public:
     //cz400
     quint8 carNo[10]; //
     quint8 simCard[12];
-
+    qint16 sensorNum;
     quint32 max_weight;
     quint32 limit_weight;
     qint32  zero;
@@ -43,7 +43,7 @@ public slots:
     bool paraSave(Para _para);
     bool paraRead(Para &_para);
 public:
-    bool run();
+    bool myrun();
 
 private:
     Para m_para;

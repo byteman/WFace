@@ -15,7 +15,8 @@ private:
     bool m_findone;
     // CmdHandler interface
 public:
-    bool run();
+    void run();
+    bool myrun();
     bool stop();
 };
 

@@ -9,6 +9,8 @@
 #include <QList>
 #include "updatehandler.h"
 #include "calibhandler.h"
+#include <QThread>
+#include <QTimer>
 class ADC102 : public QObject
 {
     Q_OBJECT
@@ -65,6 +67,7 @@ private:
     int m_interval;
     int m_slaveAddr;
     Para m_para;
+    QThread m_thread;
 };
 
 #endif // ADC102_H

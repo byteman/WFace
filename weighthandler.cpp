@@ -10,7 +10,7 @@ WeightHandler::WeightHandler(RTU_Modbus *rtu):
 }
 
 
-bool WeightHandler::run()
+bool WeightHandler::myrun()
 {
     if(_rtu)
     {
@@ -19,6 +19,10 @@ bool WeightHandler::run()
         {
             int weight = values[0] + (values[1]<<16);
             emit weightResult(weight,values[2],values[3],values[4]+(values[5]<<16),values[6] +( values[7]<<16 ) );
+        }
+        else
+        {
+            qDebug() << "failed";
         }
     }
     return true;

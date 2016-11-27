@@ -2,6 +2,8 @@
 #define CMDHANDLER_H
 #include <QObject>
 #include "mymodbus.h"
+#include <QThread>
+
 class CmdHandler:public QObject
 {
     Q_OBJECT
@@ -11,7 +13,8 @@ public:
 
     }
     virtual bool stop();
-    virtual bool run();
+    virtual bool myrun();
+    virtual void run();
 protected:
     RTU_Modbus* _rtu;
 };

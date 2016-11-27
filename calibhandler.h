@@ -3,6 +3,7 @@
 
 
 #include "cmdhandler.h"
+#include "Poco/Timer.h"
 #include <vector>
 struct Sensor
 {
@@ -18,12 +19,13 @@ struct Sensor
     qint32  wt;
 };
 #define MAX_SENSOR_NUM 6
+
 class CalibHandler : public CmdHandler
 {
      Q_OBJECT
 public:
     CalibHandler(RTU_Modbus*  rtu);
-    bool run();
+    bool myrun();
     bool readPara(int index=-1);
     bool stop();
     bool calibSet(bool hand,int  index, qint32 weight,qint32 ad);
@@ -33,6 +35,8 @@ public:
     bool modifyKs(std::vector<qint32> ks);
     bool readSensorNum();
     bool readRtParas(int num);
+    void run();
+    void onTimer(Poco::Timer &timer);
 signals:
     void calibReadResult(Sensor* sensors,int num);
     void calibProcessResult(int  index, int result);
@@ -42,6 +46,8 @@ private:
     bool m_read_sensor_num;
     int  m_sensor_num;
     Sensor sensors[MAX_SENSOR_NUM];
+    volatile bool _run;
+    Poco::Timer _timer;
 
 };
 #endif // CALIBHANDLER_H

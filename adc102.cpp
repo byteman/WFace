@@ -4,6 +4,22 @@
 #include "calibhandler.h"
 #include "updatehandler.h"
 #include <qdebug>
+
+//class Worker : public QObject
+//{
+//    Q_OBJECT
+
+//public slots:
+//    void doWork(const QString &parameter) {
+//        QString result;
+//        /* ... here is the expensive or blocking operation ... */
+//        emit resultReady(result);
+//    }
+
+//signals:
+//    void resultReady(const QString &result);
+//};
+//Worker gWorker;
 ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handler(NULL),
     m_interval(100),
@@ -25,7 +41,10 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handlers.push_back(handler_weight);
     m_handlers.push_back(handler_para);
     m_handlers.push_back(handler_calib);
+//    gWorker.moveToThread(&m_thread);
+//    m_thread.start();
     //m_handlers.push_back(handler_update);
+    //this->moveToThread(&m_thread);
 }
 
 bool ADC102::setSlaveAddr(int addr)
@@ -167,8 +186,8 @@ bool ADC102::readCalibPoints(int index)
     CalibHandler* handler = (CalibHandler*)m_handlers[3];
     m_handler = m_handlers[3];
     handler->readPara(index);
-    m_interval = 500;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    //m_interval = 1000;
+    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
     return true;
 }
 
@@ -227,7 +246,7 @@ void ADC102::timerHandler()
     //qDebug() <<    "adc102 timer";
     if(m_handler != NULL)
     {
-        if(m_handler->run())
+        if(m_handler->myrun())
         {
             QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
         }

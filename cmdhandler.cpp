@@ -7,7 +7,12 @@ bool CmdHandler::stop()
     return true;
 }
 
-bool CmdHandler::run()
+bool CmdHandler::myrun()
 {
-return true;
+    return true;
+}
+
+void CmdHandler::run()
+{
+
 }

@@ -16,8 +16,13 @@ bool ScanHandler::startScan(bool findOne)
     return true;
 }
 
+void ScanHandler::run()
+{
 
-bool ScanHandler::run()
+}
+
+
+bool ScanHandler::myrun()
 {
     if(m_addr < 11)
     {

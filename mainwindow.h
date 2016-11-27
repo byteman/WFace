@@ -74,6 +74,10 @@ private:
     QSignalMapper *signalMapper;
     QSignalMapper *signalMapper2;
 
+
+    // QObject interface
+public:
+
 };
 
 #endif // MAINWINDOW_H

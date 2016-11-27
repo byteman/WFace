@@ -46,6 +46,7 @@ HEADERS  += mainwindow.h \
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src 3rdparty/qextserialport
 
+INCLUDEPATH += 3rdparty/poco/include
 win32:INCLUDEPATH += 3rdparty/poco/include\ 3rdparty/pcomm
 unix:SOURCES += 3rdparty/qextserialport/posix_qextserialport.cpp	\
                 3rdparty/qextserialport/qextserialenumerator_unix.cpp
@@ -55,7 +56,7 @@ win32:SOURCES += 3rdparty/qextserialport/win_qextserialport.cpp \
 win32:DEFINES += _TTY_WIN_  WINVER=0x0501
 win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
 win32:LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32
-win32:LIBS += -L./3rdparty/poco/lib
+win32:LIBS += -L./3rdparty/poco -lPocoFoundationd
 
 FORMS    += mainwindow.ui
 
