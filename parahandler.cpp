@@ -50,7 +50,7 @@ bool ParaHandler::paraSave(Para _para)
            values[2] = (_para.sensor_mv&0xFFFF);
            values[3] = (_para.sensor_mv>>16)&0xFFFF;
            values[4] = _para.slave_addr;
-           if(5 == _rtu->write_registers(26,5,values))
+           if(4 == _rtu->write_registers(26,4,values))
            {
                int err = _rtu->write_registers(96,1,&_para.adRate);
                _rtu->read_registers(96,1,values);

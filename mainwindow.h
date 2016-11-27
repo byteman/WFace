@@ -54,6 +54,10 @@ private slots:
 
     void on_btnZoom10_clicked();
 
+    void on_listWidget_itemActivated(QListWidgetItem *item);
+
+    void on_listWidget_itemClicked(QListWidgetItem *item);
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;

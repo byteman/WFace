@@ -96,7 +96,7 @@ void MainWindow::onParaReadResult(Para _para)
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
     ui->edtSensorFullSpan->setText(QString("%1").arg(_para.sensor_full_span));
     ui->edtSensorMv->setText(QString("%1").arg(_para.sensor_mv));
-    ui->edtSlaveAddr->setText(QString("%1").arg(_para.slave_addr));
+    //ui->edtSlaveAddr->setText(QString("%1").arg(_para.slave_addr));
     ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
     ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
     ui->cbxAdRate->setCurrentIndex(_para.adRate);
@@ -324,7 +324,7 @@ void MainWindow::on_btnSave_clicked()
     p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt();
     p.sensor_full_span = ui->edtSensorFullSpan->text().toInt();
     p.sensor_mv = ui->edtSensorMv->text().toInt();
-    p.slave_addr = ui->edtSlaveAddr->text().toInt();
+    //p.slave_addr = ui->edtSlaveAddr->text().toInt();
     p.span_high = ui->edtFullHigh->text().toInt();
     p.span_low = ui->edtFullLow->text().toInt();
     p.stable_span = ui->edtStableSpan->text().toInt();
@@ -497,4 +497,14 @@ void MainWindow::on_btnZoom10_clicked()
     {
         QMessageBox::information(this,tr("error"),tr("zomm10x failed"));
     }
+}
+
+void MainWindow::on_listWidget_itemActivated(QListWidgetItem *item)
+{
+
+}
+
+void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
+{
+    ui->edtAddr->setText(item->text());
 }
