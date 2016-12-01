@@ -24,6 +24,16 @@ bool ParaHandler::paraSave(Para _para)
     {
        quint16 values[17];
 
+       values[0] = _para.max_weight&0xFFFF;
+       values[1] = (_para.max_weight>>16)&0xFFFF;
+       values[2] = _para.max_weight&0xFFFF;
+       values[3] = (_para.max_weight>>16)&0xFFFF;
+
+       if(4 != _rtu->write_registers(1,4,values))
+       {
+            return false;
+       }
+
        values[0] = _para.sensorNum;
        values[1] = _para.div_high;
        if(2 == _rtu->write_registers(8,2,values))
@@ -76,6 +86,7 @@ bool ParaHandler::paraRead(Para &_para)
     {
         _para.sensorNum = values[7];
         _para.div_high = values[8];
+        _para.max_weight = values[0] + (values[1] << 16);
         emit paraReadResult(_para);
         return true;
     }

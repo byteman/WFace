@@ -95,7 +95,7 @@ void MainWindow::onParaReadResult(Para _para)
    // ui->cbxDot->setCurrentIndex(_para.dot);
     //ui->edtFullLow->setText(QString("%1").arg(_para.span_low));
     //ui->lbl_display_wet_2->setText(QString("Max1: %1").arg(_para.span_low));
-    ui->edtFullHigh->setText(QString("%1").arg(_para.span_high));
+    ui->edtFullHigh->setText(QString("%1").arg(_para.max_weight));
     //ui->lbl_display_wet_3->setText(QString("Max2: %1").arg(_para.span_high));
     ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
     //ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_high));
@@ -106,7 +106,7 @@ void MainWindow::onParaReadResult(Para _para)
 
     //ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
 
-    //ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
+    //ui->cbxFilterLvl-(_para.filter_level);
     ui->edtSensorNum->setText(QString("%1").arg(_para.sensorNum));
     //ui->edtVersion->setText(QString("V%1.%2.%3").arg(_para.version/10000).arg((_para.version%10000)/100).arg(_para.version%100));
 }
@@ -168,94 +168,21 @@ void MainWindow::onUpdateResult(int result, int pos, int total)
 void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare)
 {
     qDebug() << "onweight " << weight;
-    double wf = (double)weight;
+
     char buf[64] = {0,};
-    switch(dot)
-    {
 
-        case 1:
-            qsnprintf(buf,64,"%0.1f",wf/10);
-            break;
-        case 2:
-            qsnprintf(buf,64,"%0.2f",wf/100);
-            break;
-        case 3:
-            qsnprintf(buf,64,"%0.3f",wf/1000);
-            break;
-        case 4:
-            qsnprintf(buf,64,"%0.4f",wf/10000);
-            break;
-        default:
-            qsnprintf(buf,64,"%d",weight);
-            break;
-    }
+    qsnprintf(buf,64,"%d",weight);
+
     QString ws(buf);
-//    if(ws.length() < dot)
-//    int pos = (ws.length() >= dot)?(ws.length()-dot):0;
-//    if(dot > 0)
-//        ws.insert(pos,".");
-    ui->lbl_display_wet->setText(ws);
-    QString strState = "";
-    //state = 0xFF;
-    if(state&1)
-    {
-        strState += "|" + tr("stable  ") ;
-    }
-    if(state&2)
-    {
-       strState += "|" +tr("zero  ");
-    }
-    if(state&4)
-    {
-       strState += "|" +tr("net ");
-    }
-    if(state&8)
-    {
-       strState += "|" +tr("upflow ");
-    }
-    if(state&16)
-    {
-       strState += "|" +tr("underflow ");
-    }
-    if(state&32)
-    {
-       strState += "|" +tr("highspan ");
-    }
-    if(state&64)
-    {
-       strState += "|" +tr("zoom10x ");
-    }
-    if(state&64)
-    {
-       strState += "|" +tr("menumode ");
-    }
-    if(strState.length() > 0)
-    {
-        strState += "|";
-        ui->lblstate->setText(strState);
-    }
 
-    //ui->lblgross->setText(QString(tr("gross %1 " )).arg(gross) + unit);
-    //ui->lbltare->setText(QString(tr("tare %1 " )).arg(tare) + unit);
+    ui->lblstate->setText(ws);
 }
 //标定过程....
 void MainWindow::onCalibProcessResult(int index, int result)
 {
-//    if(result > 0)
-//    {
-//        ui->statusBar->showMessage(QString("left time %1S").arg(result));
-//    }
-//    else if(result == 0)
-//    {
-//        QMessageBox::information(this,tr("info"),tr("calib ok"));
-//    }
-//    else
-//    {
-//        QMessageBox::information(this,tr("info"),tr("calib failed"));
-//    }
+
     if(index >= ui->tblCalib->rowCount())
     {
-        //adc102.readCalibPoints();
         return;
     }
     float k = (float)result/1000000.0f;
@@ -268,20 +195,25 @@ void MainWindow::onReadCalibPointResult(Sensor* sensors, int num)
     {
         initCalibPoints(num);
     }
-
+    int weight = 0;
     for(int i = 0; i < num; i++)
     {
         QTableWidgetItem *itemMv = ui->tblCalib->item(i,0);
         if(itemMv!=NULL)
         {
-            itemMv->setText(QString("%1").arg(sensors[i].mv/1000));
+            float mv = (float)sensors[i].mv/1000.0f;
+            itemMv->setText(QString("%1").arg(mv));
         }
         QTableWidgetItem *itemWt = ui->tblCalib->item(i,1);
         if(itemWt!=NULL)
         {
             itemWt->setText(QString("%1").arg(sensors[i].wt));
         }
+        float k = (float)sensors[i].k/1000000.0f;
+        ui->tblCalib->item(i,2)->setText(QString("%1").arg(k));
+        weight += sensors[i].wt;
     }
+    ui->lblstate->setText(QString("%1").arg(weight));
 
 
 }
@@ -326,37 +258,38 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     else if(index == 1)
     {
 
-        adc102.startReadWeight();
+        //adc102.startReadWeight();
+        adc102.startReadPara();
     }
     else if(index == 2)
     {
-        adc102.startReadPara();
+        adc102.readCalibPoints();
     }
     else if(index == 3)
     {
         //read points first;
         //initCalibPoints(6);
-        adc102.readCalibPoints();
+
     }
 }
 
 void MainWindow::on_btnSave_clicked()
 {
     Para p;
-    p.filter_level = ui->cbxFilterLvl->currentIndex();
+    //p.filter_level = ui->cbxFilterLvl->currentIndex();
     p.div_high = ui->cbxDivHigh->currentText().toInt();
     //p.div_low = ui->cbxDivLow->currentText().toInt();
     //p.dot = ui->cbxDot->currentIndex();
-    p.hand_zero_span = ui->edtHandZeroSpan->text().toInt();
+    //p.hand_zero_span = ui->edtHandZeroSpan->text().toInt();
 //    p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt();
 //    p.sensor_full_span = ui->edtSensorFullSpan->text().toInt();
 //    p.sensor_mv = ui->edtSensorMv->text().toInt();
 //    p.slave_addr = ui->edtSlaveAddr->text().toInt();
-    p.span_high = ui->edtFullHigh->text().toInt();
+    p.max_weight = ui->edtFullHigh->text().toInt();
 //    p.span_low = ui->edtFullLow->text().toInt();
 //    p.stable_span = ui->edtStableSpan->text().toInt();
 //    p.unit = ui->cbxUnit->currentIndex();
-    p.zero_track_span = ui->edtZeroSpan->text().toInt();
+    //p.zero_track_span = ui->edtZeroSpan->text().toInt();
     p.sensorNum = ui->edtSensorNum->text().toInt();
 
     //p.adRate = ui->cbxAdRate->currentIndex();
@@ -382,7 +315,7 @@ void MainWindow::initCalibPoints(int count)
 {
     ui->tblCalib->clear();
     ui->tblCalib->setRowCount(count);
-    ui->tblCalib->setColumnCount(7);
+    ui->tblCalib->setColumnCount(6);
 
     QStringList col_headers;
     col_headers.push_back(tr("mv"));
@@ -394,7 +327,7 @@ void MainWindow::initCalibPoints(int count)
     col_headers.push_back(tr("input"));
     col_headers.push_back(tr("zero"));
     col_headers.push_back(tr("calibrate"));
-    col_headers.push_back("state");
+    //col_headers.push_back("state");
     ui->tblCalib->setHorizontalHeaderLabels(col_headers);
 
     QStringList row_headers;
@@ -418,6 +351,7 @@ void MainWindow::initCalibPoints(int count)
             QTableWidgetItem* item = new QTableWidgetItem("");
             item->setTextAlignment(Qt::AlignHCenter);
             ui->tblCalib->setItem(i,j,item);
+
         }
 //        QTableWidgetItem* item = new QTableWidgetItem("");
 //        item->setTextAlignment(Qt::AlignHCenter);
@@ -425,6 +359,7 @@ void MainWindow::initCalibPoints(int count)
         row_headers.push_back(QString("%1").arg(i));
 
         ui->tblCalib->setColumnWidth(i,120);
+        ui->tblCalib->setH(3, new QTableWidgetItem("参数4"));
 
     }
     ui->tblCalib->setVerticalHeaderLabels(row_headers);
@@ -553,8 +488,10 @@ void MainWindow::on_btnCalibAllZero_clicked()
     int num = ui->tblCalib->rowCount();
     if(!adc102.calibAllZero(num))
     {
-        QMessageBox::information(this,"error","can not calib");
+        QMessageBox::information(this,"error","标定失败，请重试");
+        return;
     }
+    QMessageBox::information(this,"提示","标定成功");
 }
 
 void MainWindow::on_btnCalibAllWt_clicked()
@@ -601,7 +538,9 @@ void MainWindow::on_btnCalibAllWt_clicked()
     if(!adc102.calibAllWeight(weights,hand))
     {
         QMessageBox::information(this,"错误","标定失败");
+        return;
     }
+    QMessageBox::information(this,"提示","标定成功!");
 }
 
 void MainWindow::on_btnModifyK_clicked()
@@ -615,7 +554,7 @@ void MainWindow::on_btnModifyK_clicked()
         float k = ui->tblCalib->item(i,2)->text().toFloat(&ok);
         if(!ok)
         {
-            QMessageBox::information(this,"error","invalid param");
+            QMessageBox::information(this,"error","输入无效参数，请填写全部系数");
             return;
         }
         int intk = (int)(k*1000000);
@@ -623,12 +562,39 @@ void MainWindow::on_btnModifyK_clicked()
     }
     if(!adc102.modifyKs(ks))
     {
-        QMessageBox::information(this,"error","modify failed");
+        QMessageBox::information(this,"错误","修改失败");
     }
     else
     {
-        QMessageBox::information(this,"title","modify ok");
+        QMessageBox::information(this,"提示","修改成功");
     }
 
 }
 
+
+void MainWindow::on_btnCalibK_clicked()
+{
+    bool ok = false;
+    int weight = ui->edtFama->text().toInt(&ok);
+    if(!ok)
+    {
+        QMessageBox::information(this,"错误","重量错误");
+        return;
+    }
+    if(!adc102.fixScalerK(weight))
+    {
+        QMessageBox::information(this,"错误","标定失败，请重试!");
+        return;
+    }
+    QMessageBox::information(this,"提示","标定成功!");
+}
+
+void MainWindow::on_radioAudo_clicked()
+{
+    ui->btnCalibAllWt->setText("计算系数");
+}
+
+void MainWindow::on_radioHand_clicked()
+{
+    ui->btnCalibAllWt->setText("全部标重");
+}

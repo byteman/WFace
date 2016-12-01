@@ -3,7 +3,7 @@
 
 
 #include "cmdhandler.h"
-#include "Poco/Timer.h"
+//#include "Poco/Timer.h"
 #include <vector>
 struct Sensor
 {
@@ -36,7 +36,8 @@ public:
     bool readSensorNum();
     bool readRtParas(int num);
     void run();
-    void onTimer(Poco::Timer &timer);
+
+    bool fixScalerK(int weight);
 signals:
     void calibReadResult(Sensor* sensors,int num);
     void calibProcessResult(int  index, int result);
@@ -47,7 +48,7 @@ private:
     int  m_sensor_num;
     Sensor sensors[MAX_SENSOR_NUM];
     volatile bool _run;
-    Poco::Timer _timer;
+    //Poco::Timer _timer;
 
 };
 #endif // CALIBHANDLER_H

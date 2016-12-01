@@ -66,6 +66,12 @@ private slots:
 
     void on_btnModifyK_clicked();
 
+    void on_btnCalibK_clicked();
+
+    void on_radioAudo_clicked();
+
+    void on_radioHand_clicked();
+
 private:
     void initCalibPoints(int count);
     Ui::MainWindow *ui;

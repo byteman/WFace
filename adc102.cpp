@@ -186,8 +186,8 @@ bool ADC102::readCalibPoints(int index)
     CalibHandler* handler = (CalibHandler*)m_handlers[3];
     m_handler = m_handlers[3];
     handler->readPara(index);
-    //m_interval = 1000;
-    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    m_interval = 500;
+    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
     return true;
 }
 
@@ -201,6 +201,12 @@ bool ADC102::calibAllWeight(std::vector<int> weights,bool hand)
 {
     CalibHandler* handler = (CalibHandler*)m_handlers[3];
     return handler->calibSetAll(weights,hand);
+}
+
+bool ADC102::fixScalerK(int weight)
+{
+    CalibHandler* handler = (CalibHandler*)m_handlers[3];
+    return handler->fixScalerK(weight);
 }
 
 bool ADC102::stopReadWeight()

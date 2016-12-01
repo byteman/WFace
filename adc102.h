@@ -42,7 +42,7 @@ public slots:
 
     bool calibAllZero(int num);
     bool calibAllWeight(std::vector<int> weights,bool hand=true);
-
+    bool fixScalerK(int weight);
     bool stopReadWeight();
     bool stop();
     void onCalibProcessResult(int index, int result);

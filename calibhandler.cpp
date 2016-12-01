@@ -49,6 +49,17 @@ bool CalibHandler::readRtParas(int num)
     {
         return false;
     }
+    if(_rtu->read_registers(REG_SENSOR_K,num*2,values) == num*2)
+    {
+        for(int i = 0; i < num; i++)
+        {
+            int k = values[0+i*2] + (values[1+i*2] << 16);
+            sensors[i].k = k;
+        }
+    }else
+    {
+        return false;
+    }
     emit calibReadResult(sensors,num);
     return true;
 }
@@ -58,8 +69,8 @@ void CalibHandler::run()
     _run = true;
     while(_run)
     {
-        myrun();
-        Poco::Thread::sleep(1000);
+        //myrun();
+        //Poco::Thread::sleep(1000);
     }
 }
 bool CalibHandler::readSensorNum()
@@ -88,36 +99,33 @@ bool CalibHandler::myrun()
             return true;
         }
         readRtParas(m_sensor_num);
-        for(int i = 0; i < m_sensor_num; i++)
-        {
+//        for(int i = 0; i < m_sensor_num; i++)
+//        {
 
-            if(m_read_calib_points[i])
-            {
-                quint16 values[16];
-                if(_rtu->read_registers(REG_SENSOR_K+i*2,2,values) == 2)
-                {
+//            if(m_read_calib_points[i])
+//            {
+//                quint16 values[16];
+//                if(_rtu->read_registers(REG_SENSOR_K+i*2,2,values) == 2)
+//                {
 
-                    int k = values[0] + (values[1] << 16);
-                    sensors[i].k = k;
-                    sensors[i].valid = true;
-                    m_read_calib_points[i] = false;
-                    emit calibProcessResult(i,k);
-                }
+//                    int k = values[0] + (values[1] << 16);
+//                    sensors[i].k = k;
+//                    sensors[i].valid = true;
+//                    m_read_calib_points[i] = false;
+//                    emit calibProcessResult(i,k);
+//                }
 
-            }
-            //read realtime params
+//            }
+//            //read realtime params
 
-        }
+//        }
 
 
 
     }
     return true;
 }
-void CalibHandler::onTimer(Poco::Timer& timer)
-{
-     //myrun();
-}
+
 //实时读取mv,ad,weight.k值
 //标定零点和重量设置.
 bool CalibHandler::readPara(int index)
@@ -151,7 +159,7 @@ bool CalibHandler::stop()
     }
     m_sensor_num = 0;
     //_run = false;
-    _timer.stop();
+    //_timer.stop();
     return true;
 }
 
@@ -280,4 +288,22 @@ bool CalibHandler::modifyKs(std::vector<qint32> ks)
         return true;
     }
     return false;
+}
+bool CalibHandler::fixScalerK(int weight)
+{
+
+    quint16 values[2];
+    values[0] = 2;
+    if(1 != _rtu->write_registers(35,1,values))
+    {
+       return false;
+    }
+
+    values[0]   = weight&0xffff;
+    values[1]   = (weight>>16)&0xffff;
+    if(2 != _rtu->write_registers(158,2,values))
+    {
+       return false;
+    }
+    return true;
 }
