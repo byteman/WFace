@@ -93,7 +93,11 @@ bool ADC102::startScan(QString port, int baud, char parity, char databit, char s
     QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
     return true;
 }
-
+bool ADC102::stopScan()
+{
+    ScanHandler* handler = (ScanHandler*)m_handlers[0];
+    return handler->stop();
+}
 bool ADC102::startReadWeight()
 {
     if(m_handler!=NULL)

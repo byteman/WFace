@@ -116,6 +116,7 @@ void MainWindow::onScanResult(int type,int addr)
     else
     {
         ui->btnSearch->setEnabled(true);
+        ui->btnSearch->setText(tr("BusScan"));
         ui->listWidget->setEnabled(true);
     }
 }
@@ -190,39 +191,39 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
     //state = 0xFF;
     if(state&1)
     {
-        strState += "|" + tr("stable  ") ;
+        strState += " | " + tr("stable  ") ;
     }
     if(state&2)
     {
-       strState += "|" +tr("zero  ");
+       strState += " | " +tr("zero  ");
     }
     if(state&4)
     {
-       strState += "|" +tr("net ");
+       strState += " | " +tr("net ");
     }
     if(state&8)
     {
-       strState += "|" +tr("upflow ");
+       strState += " | " +tr("upflow ");
     }
     if(state&16)
     {
-       strState += "|" +tr("underflow ");
+       strState += " | " +tr("underflow ");
     }
     if(state&32)
     {
-       strState += "|" +tr("highspan ");
+       strState += " | " +tr("highspan ");
     }
     if(state&64)
     {
-       strState += "|" +tr("zoom10x ");
+       strState += " | " +tr("zoom10x ");
     }
     if(state&64)
     {
-       strState += "|" +tr("menumode ");
+       strState += " | " +tr("menumode ");
     }
     if(strState.length() > 0)
     {
-        strState += "|";
+        strState += " | ";
         ui->lblstate->setText(strState);
     }
 
@@ -266,19 +267,30 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
     adc102.setSlaveAddr(item->text().toInt());
     ui->tabWidget->setCurrentIndex(1);
 }
-
+static bool scan = false;
 void MainWindow::on_btnSearch_clicked()
 {
-    QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
-    if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1,!ui->cbxFindAll->isChecked()))
+    if(scan)
     {
-        QMessageBox::information(this,tr("error"),tr("uart open failed"));
-        return ;
+        QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
+        if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1,!ui->cbxFindAll->isChecked()))
+        {
+            QMessageBox::information(this,tr("error"),tr("uart open failed"));
+            return ;
+        }
+        //ui->btnSearch->setEnabled(false);
+        ui->btnSearch->setText(tr("StopSearch"));
+        ui->listWidget->setEnabled(false);
+        ui->listWidget->clear();
+        ui->listWidget->setIconSize(QSize(64,64));
+        scan = true;
     }
-    ui->btnSearch->setEnabled(false);
-    ui->listWidget->setEnabled(false);
-    ui->listWidget->clear();
-    ui->listWidget->setIconSize(QSize(64,64));
+    else
+    {
+        adc102.stopScan();
+    }
+
+
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index)
