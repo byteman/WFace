@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QFile>
 static QString unit="g";
+static bool scan = false;
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QMainWindow(parent),
     _app(app),
@@ -112,12 +113,14 @@ void MainWindow::onScanResult(int type,int addr)
         QString title = QString("%1").arg(addr);
         QListWidgetItem* item = new QListWidgetItem(QIcon(":/monitor.png"),title);
         ui->listWidget->addItem(item);
+        scan = true;
     }
     else
     {
         ui->btnSearch->setEnabled(true);
         ui->btnSearch->setText(tr("BusScan"));
         ui->listWidget->setEnabled(true);
+        scan = false;
     }
 }
 
@@ -267,10 +270,10 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
     adc102.setSlaveAddr(item->text().toInt());
     ui->tabWidget->setCurrentIndex(1);
 }
-static bool scan = false;
+
 void MainWindow::on_btnSearch_clicked()
 {
-    if(scan)
+    if(!scan)
     {
         QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
         if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1,!ui->cbxFindAll->isChecked()))
