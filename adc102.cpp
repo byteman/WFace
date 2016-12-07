@@ -32,7 +32,7 @@ bool ADC102::setSlaveAddr(int addr)
 {
     bool ret = true;
     m_slaveAddr = addr;
-    //ret = modbus.setByteTimeout(100);
+    ret = modbus.setByteTimeout(100);
     modbus.setDeviceAddr(addr);
     m_connect = ret;
     return m_connect;
