@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QFile>
 static QString unit="g";
+static bool scan = false;
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QMainWindow(parent),
     _app(app),
@@ -96,7 +97,7 @@ void MainWindow::onParaReadResult(Para _para)
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
     ui->edtSensorFullSpan->setText(QString("%1").arg(_para.sensor_full_span));
     ui->edtSensorMv->setText(QString("%1").arg(_para.sensor_mv));
-    ui->edtSlaveAddr->setText(QString("%1").arg(_para.slave_addr));
+    //ui->edtSlaveAddr->setText(QString("%1").arg(_para.slave_addr));
     ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
     ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
     ui->cbxAdRate->setCurrentIndex(_para.adRate);
@@ -112,11 +113,14 @@ void MainWindow::onScanResult(int type,int addr)
         QString title = QString("%1").arg(addr);
         QListWidgetItem* item = new QListWidgetItem(QIcon(":/monitor.png"),title);
         ui->listWidget->addItem(item);
+        scan = true;
     }
     else
     {
         ui->btnSearch->setEnabled(true);
+        ui->btnSearch->setText(tr("BusScan"));
         ui->listWidget->setEnabled(true);
+        scan = false;
     }
 }
 
@@ -190,39 +194,39 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
     //state = 0xFF;
     if(state&1)
     {
-        strState += "|" + tr("stable  ") ;
+        strState += " | " + tr("stable  ") ;
     }
     if(state&2)
     {
-       strState += "|" +tr("zero  ");
+       strState += " | " +tr("zero  ");
     }
     if(state&4)
     {
-       strState += "|" +tr("net ");
+       strState += " | " +tr("net ");
     }
     if(state&8)
     {
-       strState += "|" +tr("upflow ");
+       strState += " | " +tr("upflow ");
     }
     if(state&16)
     {
-       strState += "|" +tr("underflow ");
+       strState += " | " +tr("underflow ");
     }
     if(state&32)
     {
-       strState += "|" +tr("highspan ");
+       strState += " | " +tr("highspan ");
     }
     if(state&64)
     {
-       strState += "|" +tr("zoom10x ");
+       strState += " | " +tr("zoom10x ");
     }
     if(state&64)
     {
-       strState += "|" +tr("menumode ");
+       strState += " | " +tr("menumode ");
     }
     if(strState.length() > 0)
     {
-        strState += "|";
+        strState += " | ";
         ui->lblstate->setText(strState);
     }
 
@@ -269,16 +273,27 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 
 void MainWindow::on_btnSearch_clicked()
 {
-    QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
-    if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1,!ui->cbxFindAll->isChecked()))
+    if(!scan)
     {
-        QMessageBox::information(this,tr("error"),tr("uart open failed"));
-        return ;
+        QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
+        if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1,!ui->cbxFindAll->isChecked()))
+        {
+            QMessageBox::information(this,tr("error"),tr("uart open failed"));
+            return ;
+        }
+        //ui->btnSearch->setEnabled(false);
+        ui->btnSearch->setText(tr("StopSearch"));
+        ui->listWidget->setEnabled(false);
+        ui->listWidget->clear();
+        ui->listWidget->setIconSize(QSize(64,64));
+        scan = true;
     }
-    ui->btnSearch->setEnabled(false);
-    ui->listWidget->setEnabled(false);
-    ui->listWidget->clear();
-    ui->listWidget->setIconSize(QSize(64,64));
+    else
+    {
+        adc102.stopScan();
+    }
+
+
 }
 
 void MainWindow::on_tabWidget_currentChanged(int index)
@@ -324,7 +339,7 @@ void MainWindow::on_btnSave_clicked()
     p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt();
     p.sensor_full_span = ui->edtSensorFullSpan->text().toInt();
     p.sensor_mv = ui->edtSensorMv->text().toInt();
-    p.slave_addr = ui->edtSlaveAddr->text().toInt();
+    //p.slave_addr = ui->edtSlaveAddr->text().toInt();
     p.span_high = ui->edtFullHigh->text().toInt();
     p.span_low = ui->edtFullLow->text().toInt();
     p.stable_span = ui->edtStableSpan->text().toInt();
