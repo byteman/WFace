@@ -32,6 +32,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     }
     ui->cbxBaud->setCurrentIndex(1);
     ui->progressBar->hide();
+    ui->scanPb->hide();
     //int version = 21101;
     //ui->edtVersion->setText(QString("V%1.%2.%3").arg(version/10000).arg((version%10000)/100).arg(version%100));
     connect(&adc102,SIGNAL(scanResult(int , int )),this,SLOT(onScanResult(int,int)));
@@ -113,14 +114,21 @@ void MainWindow::onScanResult(int type,int addr)
         QString title = QString("%1").arg(addr);
         QListWidgetItem* item = new QListWidgetItem(QIcon(":/monitor.png"),title);
         ui->listWidget->addItem(item);
+
         scan = true;
     }
-    else
+    else if(type == 1)
     {
         ui->btnSearch->setEnabled(true);
         ui->btnSearch->setText(tr("BusScan"));
         ui->listWidget->setEnabled(true);
         scan = false;
+        ui->scanPb->hide();
+    }
+    else if(type == 2)
+    {
+        ui->scanPb->show();
+        ui->scanPb->setValue(addr);
     }
 }
 

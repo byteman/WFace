@@ -39,7 +39,9 @@ bool ScanHandler::run()
                 }
             }
         }
+        emit scanResult(2,m_addr);
         m_addr++;
+
         return true;
     }
     m_addr = 1;
