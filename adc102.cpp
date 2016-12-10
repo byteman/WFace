@@ -34,7 +34,7 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     connect(handler_para,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
     CalibHandler* handler_calib = new CalibHandler(&modbus);
     connect(handler_calib,SIGNAL(calibProcessResult(int,int)),this,SLOT(onCalibProcessResult(int,int)));
-    connect(handler_calib,SIGNAL(calibReadResult(Sensor*,int)),this,SLOT(onCalibPointResult(Sensor*,int)));
+    connect(handler_calib,SIGNAL(calibReadResult(Sensor*,int,int )),this,SLOT(onCalibPointResult(Sensor*,int,int)));
     handler_update = new UpdateHandler(&modbus);
     connect(handler_update,SIGNAL(updateResult(int,int,int)),this,SLOT(onUpdateResult(int,int,int)));
     m_handlers.push_back(handler_scan);
@@ -219,9 +219,9 @@ bool ADC102::stop()
     return true;
 }
 
-void ADC102::onCalibPointResult(Sensor* ss,int num)
+void ADC102::onCalibPointResult(Sensor* ss,int num,int weight)
 {
-    emit calibPointResult(ss,num);
+    emit calibPointResult(ss,num,weight);
 }
 
 void ADC102::onParaReadResult(Para _para)

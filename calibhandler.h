@@ -39,7 +39,7 @@ public:
 
     bool fixScalerK(int weight);
 signals:
-    void calibReadResult(Sensor* sensors,int num);
+    void calibReadResult(Sensor* sensors,int num,int weight);
     void calibProcessResult(int  index, int result);
 private:
     bool m_set_calib_points[6];

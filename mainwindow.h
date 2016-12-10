@@ -29,7 +29,7 @@ private slots:
     void onUpdateResult(int result, int pos, int total);
     void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
     void onCalibProcessResult(int index, int result);
-    void onReadCalibPointResult(Sensor *sensors, int num);
+    void onReadCalibPointResult(Sensor *sensors, int num,int weight);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
 
     void on_btnSearch_clicked();

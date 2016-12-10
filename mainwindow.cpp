@@ -40,7 +40,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     //connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
     //connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
     connect(&adc102,SIGNAL(calibProcessResult(int,int)),SLOT(onCalibProcessResult(int,int)));
-    connect(&adc102,SIGNAL(calibPointResult(Sensor*,int)),SLOT(onReadCalibPointResult(Sensor*,int)));
+    connect(&adc102,SIGNAL(calibPointResult(Sensor*,int,int)),SLOT(onReadCalibPointResult(Sensor*,int,int)));
     connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
 
 
@@ -87,7 +87,15 @@ void MainWindow::calibrate_click(int id)
         QMessageBox::information(this,"提示","输入重量");
         return;
     }
-    adc102.startCalib(hand,id,weight);
+    if(!adc102.startCalib(hand,id,weight))
+    {
+        QMessageBox::information(this,"提示","标定失败");
+        return;
+    }
+
+    QMessageBox::information(this,"提示","标定成功");
+
+
 }
 
 void MainWindow::onParaReadResult(Para _para)
@@ -189,13 +197,13 @@ void MainWindow::onCalibProcessResult(int index, int result)
     ui->tblCalib->item(index,2)->setText(QString("%1").arg(k));
 }
 
-void MainWindow::onReadCalibPointResult(Sensor* sensors, int num)
+void MainWindow::onReadCalibPointResult(Sensor* sensors, int num,int weight)
 {
     if(ui->tblCalib->rowCount() != num)
     {
         initCalibPoints(num);
     }
-    int weight = 0;
+
     for(int i = 0; i < num; i++)
     {
         QTableWidgetItem *itemMv = ui->tblCalib->item(i,0);
@@ -209,9 +217,9 @@ void MainWindow::onReadCalibPointResult(Sensor* sensors, int num)
         {
             itemWt->setText(QString("%1").arg(sensors[i].wt));
         }
-        float k = (float)sensors[i].k/1000000.0f;
-        ui->tblCalib->item(i,2)->setText(QString("%1").arg(k));
-        weight += sensors[i].wt;
+//        float k = (float)sensors[i].k/1000000.0f;
+//        ui->tblCalib->item(i,2)->setText(QString("%1").arg(k));
+
     }
     ui->lblstate->setText(QString("%1").arg(weight));
 
@@ -336,7 +344,11 @@ void MainWindow::initCalibPoints(int count)
 
     for(int i = 0; i <  count; i++)
     {
-        QPushButton* button = new QPushButton(tr("calib"),ui->tblCalib);
+        QPushButton* button = NULL;
+        if(ui->radioAudo->isChecked())
+             button = new QPushButton("记录",ui->tblCalib);
+        else
+            button = new QPushButton("标重",ui->tblCalib);
         QPushButton* button2 = new QPushButton(tr("zero"),ui->tblCalib);
         //button->setGeometry(0,0,30,20);
         button->setGeometry(0,0,50,30);
@@ -356,10 +368,10 @@ void MainWindow::initCalibPoints(int count)
 //        QTableWidgetItem* item = new QTableWidgetItem("");
 //        item->setTextAlignment(Qt::AlignHCenter);
 //        ui->tblCalib->setItem(i,6,item);
-        row_headers.push_back(QString("%1").arg(i));
+        row_headers.push_back(QString("%1").arg(i+1));
 
         ui->tblCalib->setColumnWidth(i,120);
-        ui->tblCalib->setH(3, new QTableWidgetItem("参数4"));
+        //ui->tblCalib->setH(3, new QTableWidgetItem("参数4"));
 
     }
     ui->tblCalib->setVerticalHeaderLabels(row_headers);
@@ -592,9 +604,27 @@ void MainWindow::on_btnCalibK_clicked()
 void MainWindow::on_radioAudo_clicked()
 {
     ui->btnCalibAllWt->setText("计算系数");
+    int num = ui->tblCalib->rowCount();
+    if(num < 1 ) return;
+    for(int i = 0; i < num; i++)
+    {
+        QPushButton* widget = (QPushButton*)ui->tblCalib->cellWidget(i,5);
+
+        if(widget!=NULL)
+            widget->setText("记录");
+    }
 }
 
 void MainWindow::on_radioHand_clicked()
 {
     ui->btnCalibAllWt->setText("全部标重");
+    int num = ui->tblCalib->rowCount();
+    if(num < 1 ) return;
+    for(int i = 0; i < num; i++)
+    {
+        QPushButton* widget = (QPushButton*)ui->tblCalib->cellWidget(i,5);
+
+        if(widget!=NULL)
+            widget->setText("标重");
+    }
 }
