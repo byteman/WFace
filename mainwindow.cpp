@@ -49,11 +49,53 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
 
 
     setWindowState(Qt::WindowMaximized);
+    server.setMaxPendingConnections(100);
+    if(!server.listen(QHostAddress::Any,8083))
+    {
+        QMessageBox::information(this,"错误","监听8083端口失败");
+        return;
+    }
+    connect(&server,&QTcpServer::newConnection,this,&MainWindow::onNewConection);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::onNewConection()
+{
+
+    QTcpSocket* client = server.nextPendingConnection();
+
+    QString log = QString("ip %1 port %2 connected").arg(client->peerAddress().toString()).arg(client->peerPort());
+    ui->txtLog->append(log);
+    connect(client,SIGNAL(disconnected()),this,SLOT(onDisConection()));
+    connect(client,SIGNAL(readyRead()),this,SLOT(onDataReceived()));
+
+
+
+}
+
+void MainWindow::onDisConection()
+{
+     QTcpSocket* client = static_cast<QTcpSocket*>(sender());
+     QString log = QString("ip %1 port %2 disconnectd!").arg(client->peerAddress().toString()).arg(client->peerPort());
+     ui->txtLog->append(log);
+
+     client->deleteLater();
+}
+
+void MainWindow::onDataReceived()
+{
+    QTcpSocket* client = static_cast<QTcpSocket*>(sender());
+    QByteArray data = client->readAll();
+
+
+    ui->txtLog->append(data);
+    client->write(data);
+    //client->flush();
+
 }
 
 void MainWindow::on_actionChagne_triggered()
