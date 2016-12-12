@@ -7,6 +7,8 @@
 #include <bitset>
 #include <QSignalMapper>
 #include <QTableWidgetItem>
+#include <QTcpServer>
+#include <QTcpSocket>
 namespace Ui {
 class MainWindow;
 }
@@ -21,6 +23,9 @@ public:
 
 
 private slots:
+    void onNewConection();
+    void onDisConection();
+    void onDataReceived();
     void on_actionChagne_triggered();
     void calibrate_click(int id);
     void calibrate_click_zero(int id);
@@ -29,7 +34,7 @@ private slots:
     void onUpdateResult(int result, int pos, int total);
     void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
     void onCalibProcessResult(int index, int result);
-    void onReadCalibPointResult(Sensor *sensors, int num);
+    void onReadCalibPointResult(Sensor *sensors, int num,int weight);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
 
     void on_btnSearch_clicked();
@@ -79,7 +84,7 @@ private:
     QApplication &_app;
     QSignalMapper *signalMapper;
     QSignalMapper *signalMapper2;
-
+    QTcpServer  server;
 
     // QObject interface
 public:

@@ -22,7 +22,7 @@ bool CalibHandler::readRtParas(int num)
     quint16 values[24];
     if(num == 0)
         return false;
-    bool ok = true;
+    int weight = 0;
     //read weights
     if(_rtu->read_registers(REG_SENSOR_WT,num*2,values) == num*2)
     {
@@ -49,18 +49,28 @@ bool CalibHandler::readRtParas(int num)
     {
         return false;
     }
-    if(_rtu->read_registers(REG_SENSOR_K,num*2,values) == num*2)
+//    if(_rtu->read_registers(REG_SENSOR_K,num*2,values) == num*2)
+//    {
+//        for(int i = 0; i < num; i++)
+//        {
+//            int k = values[0+i*2] + (values[1+i*2] << 16);
+//            sensors[i].k = k;
+//        }
+//    }else
+//    {
+//        return false;
+//    }
+    if(_rtu->read_registers(REG_RT_WT, 2,values) == 2)
     {
-        for(int i = 0; i < num; i++)
-        {
-            int k = values[0+i*2] + (values[1+i*2] << 16);
-            sensors[i].k = k;
-        }
+
+        weight = values[0] + (values[1] << 16);
+
+
     }else
     {
         return false;
     }
-    emit calibReadResult(sensors,num);
+    emit calibReadResult(sensors,num,weight);
     return true;
 }
 
@@ -99,26 +109,26 @@ bool CalibHandler::myrun()
             return true;
         }
         readRtParas(m_sensor_num);
-//        for(int i = 0; i < m_sensor_num; i++)
-//        {
+        for(int i = 0; i < m_sensor_num; i++)
+        {
 
-//            if(m_read_calib_points[i])
-//            {
-//                quint16 values[16];
-//                if(_rtu->read_registers(REG_SENSOR_K+i*2,2,values) == 2)
-//                {
+            if(m_read_calib_points[i])
+            {
+                quint16 values[16];
+                if(_rtu->read_registers(REG_SENSOR_K+i*2,2,values) == 2)
+                {
 
-//                    int k = values[0] + (values[1] << 16);
-//                    sensors[i].k = k;
-//                    sensors[i].valid = true;
-//                    m_read_calib_points[i] = false;
-//                    emit calibProcessResult(i,k);
-//                }
+                    int k = values[0] + (values[1] << 16);
+                    sensors[i].k = k;
+                    sensors[i].valid = true;
+                    m_read_calib_points[i] = false;
+                    emit calibProcessResult(i,k);
+                }
 
-//            }
-//            //read realtime params
+            }
+            //read realtime params
 
-//        }
+        }
 
 
 
@@ -214,7 +224,10 @@ bool CalibHandler::calibSetAll(std::vector<int> weights,bool hand)
         }
         if(num*2 == _rtu->write_registers(REG_INPUT_WTS,num*2,values))
         {
-            //m_set_calib_points[index] = true;
+            for(int i =0;i < num; i++)
+            {
+                m_set_calib_points[i] = true;
+            }
             return true;
         }
     }
@@ -230,6 +243,11 @@ bool CalibHandler::calibSetAll(std::vector<int> weights,bool hand)
         values[0] = 0x8000;
         if(1 == _rtu->write_registers(36,1,values))
         {
+            int num = weights.size();
+            for(int i =0;i < num; i++)
+            {
+                m_set_calib_points[i] = true;
+            }
            return true;
         }
         else
