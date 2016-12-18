@@ -32,7 +32,7 @@ bool ADC102::setSlaveAddr(int addr)
 {
     bool ret = true;
     m_slaveAddr = addr;
-    //ret = modbus.setByteTimeout(100);
+
     modbus.setDeviceAddr(addr);
     m_connect = ret;
     return m_connect;
@@ -85,6 +85,8 @@ bool ADC102::startScan(QString port, int baud, char parity, char databit, char s
 
         return false;
     }
+    modbus.setByteTimeout(100000);
+    modbus.set_response_timeout(100000);
     ScanHandler* handler = (ScanHandler*)m_handlers[0];
     handler->startScan(findOne);
     //m_handlers.push_back();
@@ -93,7 +95,11 @@ bool ADC102::startScan(QString port, int baud, char parity, char databit, char s
     QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
     return true;
 }
-
+bool ADC102::stopScan()
+{
+    ScanHandler* handler = (ScanHandler*)m_handlers[0];
+    return handler->stop();
+}
 bool ADC102::startReadWeight()
 {
     if(m_handler!=NULL)

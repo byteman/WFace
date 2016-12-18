@@ -6,3 +6,4 @@ Makefile
 Makefile.Release
 *.Debug
 ui_mainwindow.h
+release

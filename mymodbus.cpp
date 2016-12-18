@@ -34,9 +34,14 @@ bool RTU_Modbus::close()
     return true;
 }
 
-bool RTU_Modbus::setByteTimeout(int ms)
+bool RTU_Modbus::setByteTimeout(int us)
 {
-    return (modbus_set_byte_timeout(m_modbus,ms/1000,ms%1000)==0)?true:false;
+    return (modbus_set_byte_timeout(m_modbus,us/1000000,us%1000000)==0)?true:false;
+}
+
+bool RTU_Modbus::set_response_timeout(int us)
+{
+    return (modbus_set_response_timeout(m_modbus,us/1000000,us%1000000)==0)?true:false;
 }
 
 void RTU_Modbus::setDeviceAddr(int _addr)
