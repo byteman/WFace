@@ -1,3 +1,21 @@
+#ifndef NET_MSG_H
+#define NET_MSG_H
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+#pragma pack(push) // 将当前pack设置压栈保存
+#pragma pack(1)// 必须在结构体定义之前使用
+
+typedef struct
+{
+    unsigned short dev_id;
+    unsigned char  dir;
+    unsigned char  cmd;
+    unsigned char  oper;
+    unsigned short len;
+}Msg_Head;
 
 typedef struct {
 	double 			Longitude;// 经度
@@ -57,4 +75,11 @@ typedef struct {
 									// 没有超载值为0，超载时值为当前重量
 }DevInf;
 
+#pragma pack(pop)
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
 

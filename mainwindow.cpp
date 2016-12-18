@@ -9,6 +9,8 @@
 #include "pcomm.h"
 #include <QFileDialog>
 #include <QFile>
+#include "netmsg.h"
+#include "crc.h"
 static QString unit="g";
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QMainWindow(parent),
@@ -85,13 +87,76 @@ void MainWindow::onDisConection()
 
      client->deleteLater();
 }
+void MainWindow::processOneWeight(QByteArray& data)
+{
+    PointWet  pwt;
 
+    if(data.size() != sizeof(PointWet))
+    {
+        qDebug() << "processOneWeight size error";
+        return;
+    }
+    memcpy(&pwt, data.data(), sizeof(PointWet));
+
+}
+static QByteArray myData;
+
+void MainWindow::parse()
+{
+    static bool waitHead = true;
+
+    static Msg_Head head;
+    while(myData.size() >= 0)
+    {
+        if(waitHead)
+        {
+            if(myData.size() >= 7)
+            {
+                memcpy(&head,myData.data(),sizeof(Msg_Head));
+                myData.remove(0,sizeof(Msg_Head));
+                waitHead = false;
+            }
+        }
+        else
+        {
+            if(myData.size() < (head.len+2) )
+            {
+                break;
+            }
+            //myData.remove(0,head.len+2);
+            unsigned short crc =u16CRC_Calc16(myData,head.len);
+            unsigned short crc_data = (myData[head.len+1]<<8)+myData[head.len];
+
+            if(crc != crc_data)
+            {
+                myData.remove(0,head.len+2);
+                continue;
+            }
+            myData.remove(head.len,2);
+            switch(head.cmd)
+            {
+                case 0:
+                    processOneWeight(myData);
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+            }
+            waitHead = true;
+            myData.remove(0,head.len);
+        }
+    }
+
+}
 void MainWindow::onDataReceived()
 {
     QTcpSocket* client = static_cast<QTcpSocket*>(sender());
     QByteArray data = client->readAll();
-
-
+    myData.append(data);
+    parse();
     ui->txtLog->append(data);
     client->write(data);
     //client->flush();

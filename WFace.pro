@@ -27,7 +27,10 @@ SOURCES += main.cpp\
     parahandler.cpp \
     calibhandler.cpp \
     updatehandler.cpp \
-    paramconfig.cpp
+    paramconfig.cpp \
+    networkmgr.cpp \
+    netclient.cpp \
+    crc16.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/qextserialport/qextserialport.h \
@@ -42,7 +45,9 @@ HEADERS  += mainwindow.h \
     calibhandler.h \
     updatehandler.h \
     paramconfig.h \
-    wcommon.h
+    wcommon.h \
+    networkmgr.h \
+    netclient.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src 3rdparty/qextserialport
 

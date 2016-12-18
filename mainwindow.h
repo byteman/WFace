@@ -89,6 +89,8 @@ private:
     // QObject interface
 public:
 
+    void parse();
+    void processOneWeight(QByteArray &data);
 };
 
 #endif // MAINWINDOW_H
