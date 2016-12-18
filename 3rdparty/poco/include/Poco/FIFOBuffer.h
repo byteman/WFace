@@ -77,33 +77,33 @@ public:
 		///	  Readable event observers are notified, with true value
 		///	  as the argument
 
-	BasicFIFOBuffer(std::size_t bufferSize, bool bufferNotify = false):
-		_buffer(bufferSize),
+	BasicFIFOBuffer(std::size_t size, bool notify = false):
+		_buffer(size),
 		_begin(0),
 		_used(0),
-		_notify(bufferNotify),
+		_notify(notify),
 		_eof(false),
 		_error(false)
 		/// Creates the FIFOBuffer.
 	{
 	}
 
-	BasicFIFOBuffer(T* pBuffer, std::size_t bufferSize, bool bufferNotify = false):
-		_buffer(pBuffer, bufferSize),
+	BasicFIFOBuffer(T* pBuffer, std::size_t size, bool notify = false):
+		_buffer(pBuffer, size),
 		_begin(0),
 		_used(0),
-		_notify(bufferNotify),
+		_notify(notify),
 		_eof(false),
 		_error(false)
 		/// Creates the FIFOBuffer.
 	{
 	}
 
-	BasicFIFOBuffer(const T* pBuffer, std::size_t bufferSize, bool bufferNotify = false):
-		_buffer(pBuffer, bufferSize),
+	BasicFIFOBuffer(const T* pBuffer, std::size_t size, bool notify = false):
+		_buffer(pBuffer, size),
 		_begin(0),
-		_used(bufferSize),
-		_notify(bufferNotify),
+		_used(size),
+		_notify(notify),
 		_eof(false),
 		_error(false)
 		/// Creates the FIFOBuffer.
@@ -154,7 +154,7 @@ public:
 		return length;
 	}
 	
-	std::size_t peek(Poco::Buffer<T>& rBuffer, std::size_t length = 0) const
+	std::size_t peek(Poco::Buffer<T>& buffer, std::size_t length = 0) const
 		/// Peeks into the data currently in the FIFO
 		/// without actually extracting it.
 		/// Resizes the supplied buffer to the size of
@@ -169,8 +169,8 @@ public:
 		Mutex::ScopedLock lock(_mutex);
 		if (!isReadable()) return 0;
 		if (0 == length || length > _used) length = _used;
-		rBuffer.resize(length);
-		return peek(rBuffer.begin(), length);
+		buffer.resize(length);
+		return peek(buffer.begin(), length);
 	}
 	
 	std::size_t read(T* pBuffer, std::size_t length)
@@ -196,7 +196,7 @@ public:
 		return readLen;
 	}
 	
-	std::size_t read(Poco::Buffer<T>& rBuffer, std::size_t length = 0)
+	std::size_t read(Poco::Buffer<T>& buffer, std::size_t length = 0)
 		/// Copies the data currently in the FIFO
 		/// into the supplied buffer.
 		/// Resizes the supplied buffer to the size of
@@ -207,7 +207,7 @@ public:
 		Mutex::ScopedLock lock(_mutex);
 		if (!isReadable()) return 0;
 		std::size_t usedBefore = _used;
-		std::size_t readLen = peek(rBuffer, length);
+		std::size_t readLen = peek(buffer, length);
 		poco_assert (_used >= readLen);
 		_used -= readLen;
 		if (0 == _used) _begin = 0;
@@ -242,8 +242,8 @@ public:
 		}
 
 		std::size_t usedBefore = _used;
-		std::size_t availableBefore =  _buffer.size() - _used - _begin;
-		std::size_t len = length > availableBefore ? availableBefore : length;
+		std::size_t available =  _buffer.size() - _used - _begin;
+		std::size_t len = length > available ? available : length;
 		std::memcpy(begin() + _used, pBuffer, len * sizeof(T));
 		_used += len;
 		poco_assert (_used <= _buffer.size());
@@ -252,7 +252,7 @@ public:
 		return len;
 	}
 
-	std::size_t write(const Buffer<T>& rBuffer, std::size_t length = 0)
+	std::size_t write(const Buffer<T>& buffer, std::size_t length = 0)
 		/// Writes data from supplied buffer to the FIFO buffer.
 		/// If there is no sufficient space for the whole
 		/// buffer to be written, data up to available 
@@ -263,10 +263,10 @@ public:
 		/// 
 		/// Returns the length of data written.
 	{
-		if (length == 0 || length > rBuffer.size())
-			length = rBuffer.size();
+		if (length == 0 || length > buffer.size())
+			length = buffer.size();
 
-		return write(rBuffer.begin(), length);
+		return write(buffer.begin(), length);
 	}
 
 	std::size_t size() const
@@ -325,7 +325,7 @@ public:
 		if (!isWritable())
 			throw Poco::InvalidAccessException("Buffer not writable.");
 
-		std::memcpy(begin() + _used, ptr, length * sizeof(T));
+		std::memcpy(&_buffer[_used], ptr, length * sizeof(T));
 		std::size_t usedBefore = _used;
 		_used += length;
 		if (_notify) notify(usedBefore);
@@ -499,10 +499,10 @@ public:
 		return !isFull() && isValid() && !_eof;
 	}
 
-	void setNotify(bool bufferNotify = true)
+	void setNotify(bool notify = true)
 		/// Enables/disables notifications.
 	{
-		_notify = bufferNotify;
+		_notify = notify;
 	}
 
 	bool getNotify() const

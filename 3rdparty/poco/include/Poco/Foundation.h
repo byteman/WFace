@@ -114,7 +114,6 @@
 //
 #include "Poco/Alignment.h"
 
-
 //
 // Cleanup inconsistencies
 //

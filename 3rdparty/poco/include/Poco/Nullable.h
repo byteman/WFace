@@ -63,32 +63,28 @@ public:
 	Nullable(): 
 		/// Creates an empty Nullable.
 		_value(),
-		_isNull(true),
-		_null()
+		_isNull(true)
 	{
 	}
 
 	Nullable(const NullType&): 
 		/// Creates an empty Nullable.
 		_value(),
-		_isNull(true),
-		_null()
+		_isNull(true)
 	{
 	}
 
 	Nullable(const C& value): 
 		/// Creates a Nullable with the given value.
 		_value(value), 
-		_isNull(false),
-		_null()
+		_isNull(false)
 	{
 	}
 	
 	Nullable(const Nullable& other):
 		/// Creates a Nullable by copying another one.
 		_value(other._value),
-		_isNull(other._isNull),
-		_null()
+		_isNull(other._isNull)
 	{
 	}
 
@@ -184,7 +180,7 @@ public:
 
 	bool operator < (const Nullable<C>& other) const
 		/// Compares two Nullable objects. Return true if this object's
-		/// value is smaller than the other object's value.
+		/// value is smaler than the other object's value.
 		/// Null value is smaller than a non-null value.
 	{
 		if (_isNull && other._isNull) return false;
