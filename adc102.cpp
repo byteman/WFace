@@ -85,7 +85,7 @@ bool ADC102::startScan(QString port, int baud, char parity, char databit, char s
 
         return false;
     }
-    modbus.setByteTimeout(100000);
+    //modbus.setByteTimeout(100000);
     modbus.set_response_timeout(100000);
     ScanHandler* handler = (ScanHandler*)m_handlers[0];
     handler->startScan(findOne);
@@ -198,6 +198,10 @@ void ADC102::onCalibProcessResult(int index, int result)
 void ADC102::onScanResult(int type, int addr)
 {
     emit scanResult(type,addr);
+    if(type == 1)
+    {
+        modbus.set_response_timeout(1000000);
+    }
 }
 
 void ADC102::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare)
