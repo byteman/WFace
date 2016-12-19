@@ -31,7 +31,7 @@
 #include "Poco/Delegate.h"
 #include <iostream>
 #include <sstream>
-
+#include "netmsg.h"
 using namespace Poco::Data::Keywords;
 using Poco::Data::Session;
 using Poco::Data::Statement;
@@ -110,7 +110,7 @@ public:
 
 
 		std::string CONFIGDB;
-		std::string FACEDB;
+        std::string WEIGHTDB;
 		std::string LOGDB;
 private:
 

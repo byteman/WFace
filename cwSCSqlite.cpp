@@ -48,41 +48,20 @@ void cwSqlite::InitConfigDB()
 void cwSqlite::InitFaceDB()
 {
 	
-	Session tmp (Poco::Data::SQLite::Connector::KEY, FACEDB);
+    Session tmp (Poco::Data::SQLite::Connector::KEY, WEIGHTDB);
 	std::vector<std::string> vtb;
 	Transaction trans(tmp);
 	tmp<<"SELECT name FROM sqlite_master WHERE type='table'",into(vtb), now;
-	if(!IsExsist("facefeature",vtb))
+    if(!IsExsist("weightTable",vtb))
 	{
 		tmp<<"DROP TABLE IF EXISTS [faceverify]",now;
-		tmp<<"CREATE TABLE [faceverify] ([vtime] TIMESTAMP NOT NULL ON CONFLICT REPLACE DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime')), [age] Integer, "
-		<<"[male] BOOLEAN, [glasses] BOOLEAN, [xangle] Integer, [yangle] Integer, [zangle] Integer, [smile] Integer, [quality] Float, [score] TEXT, "
-		<<"[img] blob, [send_flag] BOOLEAN, [x] INTEGER, [y] INTEGER, [width] INTEGER, [height] INTEGER, [imgf] BLOB)", now;
+        tmp<<"CREATE TABLE [weightTable] ([vtime] TIMESTAMP NOT NULL ON CONFLICT REPLACE DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime')), [weight] Integer, "
+        <<"[gps] TEXT, [plate] TEXT, [driver] TEXT [stime] TIMESTAMP NOT NULL ON CONFLICT REPLACE DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime'))", now;
 	}
-	if(!IsExsist("faceverify",vtb))
-	{
-		tmp<<"DROP TABLE IF EXISTS [facefeature]", now;
-		tmp<<"CREATE TABLE [facefeature] ([id] char(36), [feature] blob, [img] blob, [time] TIMESTAMP, "
-		"[tag] VARCHAR(64), CONSTRAINT [sqlite_autoindex_facefeature_1] PRIMARY KEY ([id]))", now;
-	}
+
 	trans.commit();
 }
 
-void cwSqlite::InitLogDB()
-{
-	//Poco::FastMutex::ScopedLock lock(m_Mutex);
-	Session tmp (Poco::Data::SQLite::Connector::KEY, LOGDB);
-	std::vector<std::string> vtb;
-	tmp<<"SELECT name FROM sqlite_master WHERE type='table'",into(vtb), now;
-	if(!IsExsist("syslog",vtb))
-	{
-		Transaction trans(tmp);
-		tmp<<"DROP TABLE IF EXISTS [syslog]",now;
-		tmp<<"CREATE TABLE [syslog] ([opertime] TIMESTAMP NOT NULL ON CONFLICT REPLACE DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime')), "
-		<<"[type] TINYINT NOT NULL ON CONFLICT REPLACE DEFAULT 0, [msg] TEXT)",now; 
-		trans.commit();
-	}
-}
 cwSqlite& cwSqlite::instance()
 {
 	static Poco::SingletonHolder<cwSqlite> sh;
