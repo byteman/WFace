@@ -124,7 +124,7 @@ void MainWindow::parse()
                 break;
             }
             //myData.remove(0,head.len+2);
-            unsigned short crc =u16CRC_Calc16(myData,head.len);
+            unsigned short crc =u16CRC_Calc16((const uint8_t*)myData.data(),head.len);
             unsigned short crc_data = (myData[head.len+1]<<8)+myData[head.len];
 
             if(crc != crc_data)
