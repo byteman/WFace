@@ -1,13 +1,21 @@
 #ifndef NETCLIENT_H
 #define NETCLIENT_H
 #include <QTcpSocket>
-
-class NetClient
+#include <QByteArray>
+#include "netmsg.h"
+class NetClient:public QObject
 {
+    Q_OBJECT
 public:
     NetClient(QTcpSocket* socket);
+private slots:
+    void onDisConection();
+    void onDataReceived();
 private:
     QTcpSocket _socket;
+    QByteArray _data;
+    void processOneWeight(QByteArray &data);
+    void parse();
 };
 
 #endif // NETCLIENT_H

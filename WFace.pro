@@ -28,7 +28,10 @@ SOURCES += main.cpp\
     calibhandler.cpp \
     updatehandler.cpp \
     paramconfig.cpp \
-    cwSCSqlite.cpp
+    cwSCSqlite.cpp \
+    netclient.cpp \
+    networkmgr.cpp \
+    crc16.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/qextserialport/qextserialport.h \
@@ -44,7 +47,9 @@ HEADERS  += mainwindow.h \
     updatehandler.h \
     paramconfig.h \
     wcommon.h \
-    cwSCSqlite.h
+    cwSCSqlite.h \
+    netclient.h \
+    networkmgr.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src 3rdparty/qextserialport
 

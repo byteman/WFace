@@ -9,6 +9,7 @@
 #include <QTableWidgetItem>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include "networkmgr.h"
 namespace Ui {
 class MainWindow;
 }
@@ -23,9 +24,6 @@ public:
 
 
 private slots:
-    void onNewConection();
-    void onDisConection();
-    void onDataReceived();
     void on_actionChagne_triggered();
     void calibrate_click(int id);
     void calibrate_click_zero(int id);
@@ -84,7 +82,7 @@ private:
     QApplication &_app;
     QSignalMapper *signalMapper;
     QSignalMapper *signalMapper2;
-    QTcpServer  server;
+    NetWorkMgr network;
 
     // QObject interface
 public:
