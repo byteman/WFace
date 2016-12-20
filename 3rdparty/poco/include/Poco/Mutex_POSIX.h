@@ -31,15 +31,9 @@ namespace Poco {
 
 class Foundation_API MutexImpl
 {
-public:
-	enum MutexTypeImpl
-	{
-		MUTEX_RECURSIVE_IMPL,
-		MUTEX_NONRECURSIVE_IMPL
-	};
-
 protected:
-	explicit MutexImpl(MutexTypeImpl type);
+	MutexImpl();
+	MutexImpl(bool fast);
 	~MutexImpl();
 	void lockImpl();
 	bool tryLockImpl();

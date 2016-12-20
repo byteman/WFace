@@ -23,7 +23,7 @@
 #include "Poco/Poco.h"
 #include "Poco/SharedMemory.h"
 #include "Poco/RefCountedObject.h"
-#include "Poco/UnWindows.h"
+
 
 namespace Poco {
 
@@ -52,7 +52,7 @@ public:
 		/// will generally ignore the hint.
 
 	char* begin() const;
-		/// Returns the begin address of the SharedMemory segment. Will be null for illegal segments.
+		/// Returns the beginn address of the SharedMemory segment. Will be null for illegal segments.
 
 	char* end() const;
 		/// Points past the last byte of the end address of the SharedMemory segment. Will be null for illegal segments.

@@ -158,13 +158,11 @@ public:
 		if (it == _map.end())
 		{
 			LibraryInfo li;
-			li.pLibrary  = 0;
-			li.pManifest = 0;
+			li.pLibrary  = new SharedLibrary(path);
+			li.pManifest = new Manif();
 			li.refCount  = 1;
 			try
 			{
-				li.pLibrary  = new SharedLibrary(path);
-				li.pManifest = new Manif();
 				std::string pocoBuildManifestSymbol("pocoBuildManifest");
 				pocoBuildManifestSymbol.append(manifest);
 				if (li.pLibrary->hasSymbol("pocoInitializeLibrary"))

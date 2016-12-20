@@ -388,7 +388,7 @@ S translate(const S& str, const typename S::value_type* from, const typename S::
 
 template <class S>
 S& translateInPlace(S& str, const S& from, const S& to)
-	/// Replaces in str all occurrences of characters in from
+	/// Replaces in str all occurences of characters in from
 	/// with the corresponding (by position) characters in to.
 	/// If there is no corresponding character, the character
 	/// is removed.
@@ -491,7 +491,7 @@ S& removeInPlace(S& str, const typename S::value_type ch, typename S::size_type 
 
 template <class S>
 S replace(const S& str, const S& from, const S& to, typename S::size_type start = 0)
-	/// Replace all occurrences of from (which must not be the empty string)
+	/// Replace all occurences of from (which must not be the empty string)
 	/// in str with to, starting at position start.
 {
 	S result(str);
@@ -620,22 +620,6 @@ S cat(const S& delim, const It& begin, const It& end)
 		result += *it;
 	}
 	return result;
-}
-
-
-template <class S>
-bool startsWith(const S& str, const S& prefix)
-	/// Tests whether the string starts with the given prefix.
-{
-	return str.size() >= prefix.size() && equal(prefix.begin(), prefix.end(), str.begin());
-}
-
-
-template <class S>
-bool endsWith(const S& str, const S& suffix)
-	/// Tests whether the string ends with the given suffix.
-{
-	return str.size() >= suffix.size() && equal(suffix.rbegin(), suffix.rend(), str.rbegin());
 }
 
 

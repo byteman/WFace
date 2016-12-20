@@ -23,8 +23,8 @@
 #include "Poco/Foundation.h"
 #include "Poco/Formatter.h"
 #include "Poco/Message.h"
-#include <vector>
 
+#include <vector>
 
 namespace Poco {
 
@@ -45,7 +45,6 @@ class Foundation_API PatternFormatter: public Formatter
 	///   * %P - message process identifier
 	///   * %T - message thread name
 	///   * %I - message thread identifier (numeric)
-	///   * %O - message thread OS identifier (numeric)
 	///   * %N - node or host name
 	///   * %U - message source file path (empty string if not set)
 	///   * %u - message source line number (0 if not set)
@@ -105,8 +104,6 @@ public:
 		///       for details.
 		///     * times: Specifies whether times are adjusted for local time
 		///       or taken as they are in UTC. Supported values are "local" and "UTC".
-		///     * priorityNames: Provide a comma-separated list of custom priority names,
-		///       e.g. "Fatal, Critical, Error, Warning, Notice, Information, Debug, Trace"
 		///
 		/// If any other property name is given, a PropertyNotSupported
 		/// exception is thrown.
@@ -118,10 +115,9 @@ public:
 
 	static const std::string PROP_PATTERN;
 	static const std::string PROP_TIMES;
-	static const std::string PROP_PRIORITY_NAMES;
 
 protected:
-	const std::string& getPriorityName(int);
+	static const std::string& getPriorityName(int);
 		/// Returns a string for the given priority value.
 	
 private:
@@ -140,15 +136,11 @@ private:
 	void parsePattern();
 		/// Will parse the _pattern string into the vector of PatternActions,
 		/// which contains the message key, any text that needs to be written first
-		/// a property in case of %[] and required length.
-
-	void parsePriorityNames();
+		/// a proprety in case of %[] and required length.
 
 	std::vector<PatternAction> _patternActions;
 	bool _localTime;
 	std::string _pattern;
-	std::string _priorityNames;
-	std::string _priorities[9];
 };
 
 

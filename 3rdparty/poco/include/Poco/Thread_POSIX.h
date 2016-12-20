@@ -44,19 +44,8 @@ namespace Poco {
 
 class Foundation_API ThreadImpl
 {
-public:
-
-#if POCO_OS == POCO_OS_LINUX
-	// OS kernel thread ID
-	typedef pid_t TIDImpl;
-#elif POCO_OS == POCO_OS_MAC_OS_X
-	// OS kernel thread ID
-	typedef mach_port_t TIDImpl;
-#else
-	// Default: pthread id
+public:	
 	typedef pthread_t TIDImpl;
-#endif
-
 	typedef void (*Callable)(void*);
 
 	enum Priority
@@ -67,12 +56,12 @@ public:
 		PRIO_HIGH_IMPL,
 		PRIO_HIGHEST_IMPL
 	};
-
+	
 	enum Policy
 	{
 		POLICY_DEFAULT_IMPL = SCHED_OTHER
 	};
-
+	
 	ThreadImpl();
 	~ThreadImpl();
 
@@ -85,8 +74,6 @@ public:
 	static int getMaxOSPriorityImpl(int policy);
 	void setStackSizeImpl(int size);
 	int getStackSizeImpl() const;
-	void setAffinityImpl(int cpu);
-	int getAffinityImpl() const;
 	void startImpl(SharedPtr<Runnable> pTarget);
 	void joinImpl();
 	bool joinImpl(long milliseconds);
@@ -122,7 +109,7 @@ private:
 		{
 			pthread_setspecific(_key, pThread);
 		}
-
+	
 	private:
 		pthread_key_t _key;
 	};
@@ -132,23 +119,21 @@ private:
 		ThreadData():
 			thread(0),
 			prio(PRIO_NORMAL_IMPL),
-			osPrio(),
 			policy(SCHED_OTHER),
-			done(Event::EVENT_MANUALRESET),
+			done(false),
 			stackSize(POCO_THREAD_STACK_SIZE),
 			started(false),
 			joined(false)
 		{
-#if defined(POCO_VXWORKS)
+		#if defined(POCO_VXWORKS)
 			// This workaround is for VxWorks 5.x where
 			// pthread_init() won't properly initialize the thread.
 			std::memset(&thread, 0, sizeof(thread));
-#endif
+		#endif
 		}
 
 		SharedPtr<Runnable> pRunnableTarget;
 		pthread_t     thread;
-		TIDImpl       tid;
 		int           prio;
 		int           osPrio;
 		int           policy;
@@ -161,7 +146,7 @@ private:
 	AutoPtr<ThreadData> _pData;
 
 	static CurrentThreadHolder _currentThreadHolder;
-
+	
 #if defined(POCO_OS_FAMILY_UNIX) && !defined(POCO_VXWORKS)
 	SignalHandler::JumpBufferVec _jumpBufferVec;
 	friend class SignalHandler;
@@ -204,7 +189,7 @@ inline int ThreadImpl::getStackSizeImpl() const
 
 inline ThreadImpl::TIDImpl ThreadImpl::tidImpl() const
 {
-	return _pData->tid;
+	return _pData->thread;
 }
 
 

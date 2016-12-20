@@ -37,7 +37,7 @@ class LinearHashTable
 	/// This class implements a linear hash table.
 	///
 	/// In a linear hash table, the available address space
-	/// grows or shrinks dynamically. A linear hash table thus
+	/// grows or shrinks dynamically. A linar hash table thus
 	/// supports any number of insertions or deletions without
 	/// lookup or insertion performance deterioration.
 	///
@@ -281,15 +281,15 @@ public:
 		/// Returns an iterator pointing to the first entry, if one exists.
 	{
 		BucketVecIterator it(_buckets.begin());
-		BucketVecIterator itEnd(_buckets.end());
-		while (it != itEnd && it->empty())
+		BucketVecIterator end(_buckets.end());
+		while (it != end && it->empty())
 		{
 			++it;
 		}
-		if (it == itEnd)
-			return end();
+		if (it == end)
+			return this->end();
 		else
-			return ConstIterator(it, itEnd, it->begin());
+			return ConstIterator(it, end, it->begin());
 	}
 	
 	ConstIterator end() const
@@ -302,15 +302,15 @@ public:
 		/// Returns an iterator pointing to the first entry, if one exists.
 	{
 		BucketVecIterator it(_buckets.begin());
-		BucketVecIterator itEnd(_buckets.end());
-		while (it != itEnd && it->empty())
+		BucketVecIterator end(_buckets.end());
+		while (it != end && it->empty())
 		{
 			++it;
 		}
-		if (it == itEnd)
-			return end();
+		if (it == end)
+			return this->end();
 		else
-			return Iterator(it, itEnd, it->begin());
+			return Iterator(it, end, it->begin());
 	}
 	
 	Iterator end()
@@ -400,8 +400,8 @@ public:
 	void clear()
 		/// Erases all elements.
 	{
-		LinearHashTable emptyTable;
-		swap(emptyTable);
+		LinearHashTable empty;
+		swap(empty);
 	}
 	
 	std::size_t size() const
