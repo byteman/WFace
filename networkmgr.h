@@ -13,9 +13,13 @@ public:
     bool start(int port);
     bool stop();
 
-
+Q_SIGNALS:
+    void SignalOneWeight(QTcpSocket* _socket,PointWet wet);
+    void SignalDataReady(QTcpSocket* _socket,QByteArray data);
 private slots:
     void onNewConection();
+    void onOneWeight(PointWet wet);
+    void onDataReady(QByteArray data);
 private:
     void addClient(QTcpSocket* _socket);
     ClientSocketMap _clientList;

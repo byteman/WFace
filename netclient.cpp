@@ -28,7 +28,7 @@ void NetClient::processOneWeight(QByteArray& data)
         return;
     }
     memcpy(&pwt, data.data(), sizeof(PointWet));
-
+    emit onOneWeight(pwt);
 }
 
 
@@ -87,8 +87,10 @@ void NetClient::onDataReceived()
 {
     QTcpSocket* client = static_cast<QTcpSocket*>(sender());
     QByteArray data = client->readAll();
+
     _data.append(data);
     parse();
+    emit signalOneWeight(data);
     //ui->txtLog->append(data);
     //client->write(data);
     //client->flush();
