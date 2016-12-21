@@ -4,16 +4,27 @@
 #include <QTcpSocket>
 #include "netclient.h"
 #include <map>
-typedef std::map<std::string,NetClient*> ClientSocketMap;
-class NetWorkMgr
+typedef std::map<QTcpSocket*,NetClient*> ClientSocketMap;
+class NetWorkMgr:public QObject
 {
+    Q_OBJECT
 public:
     NetWorkMgr();
     bool start(int port);
     bool stop();
-    void addClient(QTcpSocket* _socket);
+
+Q_SIGNALS:
+    void SignalOneMsg(QTcpSocket* _socket,Msg_Head head, void *data);
+    void SignalDataReady(QTcpSocket* _socket,QByteArray data);
+private slots:
+    void onDisConection();
+    void onNewConection();
+    void onNetMsg(Msg_Head head, void *data);
+    void onDataReady(QByteArray data);
 private:
+    void addClient(QTcpSocket* _socket);
     ClientSocketMap _clientList;
+    QTcpServer _tcpServer;
 };
 
 #endif // NETWORKMGR_H

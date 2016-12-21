@@ -888,6 +888,21 @@
             <string>设备IP</string>
            </property>
           </column>
+          <column>
+           <property name="text">
+            <string>时间</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>GPS</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>车牌号</string>
+           </property>
+          </column>
          </widget>
         </item>
         <item>

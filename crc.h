@@ -26,7 +26,7 @@
 
 #include <stdint.h>
 
-uint16_t u16CRC_Calc16(const uint8_t *pu8Data, int16_t u16Len);
+unsigned short Reentrent_CRC16(unsigned char *pData, unsigned int nData);
 
 #endif /* end __CRC_H */
 /*****************************************************************************

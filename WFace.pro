@@ -28,7 +28,9 @@ SOURCES += main.cpp\
     calibhandler.cpp \
     updatehandler.cpp \
     paramconfig.cpp \
-    cwSCSqlite.cpp
+    netclient.cpp \
+    networkmgr.cpp \
+    crc16.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/qextserialport/qextserialport.h \
@@ -44,7 +46,9 @@ HEADERS  += mainwindow.h \
     updatehandler.h \
     paramconfig.h \
     wcommon.h \
-    cwSCSqlite.h
+    cwSCSqlite.h \
+    netclient.h \
+    networkmgr.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src 3rdparty/qextserialport
 
@@ -58,7 +62,7 @@ win32:SOURCES += 3rdparty/qextserialport/win_qextserialport.cpp \
 win32:DEFINES += _TTY_WIN_  WINVER=0x0501
 win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
 win32:LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32
-win32:LIBS += -L./3rdparty/poco/lib/win32 -lPocoFoundationd
+#win32:LIBS += -L./3rdparty/poco/lib/win32
 
 FORMS    += mainwindow.ui
 

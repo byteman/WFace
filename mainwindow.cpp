@@ -49,118 +49,45 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     signalMapper  = new QSignalMapper(this);
     signalMapper2 = new QSignalMapper(this);
 
-
+    network.start(8383);
+    connect(&network,SIGNAL(SignalOneMsg(QTcpSocket*,Msg_Head,void*)),SLOT(onOneMsg(QTcpSocket*,Msg_Head,void*)));
     setWindowState(Qt::WindowMaximized);
-    server.setMaxPendingConnections(100);
-    if(!server.listen(QHostAddress::Any,8083))
-    {
-        QMessageBox::information(this,"错误","监听8083端口失败");
-        return;
-    }
-    connect(&server,&QTcpServer::newConnection,this,&MainWindow::onNewConection);
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+#include <QTextCodec>
 
-void MainWindow::onNewConection()
+void MainWindow::addItemContent(int row, int column, QString content)
+
 {
 
-    QTcpSocket* client = server.nextPendingConnection();
+      QTableWidgetItem *item = new QTableWidgetItem (content);
 
-    QString log = QString("ip %1 port %2 connected").arg(client->peerAddress().toString()).arg(client->peerPort());
-    ui->txtLog->append(log);
-    connect(client,SIGNAL(disconnected()),this,SLOT(onDisConection()));
-    connect(client,SIGNAL(readyRead()),this,SLOT(onDataReceived()));
-
-
+      ui->tableWidget->setItem(row, column, item);
 
 }
-
-void MainWindow::onDisConection()
+void MainWindow::onOneMsg(QTcpSocket * _socket, Msg_Head head, void *arg)
 {
-     QTcpSocket* client = static_cast<QTcpSocket*>(sender());
-     QString log = QString("ip %1 port %2 disconnectd!").arg(client->peerAddress().toString()).arg(client->peerPort());
-     ui->txtLog->append(log);
-
-     client->deleteLater();
-}
-void MainWindow::processOneWeight(QByteArray& data)
-{
-    PointWet  pwt;
-
-    if(data.size() != sizeof(PointWet))
+    if(head.cmd == 1)
     {
-        qDebug() << "processOneWeight size error";
-        return;
+        PointWet* pwt =  (PointWet*)arg;
+        qDebug() << "wet" << pwt->wet;
+
+        QTextCodec *codec = QTextCodec::codecForName("GB18030");
+        QString duty = codec->toUnicode(pwt->duty);
+        QMessageBox::information(this,"title",duty);
+        qDebug() << "wet" << duty;
+
+        ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
+        int i = ui->tableWidget->rowCount()+1;
+        //QTableWidgetItem *item = new QTableWidgetItem (content);
+
+        addItemContent(i,1,_socket->peerAddress().toString());
     }
-    memcpy(&pwt, data.data(), sizeof(PointWet));
-
-}
-static QByteArray myData;
-
-void MainWindow::parse()
-{
-    static bool waitHead = true;
-
-    static Msg_Head head;
-    while(myData.size() >= 0)
-    {
-        if(waitHead)
-        {
-            if(myData.size() >= 7)
-            {
-                memcpy(&head,myData.data(),sizeof(Msg_Head));
-                myData.remove(0,sizeof(Msg_Head));
-                waitHead = false;
-            }
-        }
-        else
-        {
-            if(myData.size() < (head.len+2) )
-            {
-                break;
-            }
-            //myData.remove(0,head.len+2);
-            unsigned short crc =u16CRC_Calc16((const uint8_t*)myData.data(),head.len);
-            unsigned short crc_data = (myData[head.len+1]<<8)+myData[head.len];
-
-            if(crc != crc_data)
-            {
-                myData.remove(0,head.len+2);
-                continue;
-            }
-            myData.remove(head.len,2);
-            switch(head.cmd)
-            {
-                case 0:
-                    processOneWeight(myData);
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-            }
-            waitHead = true;
-            myData.remove(0,head.len);
-        }
-    }
-
-}
-void MainWindow::onDataReceived()
-{
-    QTcpSocket* client = static_cast<QTcpSocket*>(sender());
-    QByteArray data = client->readAll();
-    myData.append(data);
-    parse();
-    ui->txtLog->append(data);
-    client->write(data);
-    //client->flush();
-
 }
 
 void MainWindow::on_actionChagne_triggered()
