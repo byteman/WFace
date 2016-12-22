@@ -50,7 +50,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     signalMapper2 = new QSignalMapper(this);
 
     network.start(8383);
-    connect(&network,SIGNAL(SignalOneMsg(QTcpSocket*,Msg_Head,void*)),SLOT(onOneMsg(QTcpSocket*,Msg_Head,void*)));
+    connect(&network,SIGNAL(SignalOneMsg(NetClient*,Msg_Head,void*)),SLOT(onOneMsg(NetClient*,Msg_Head,void*)));
     setWindowState(Qt::WindowMaximized);
 
 }
@@ -70,7 +70,25 @@ void MainWindow::addItemContent(int row, int column, QString content)
       ui->tableWidget->setItem(row, column, item);
 
 }
-void MainWindow::onOneMsg(QTcpSocket * _socket, Msg_Head head, void *arg)
+QString formatGps(GpsDef* gps)
+{
+    QString gpss;
+    if(gps->ns == 'n') gpss.append("n");
+    else gpss.append("s");
+
+
+    gpss += QString("%1").arg(gps->Longitude);
+
+    if(gps->ew == 'e') gpss.append("e");
+    else gpss.append("w");
+
+
+    gpss += QString("%1").arg(gps->Latitude);
+
+
+    return gpss;
+}
+void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
 {
     if(head.cmd == 1)
     {
@@ -79,14 +97,17 @@ void MainWindow::onOneMsg(QTcpSocket * _socket, Msg_Head head, void *arg)
 
         QTextCodec *codec = QTextCodec::codecForName("GB18030");
         QString duty = codec->toUnicode(pwt->duty);
-        QMessageBox::information(this,"title",duty);
+        //QMessageBox::information(this,"title",duty);
         qDebug() << "wet" << duty;
+        int count = ui->tableWidget->rowCount();
+        ui->tableWidget->setRowCount(count+1);
 
-        ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
-        int i = ui->tableWidget->rowCount()+1;
         //QTableWidgetItem *item = new QTableWidgetItem (content);
+        QString host = _socket->getSocket()->peerAddress().toString();
+        addItemContent(count,0,host);
+        addItemContent(count,1,QString("%1").arg(pwt->wet));
 
-        addItemContent(i,1,_socket->peerAddress().toString());
+        addItemContent(count,2,formatGps(&pwt->gps));
     }
 }
 

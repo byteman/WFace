@@ -25,7 +25,7 @@ public:
     void addItemContent(int row, int column, QString content);
 
 private slots:
-    void onOneMsg(QTcpSocket*,Msg_Head,void*);
+    void onOneMsg(NetClient*,Msg_Head,void*);
     void on_actionChagne_triggered();
     void calibrate_click(int id);
     void calibrate_click_zero(int id);

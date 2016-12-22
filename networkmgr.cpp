@@ -56,10 +56,10 @@ void NetWorkMgr::onNewConection()
 
 void NetWorkMgr::onNetMsg(Msg_Head head, void *data)
 {
-    emit SignalOneMsg((QTcpSocket*)sender(),head,data);
+    emit SignalOneMsg((NetClient*)sender(),head,data);
 }
 
 void NetWorkMgr::onDataReady(QByteArray data)
 {
-    emit SignalDataReady((QTcpSocket*)sender(),data);
+    emit SignalDataReady((NetClient*)sender(),data);
 }
