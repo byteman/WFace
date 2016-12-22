@@ -9,6 +9,11 @@ NetClient::NetClient(QTcpSocket* socket):
     connect(socket,SIGNAL(readyRead()),this,SLOT(onDataReceived()));
 }
 
+QTcpSocket* NetClient::getSocket()
+{
+    return _socket;
+}
+
 
 void NetClient::processOneWeight(QByteArray& data)
 {

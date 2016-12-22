@@ -14,8 +14,8 @@ public:
     bool stop();
 
 Q_SIGNALS:
-    void SignalOneMsg(QTcpSocket* _socket,Msg_Head head, void *data);
-    void SignalDataReady(QTcpSocket* _socket,QByteArray data);
+    void SignalOneMsg(NetClient* _socket,Msg_Head head, void *data);
+    void SignalDataReady(NetClient* _socket,QByteArray data);
 private slots:
     void onDisConection();
     void onNewConection();
