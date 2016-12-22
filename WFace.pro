@@ -48,7 +48,8 @@ HEADERS  += mainwindow.h \
     wcommon.h \
     cwSCSqlite.h \
     netclient.h \
-    networkmgr.h
+    networkmgr.h \
+    netmsg.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src 3rdparty/qextserialport
 

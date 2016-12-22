@@ -52,6 +52,8 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     network.start(8383);
     connect(&network,SIGNAL(SignalOneMsg(NetClient*,Msg_Head,void*)),SLOT(onOneMsg(NetClient*,Msg_Head,void*)));
     setWindowState(Qt::WindowMaximized);
+    for(int i = 0; i < ui->tableWidget->columnCount(); i++)
+        ui->tableWidget->setColumnWidth(i,200);
 
 }
 
@@ -88,6 +90,11 @@ QString formatGps(GpsDef* gps)
 
     return gpss;
 }
+QString formatTime(DateDef& d)
+{
+    return QString("%1-%2-%3 %4:%5:%6").arg(2000+d.year).arg(d.month).arg(d.day).arg(d.hour).arg(d.min).arg(d.sec);
+}
+#include <QDateTime>
 void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
 {
     if(head.cmd == 1)
@@ -96,7 +103,12 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
         qDebug() << "wet" << pwt->wet;
 
         QTextCodec *codec = QTextCodec::codecForName("GB18030");
-        QString duty = codec->toUnicode(pwt->duty);
+        char buffer[32] = {0,};
+        memcpy(buffer,pwt->duty,DUTY_LEN);
+        QString duty = codec->toUnicode(buffer);
+        memset(buffer,0,32);
+        memcpy(buffer,pwt->license_plate,LICENSE_LEN);
+        QString card = codec->toUnicode(buffer);
         //QMessageBox::information(this,"title",duty);
         qDebug() << "wet" << duty;
         int count = ui->tableWidget->rowCount();
@@ -104,10 +116,18 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
 
         //QTableWidgetItem *item = new QTableWidgetItem (content);
         QString host = _socket->getSocket()->peerAddress().toString();
-        addItemContent(count,0,host);
-        addItemContent(count,1,QString("%1").arg(pwt->wet));
 
-        addItemContent(count,2,formatGps(&pwt->gps));
+        int i = 0;
+
+        addItemContent(count,i++,card);
+        addItemContent(count,i++,host);
+
+        addItemContent(count,i++,formatGps(&pwt->gps));
+        addItemContent(count,i++,formatTime(pwt->wet_date));
+        QDateTime qdt = QDateTime::currentDateTime();
+
+        addItemContent(count,i++,qdt.toString("yyyy-MM-dd hh:mm:ss"));
+        addItemContent(count,i++,QString("%1").arg(pwt->wet));
     }
 }
 

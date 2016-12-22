@@ -5,8 +5,8 @@
 extern "C"{
 #endif
 
-#pragma pack(push) // ½«µ±Ç°packÉèÖÃÑ¹Õ»±£´æ
-#pragma pack(1)// ±ØĞëÔÚ½á¹¹Ìå¶¨ÒåÖ®Ç°Ê¹ÓÃ
+#pragma pack(push) // å°†å½“å‰packè®¾ç½®å‹æ ˆä¿å­˜
+#pragma pack(1)// å¿…é¡»åœ¨ç»“æ„ä½“å®šä¹‰ä¹‹å‰ä½¿ç”¨
 
 typedef struct
 {
@@ -20,15 +20,15 @@ typedef struct
 
 
 typedef struct {
-        double 			Longitude;	// ¾­¶È
-        double 			Latitude;	// Î³¶È
-        unsigned char 	ns;			// ÄÏ±±ÖµÎª,'n'»ò's'
-        unsigned char 	ew;			// ¶«Î÷,'e'»ò'w'
+        double 			Longitude;	// ç»åº¦
+        double 			Latitude;	// çº¬åº¦
+        unsigned char 	ns;			// å—åŒ—å€¼ä¸º,'n'æˆ–'s'
+        unsigned char 	ew;			// ä¸œè¥¿,'e'æˆ–'w'
 }GpsDef;
 
 
 typedef struct {
-        unsigned char 	year;		// µ±Ç°Äê¼õÈ¥2000,Èç2016Äê£¬yearÊµ¼Ê±£´æ16¡£
+        unsigned char 	year;		// å½“å‰å¹´å‡å»2000,å¦‚2016å¹´ï¼Œyearå®é™…ä¿å­˜16ã€‚
         unsigned char	month;
         unsigned char	day;
         unsigned char	hour;
@@ -39,46 +39,46 @@ typedef struct {
 #define		LICENSE_LEN		10
 #define		DUTY_LEN		16
 
-// A×éÄÚÈİ-µ¥µãÖØÁ¿
+// Aç»„å†…å®¹-å•ç‚¹é‡é‡
 typedef struct {
-        int 	wet;						// µ¥µãÖØÁ¿¡¢
-        DateDef	wet_date;					// µ¥µãÖØÁ¿µÄ»ñÈ¡ÈÕÆÚÊ±¼ä¡¢
-        GpsDef 	gps;						// GPSĞÅÏ¢¡¢
-        char 	license_plate[LICENSE_LEN];	// ³µÁ¾ºÅÅÆĞÅÏ¢£¨»ò±¾»úĞÅÏ¢£©¡¢
-        char	duty[DUTY_LEN];				// Öµ°àÔ±£¨»òË¾»úĞÅÏ¢£©¡¢
-        DateDef	up_date;					// ·¢ËÍµÄÊµÊ±ÈÕÆÚÊ±¼ä.
+        int 	wet;						// å•ç‚¹é‡é‡ã€
+        DateDef	wet_date;					// å•ç‚¹é‡é‡çš„è·å–æ—¥æœŸæ—¶é—´ã€
+        GpsDef 	gps;						// GPSä¿¡æ¯ã€
+        char 	license_plate[LICENSE_LEN];	// è½¦è¾†å·ç‰Œä¿¡æ¯ï¼ˆæˆ–æœ¬æœºä¿¡æ¯ï¼‰ã€
+        char	duty[DUTY_LEN];				// å€¼ç­å‘˜ï¼ˆæˆ–å¸æœºä¿¡æ¯ï¼‰ã€
+        DateDef	up_date;					// å‘é€çš„å®æ—¶æ—¥æœŸæ—¶é—´.
 }PointWet;
 
-// B×éÄÚÈİ-×ÜÖØÁ¿
+// Bç»„å†…å®¹-æ€»é‡é‡
 typedef struct {
-        int 	wet;						// ×ÜÖØÁ¿
-        char 	license_plate[LICENSE_LEN];	// ³µÁ¾ºÅÅÆĞÅÏ¢£¨»ò±¾»úĞÅÏ¢£©¡¢
-        GpsDef 	gps;						// GPSĞÅÏ¢¡¢
-        DateDef	up_date;					// ·¢ËÍµÄÊµÊ±ÈÕÆÚÊ±¼ä.
+        int 	wet;						// æ€»é‡é‡
+        char 	license_plate[LICENSE_LEN];	// è½¦è¾†å·ç‰Œä¿¡æ¯ï¼ˆæˆ–æœ¬æœºä¿¡æ¯ï¼‰ã€
+        GpsDef 	gps;						// GPSä¿¡æ¯ã€
+        DateDef	up_date;					// å‘é€çš„å®æ—¶æ—¥æœŸæ—¶é—´.
 }TotalWet;
 
-// C×éÄÚÈİ-ÅÅË®ÖØÁ¿
+// Cç»„å†…å®¹-æ’æ°´é‡é‡
 typedef struct {
-        int 	wet;						// ÅÅË®ÖØÁ¿¡¢
-        char 	license_plate[LICENSE_LEN];	// ³µÁ¾ºÅÅÆĞÅÏ¢£¨»ò±¾»úĞÅÏ¢£©¡¢
-        GpsDef 	gps;						// GPSĞÅÏ¢¡¢
-        DateDef	up_date;					// ·¢ËÍµÄÊµÊ±ÈÕÆÚÊ±¼ä.
+        int 	wet;						// æ’æ°´é‡é‡ã€
+        char 	license_plate[LICENSE_LEN];	// è½¦è¾†å·ç‰Œä¿¡æ¯ï¼ˆæˆ–æœ¬æœºä¿¡æ¯ï¼‰ã€
+        GpsDef 	gps;						// GPSä¿¡æ¯ã€
+        DateDef	up_date;					// å‘é€çš„å®æ—¶æ—¥æœŸæ—¶é—´.
 }DrainageWet;
 
 
-// Éè±¸×´Ì¬
+// è®¾å¤‡çŠ¶æ€
 typedef struct {
-        unsigned short	snsr_line;		// ´«¸ĞÆ÷ÔÚÏß×´Ì¬£¬
-                                                                        // Ã¿¸öbit±íÊ¾¶ÔÓ¦´«¸ĞÆ÷ÊÇ·ñÔÚÏß¡£0bit±íÊ¾µÚÒ»¸ö´«¸ĞÆ÷£¬ÒÀ´ÎÀàÍÆ¡£
-                                                                        // 0±íÊ¾´«¸ĞÆ÷²»ÔÚÏß£¬1±íÊ¾ÔÚÏß¡£
+        unsigned short	snsr_line;		// ä¼ æ„Ÿå™¨åœ¨çº¿çŠ¶æ€ï¼Œ
+                                                                        // æ¯ä¸ªbitè¡¨ç¤ºå¯¹åº”ä¼ æ„Ÿå™¨æ˜¯å¦åœ¨çº¿ã€‚0bitè¡¨ç¤ºç¬¬ä¸€ä¸ªä¼ æ„Ÿå™¨ï¼Œä¾æ¬¡ç±»æ¨ã€‚
+                                                                        // 0è¡¨ç¤ºä¼ æ„Ÿå™¨ä¸åœ¨çº¿ï¼Œ1è¡¨ç¤ºåœ¨çº¿ã€‚
 
-        unsigned char	snsr_exc;		// ´«¸ĞÆ÷¹ÊÕÏÇé¿ö,
-                                                                        // 0Ã»ÓĞÒì³£,1¶ÏÏß,2¶ÌÂ·,3Êä³öµçÑ¹·¶Î§´íÎó
+        unsigned char	snsr_exc;		// ä¼ æ„Ÿå™¨æ•…éšœæƒ…å†µ,
+                                                                        // 0æ²¡æœ‰å¼‚å¸¸,1æ–­çº¿,2çŸ­è·¯,3è¾“å‡ºç”µå‹èŒƒå›´é”™è¯¯
 
-                         char	gpr_exc;		// gpsÄ£¿é,0Õı³£;>1ËÑĞÇÊıÁ¿;-1ÌìÏß¶ÏÂ·;-2ÌìÏß¶ÌÂ·;-3Ä£¿éÒì³£
-        unsigned char	gprs_exc;		// gprsÄ£¿é,0Õı³£;1Òì³£
-        unsigned char	wet_exc;		// ³¬ÔØÇé¿ö,
-                                                                        // Ã»ÓĞ³¬ÔØÖµÎª0£¬³¬ÔØÊ±ÖµÎªµ±Ç°ÖØÁ¿
+                         char	gpr_exc;		// gpsæ¨¡å—,0æ­£å¸¸;>1æœæ˜Ÿæ•°é‡;-1å¤©çº¿æ–­è·¯;-2å¤©çº¿çŸ­è·¯;-3æ¨¡å—å¼‚å¸¸
+        unsigned char	gprs_exc;		// gprsæ¨¡å—,0æ­£å¸¸;1å¼‚å¸¸
+        unsigned char	wet_exc;		// è¶…è½½æƒ…å†µ,
+                                                                        // æ²¡æœ‰è¶…è½½å€¼ä¸º0ï¼Œè¶…è½½æ—¶å€¼ä¸ºå½“å‰é‡é‡
 
 }DevInf;
 
@@ -103,20 +103,20 @@ typedef enum {
 }cws_cmd_type;
 
 typedef enum _cws_cmd{
-        cws_cmd_wet_one = 1,	// µ¥´Î
-        cws_cmd_wet_dump,		// Ğ¶ÔØ
-        cws_cmd_wet_drain,		// ÅÅË®
-        cws_cmd_gps,			// gpsĞÅÏ¢
-        cws_cmd_dev_inf,		// Éè±¸ĞÅÏ¢
-        cws_cmd_heart,			// ĞÄÌø
-        cws_cmd_file,			// Éı¼¶ÎÄ¼ş
-        cws_cmd_dev_rst,		// Éè±¸¸´Î»
+        cws_cmd_wet_one = 1,	// å•æ¬¡
+        cws_cmd_wet_dump,		// å¸è½½
+        cws_cmd_wet_drain,		// æ’æ°´
+        cws_cmd_gps,			// gpsä¿¡æ¯
+        cws_cmd_dev_inf,		// è®¾å¤‡ä¿¡æ¯
+        cws_cmd_heart,			// å¿ƒè·³
+        cws_cmd_file,			// å‡çº§æ–‡ä»¶
+        cws_cmd_dev_rst,		// è®¾å¤‡å¤ä½
 
-        cws_cmd_dev_rev,		// ÖÕ¶Ë°æ±¾
-        cws_cmd_wet_rt,			// ÊµÊ±ÖØÁ¿
-        cws_cmd_gps_mode,		// gpsÄ£¿é
-        cws_cmd_gps_uptime,		// GpsÉÏ´«Ê±¼ä¼ä¸ôÉèÖÃ
-        cws_cmd_dev_uptime,		// Éè±¸×´Ì¬ÉÏ´«Ê±¼ä¼ä¸ô
+        cws_cmd_dev_rev,		// ç»ˆç«¯ç‰ˆæœ¬
+        cws_cmd_wet_rt,			// å®æ—¶é‡é‡
+        cws_cmd_gps_mode,		// gpsæ¨¡å—
+        cws_cmd_gps_uptime,		// Gpsä¸Šä¼ æ—¶é—´é—´éš”è®¾ç½®
+        cws_cmd_dev_uptime,		// è®¾å¤‡çŠ¶æ€ä¸Šä¼ æ—¶é—´é—´éš”
 }cws_cmd_def;
 
 
