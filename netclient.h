@@ -36,6 +36,8 @@ public:
     int  StartUpgrade(QString file,int fileType=1);
     bool readPara(int  para_addr);
     bool writePara(int para_addr, QByteArray para);
+    QString getID();
+    bool reset();
 signals:
     void signalMsg(Msg_Head head,void* msg);
     void signalDataReady(QByteArray data);

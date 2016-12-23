@@ -213,8 +213,8 @@ void NetClient::sendUpdateStartRequest()
     fileStartDef fileHead;
     memset(&fileHead,0,sizeof(fileStartDef));
 
-    const char* ptr =  (const char*) m_file_name.toLocal8Bit();
-    strcpy(fileHead.file_name,ptr); //文件名
+    //const char* ptr =  (const char*) m_file_name.toLocal8Bit();
+    strcpy(fileHead.file_name,"release.bin"); //文件名
     fileHead.file_size = size; //文件大小
     fileHead.file_type = m_file_type;//升级文件类型
     fileHead.mode = -1;
@@ -333,6 +333,18 @@ bool NetClient::readPara(int para_addr)
 bool NetClient::writePara(int para_addr, QByteArray para)
 {
     return sendpacket(para_addr, OPER_HOST_WRITE_DEV,para);
+}
+
+QString NetClient::getID()
+{
+    return _socket->peerAddress().toString();
+}
+
+bool NetClient::reset()
+{
+    QByteArray data;
+    data.clear();
+    return sendpacket(CMD_RESET,OPER_HOST_WRITE_DEV,data);
 }
 
 void NetClient::timerHandler()

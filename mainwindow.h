@@ -25,6 +25,7 @@ public:
     void addItemContent(int row, int column, QString content);
 
 private slots:
+    void onNewClient(NetClient*);
     void onOneMsg(NetClient*,Msg_Head,void*);
     void on_actionChagne_triggered();
     void calibrate_click(int id);
@@ -66,7 +67,7 @@ private slots:
     void on_btnCalibAllZero_clicked();
 
     void on_btnCalibAllWt_clicked();
-
+    void onRemoveClient(int);
 
 
     void on_btnModifyK_clicked();
@@ -85,12 +86,19 @@ private:
     QSignalMapper *signalMapper;
     QSignalMapper *signalMapper2;
     NetWorkMgr network;
-
+    QString curDev;
+    bool closed;
+    bool isUart;
     // QObject interface
 public:
 
     void parse();
     void processOneWeight(QByteArray &data);
+    void addItem(QString id);
+
+    // QWidget interface
+protected:
+    void closeEvent(QCloseEvent *);
 };
 
 #endif // MAINWINDOW_H

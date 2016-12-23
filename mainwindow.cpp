@@ -24,7 +24,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
 
     QByteArray res = file.readAll();
 
-
+    closed = false;
     QextSerialEnumerator serialEnum;
     QList<QextPortInfo> ports = serialEnum.getPorts();
     QextPortInfo port;
@@ -52,6 +52,9 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     network.start(8383);
     connect(&network,SIGNAL(SignalOneMsg(NetClient*,Msg_Head,void*)),SLOT(onOneMsg(NetClient*,Msg_Head,void*)));
     connect(&network,SIGNAL(SignalUpdateEvent(NetClient*,int, UpdateEvtPara)), SLOT(onUpdateEvent(NetClient*,int, UpdateEvtPara)));
+    connect(&network,SIGNAL(SignalNewClient(NetClient*)), SLOT(onNewClient(NetClient*)));
+    connect(&network,SIGNAL(SignalRemoveClient(int)), SLOT(onRemoveClient(int)));
+
     setWindowState(Qt::WindowMaximized);
     for(int i = 0; i < ui->tableWidget->columnCount(); i++)
         ui->tableWidget->setColumnWidth(i,200);
@@ -72,6 +75,20 @@ void MainWindow::addItemContent(int row, int column, QString content)
 
       ui->tableWidget->setItem(row, column, item);
 
+}
+void MainWindow::addItem(QString id)
+{
+    QString title = QString("%1").arg(id);
+    QListWidgetItem* item = new QListWidgetItem(QIcon(":/monitor.png"),title);
+    ui->listWidget->addItem(item);
+}
+
+void MainWindow::onNewClient(NetClient *client)
+{
+    QString id = "unkown";
+    if(client!=NULL)
+        id = client->getID();
+    addItem(id);
 }
 QString formatGps(GpsDef* gps)
 {
@@ -201,9 +218,7 @@ void MainWindow::onScanResult(int type,int addr)
 {
     if(type == 0)
     {
-        QString title = QString("%1").arg(addr);
-        QListWidgetItem* item = new QListWidgetItem(QIcon(":/monitor.png"),title);
-        ui->listWidget->addItem(item);
+        addItem(QString("%1").arg(addr));
     }
     else
     {
@@ -304,8 +319,21 @@ void MainWindow::onReadCalibPointResult(Sensor* sensors, int num,int weight)
 
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
-    adc102.setSlaveAddr(item->text().toInt());
+    int id = 0;
+    bool ok = false;
+    id = (item->text().toInt(&ok));
+    if(ok && id <= 32)
+    {
+        adc102.setSlaveAddr(item->text().toInt());
+        isUart = true;
+    }
+    else
+    {
+        curDev = item->text();
+        isUart = false;
+    }
     ui->tabWidget->setCurrentIndex(1);
+
 }
 
 void MainWindow::onUpdateEvent(NetClient *_client, int evt, UpdateEvtPara para)
@@ -325,7 +353,11 @@ void MainWindow::onUpdateEvent(NetClient *_client, int evt, UpdateEvtPara para)
             }
             break;
         case UEVT_END:
+            
             break;
+    case UEVT_OK:
+            break;
+    default:break;
     }
 }
 
@@ -550,7 +582,7 @@ void MainWindow::on_btnUpdate_clicked()
 //    {
 //        //QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
 //    }
-
+    network.startUpdate(curDev,file);
 }
 
 void MainWindow::on_btnSelFile_clicked()
@@ -572,7 +604,10 @@ void MainWindow::on_btnSelFile_clicked()
 
 void MainWindow::on_btnReset_clicked()
 {
-    adc102.reset();
+    if(isUart)
+        adc102.reset();
+    else
+        n
 }
 
 void MainWindow::on_btnZero_clicked()
@@ -653,6 +688,19 @@ void MainWindow::on_btnCalibAllWt_clicked()
     QMessageBox::information(this,"提示","标定成功!");
 }
 
+void MainWindow::onRemoveClient(int)
+{
+    if(closed) return;
+    ui->listWidget->clear();
+    curDev.clear();
+    QStringList devs;
+    network.getOnLineClients(devs);
+    ui->tabWidget->setCurrentIndex(0);
+    for(int i = 0 ; i <devs.size();i++)
+        addItem(devs[i]);
+
+}
+
 void MainWindow::on_btnModifyK_clicked()
 {
     int num = ui->tblCalib->rowCount();
@@ -725,4 +773,10 @@ void MainWindow::on_radioHand_clicked()
         if(widget!=NULL)
             widget->setText("标重");
     }
+}
+
+
+void MainWindow::closeEvent(QCloseEvent *)
+{
+    closed = true;
 }

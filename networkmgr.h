@@ -14,10 +14,15 @@ public:
     bool stop();
     bool startUpdate(QString dev_ip, QString file);
     bool readPara(QString dev_ip, int para_addr);
+    int  getOnLineClients(QStringList &list);
+    bool setCurrentClient(QString dev_id);
+    bool reset();
 Q_SIGNALS:
     void SignalOneMsg(NetClient* _socket,Msg_Head head, void *data);
     void SignalDataReady(NetClient* _socket,QByteArray data);
     void SignalUpdateEvent(NetClient* _client, int evt, UpdateEvtPara para);
+    void SignalNewClient(NetClient* _client);
+    void SignalRemoveClient(int ipaddr);
 private slots:
     void onUpdateEvent(int evt, UpdateEvtPara para);
     void onDisConection();
@@ -29,6 +34,7 @@ private:
     void addClient(QTcpSocket* _socket);
     ClientSocketMap _clientList;
     QTcpServer _tcpServer;
+    NetClient* _curClient;
 
 };
 

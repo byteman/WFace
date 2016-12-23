@@ -3,7 +3,8 @@
 #include <QHostAddress>
 #include "netclient.h"
 
-NetWorkMgr::NetWorkMgr()
+NetWorkMgr::NetWorkMgr():
+    _curClient(NULL)
 {
 
 }
@@ -41,6 +42,29 @@ bool NetWorkMgr::readPara(QString dev_ip, int para_addr)
     client->readPara(para_addr);
 }
 
+int NetWorkMgr::getOnLineClients(QStringList &list)
+{
+    ClientSocketMap::iterator it = _clientList.begin();
+
+    for(;it != _clientList.end(); it++)
+    {
+        list.push_back(it->second->getID());
+    }
+    return list.size();
+}
+
+bool NetWorkMgr::setCurrentClient(QString dev_id)
+{
+    _curClient = findClient(dev_id);
+    return true;
+}
+
+bool NetWorkMgr::reset()
+{
+    if(_curClient==NULL) return false;
+    return _curClient->reset();
+}
+
 void NetWorkMgr::onUpdateEvent(int evt, UpdateEvtPara para)
 {
     emit SignalUpdateEvent((NetClient*)sender(), evt, para);
@@ -57,6 +81,7 @@ void NetWorkMgr::addClient(QTcpSocket *_socket)
 
     QString log = QString("ip %1 port %2 connected").arg(_socket->peerAddress().toIPv4Address()).arg(_socket->peerPort());
     qDebug() << log;
+    emit SignalNewClient(client);
     //ui->txtLog->append(log);
 }
 void NetWorkMgr::onDisConection()
@@ -66,7 +91,7 @@ void NetWorkMgr::onDisConection()
      QString log = QString("ip %1 port %2 disconnectd!").arg(_socket->peerAddress().toIPv4Address()).arg(_socket->peerPort());
      //ui->txtLog->append(log);
      qDebug() << log;
-
+     int ip = _socket->peerAddress().toIPv4Address();
      ClientSocketMap::iterator iter=_clientList.find(_socket);
      if(iter!=_clientList.end())
      {
@@ -75,6 +100,7 @@ void NetWorkMgr::onDisConection()
          _clientList.erase(iter);
      }
      _socket->deleteLater();
+     emit SignalRemoveClient(ip);
 }
 
 void NetWorkMgr::onNewConection()
@@ -94,14 +120,14 @@ void NetWorkMgr::onDataReady(QByteArray data)
     emit SignalDataReady((NetClient*)sender(),data);
 }
 
-NetClient *NetWorkMgr::findClient(QString ip)
+NetClient *NetWorkMgr::findClient(QString id)
 {
     ClientSocketMap::iterator it = _clientList.begin();
     NetClient* client = NULL;
     for(;it != _clientList.end(); it++)
     {
-        QString peer = it->first->peerAddress().toIPv4Address();
-        if(peer == ip)
+        QString _id = it->second->getID();
+        if(_id == id)
         {
             client = it->second;
             break;
