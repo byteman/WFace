@@ -36,7 +36,7 @@ private slots:
     void onCalibProcessResult(int index, int result);
     void onReadCalibPointResult(Sensor *sensors, int num,int weight);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
-
+    void onUpdateEvent(NetClient* _client,int evt, UpdateEvtPara para);
     void on_btnSearch_clicked();
 
     void on_tabWidget_currentChanged(int index);

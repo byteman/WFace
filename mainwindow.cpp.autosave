@@ -325,7 +325,9 @@ void MainWindow::onUpdateEvent(NetClient *_client, int evt, UpdateEvtPara para)
             }
             break;
         case UEVT_END:
+            
             break;
+        case UEVT_DATA
     }
 }
 

@@ -8,6 +8,28 @@ extern "C"{
 #pragma pack(push) // 将当前pack设置压栈保存
 #pragma pack(1)// 必须在结构体定义之前使用
 
+#define DIR_HOST_TO_DEV 0x5A
+#define DIR_DEV_TO_HOST 0xA5
+
+#define OPER_DEV_SEND2_HOST 0x1
+#define OPER_HOST_READ_DEV  0x2
+#define OPER_HOST_WRITE_DEV 0x4
+
+#define CMD_DEV2HOST_ONE_WEIGHT 1
+#define CMD_DEV2HOST_ALL_WEIGHT 2
+#define CMD_DEV2HOST_WATER_WEIGHT 3
+#define CMD_DEV2HOST_GPS 4
+#define CMD_DEV2HOST_DEVINFO 5
+#define CMD_DEV2HOST_HEART 6
+#define CMD_UPDATE 7
+#define CMD_RESET 8
+#define CMD_VER  9
+#define CMD_REALTIME_WEIGHT 10
+#define CMD_GPS 11
+#define CMD_GPS_REPORT_TIME 12       //轨迹上发时间间隔
+#define CMD_DEV_REPORT_TIME 13       //设备运行情况上发时间间隔
+
+
 typedef struct
 {
     unsigned short dev_id;
@@ -81,6 +103,24 @@ typedef struct {
                                                                         // 没有超载值为0，超载时值为当前重量
 
 }DevInf;
+
+// 文件传输结构
+typedef struct {
+	int 			mode;			// -1表示开始文件传输
+	unsigned int	file_type;		// 0普通文件，1升级文件
+	unsigned int 	file_size;		// 传输的文件大小
+	char			file_name[20];	// 使用8.3文件名规则,字符串保存，空余填零
+}fileStartDef;
+
+typedef struct {
+	int 			pack;			// 当前传输第几包数据
+	unsigned short	pack_size;		// 当前文件数据包的大小,可以选128，512，默认128
+	char			*data;			// 具体文件数据长度由 pack_size决定
+}fileRecvDef;
+
+typedef struct {
+	int 			mode;			// -2表示文件传输结束
+}fileEndDef;
 
 
 typedef struct {
