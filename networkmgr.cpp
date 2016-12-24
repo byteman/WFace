@@ -32,14 +32,42 @@ bool NetWorkMgr::startUpdate(QString dev_ip, QString file)
 
 }
 
-bool NetWorkMgr::readPara(QString dev_ip, int para_addr)
+bool NetWorkMgr::readPara(int para_addr,QString dev_id)
 {
-    NetClient* client = findClient(dev_ip);
-    if(client == NULL)
+    NetClient* client = NULL;
+    if(dev_id.isEmpty() && _curClient!=NULL)
     {
-        return false;
+        client =_curClient;
     }
+    else
+    {
+        client = findClient(dev_id);
+        if(client == NULL)
+        {
+            return false;
+        }
+    }
+
     client->readPara(para_addr);
+}
+
+bool NetWorkMgr::writePara(int para_addr, QByteArray data, QString dev_id)
+{
+    NetClient* client = NULL;
+    if(dev_id.isEmpty() && _curClient!=NULL)
+    {
+        client =_curClient;
+    }
+    else
+    {
+        client = findClient(dev_id);
+        if(client == NULL)
+        {
+            return false;
+        }
+    }
+
+    return client->writePara(para_addr,data);
 }
 
 int NetWorkMgr::getOnLineClients(QStringList &list)

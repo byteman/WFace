@@ -97,6 +97,8 @@ public:
     void addItem(QString id);
 
     // QWidget interface
+    QUrl GPSMark(const QString &GPSCoordinate);
+    bool checkAck(QString para, int oper,int value);
 protected:
     void closeEvent(QCloseEvent *);
 };

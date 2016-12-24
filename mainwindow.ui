@@ -492,7 +492,7 @@
               </spacer>
              </item>
              <item row="5" column="3">
-              <widget class="QComboBox" name="comboBox">
+              <widget class="QComboBox" name="cbxGps">
                <item>
                 <property name="text">
                  <string>GPS</string>
@@ -513,7 +513,7 @@
               </widget>
              </item>
              <item row="6" column="3">
-              <widget class="QLineEdit" name="lineEdit_3"/>
+              <widget class="QLineEdit" name="edtGpsTime"/>
              </item>
              <item row="5" column="0">
               <widget class="QLabel" name="label_3">
@@ -523,7 +523,7 @@
               </widget>
              </item>
              <item row="7" column="3">
-              <widget class="QLineEdit" name="lineEdit_4"/>
+              <widget class="QLineEdit" name="edtDevTime"/>
              </item>
              <item row="7" column="0">
               <widget class="QLabel" name="label_11">
@@ -987,6 +987,22 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_5">
+       <attribute name="title">
+        <string>页</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QWebView" name="webView">
+          <property name="url">
+           <url>
+            <string>about:blank</string>
+           </url>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -997,7 +1013,7 @@
      <x>0</x>
      <y>0</y>
      <width>977</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuChange">
@@ -1048,6 +1064,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKitWidgets/QWebView</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

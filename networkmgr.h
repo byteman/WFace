@@ -13,7 +13,8 @@ public:
     bool start(int port);
     bool stop();
     bool startUpdate(QString dev_ip, QString file);
-    bool readPara(QString dev_ip, int para_addr);
+    bool readPara(int para_addr,QString dev_id="");
+    bool writePara(int para_addr,QByteArray data,QString dev_id="");
     int  getOnLineClients(QStringList &list);
     bool setCurrentClient(QString dev_id);
     bool reset();

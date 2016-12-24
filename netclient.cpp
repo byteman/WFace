@@ -150,6 +150,7 @@ void NetClient::parse()
                     break;
                 case 4:
                     break;
+
                 case CMD_UPDATE:
                     processUpdateAck(head,_data);
                     break;

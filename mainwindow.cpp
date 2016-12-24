@@ -6,6 +6,7 @@
 #include "3rdparty/qextserialport/qextserialenumerator.h"
 #include <QSignalMapper>
 #include <QTranslator>
+#include <QtWebKitWidgets/QWebView>
 #include "pcomm.h"
 #include <QFileDialog>
 #include <QFile>
@@ -58,9 +59,34 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     setWindowState(Qt::WindowMaximized);
     for(int i = 0; i < ui->tableWidget->columnCount(); i++)
         ui->tableWidget->setColumnWidth(i,200);
-
+    //GPSMark("40.047669,116.313082");
+    //ui->webView->load();
 }
+#include <QUrl>
+#include <QUrlQuery>
+QUrl  MainWindow::GPSMark(const QString &GPSCoordinate)
+{
+    QUrl temp;
+    QString ret;
+    //HttpClient * http = new HttpClient();
+    QUrl url;
+    url.setUrl("http://api.map.baidu.com/marker");
+    QUrlQuery urlQuery;
+    urlQuery.addQueryItem("location", GPSCoordinate);
+    urlQuery.addQueryItem("title", tr("my GPS location"));  //标点的标题
+    urlQuery.addQueryItem("content", tr("current location"));       //标点的内容
+    urlQuery.addQueryItem("output", "html");
+    //urlQuery.addQueryItem("coord_type", "bd09");
+    urlQuery.addQueryItem("src", "map");
+    url.setQuery(urlQuery);
+    //http://map.baidu.com/?latlng=40.047669,116.313082&title=my gps loclation
+    //url = QUrl("http://map.baidu.com/?latlng=40.047669,116.313082&title=我的位置&content=百度奎科大厦&autoOpen=true&l");
+    ui->webView->load(url);
+    ui->webView->show();
 
+    setWindowTitle(url.toString());
+    return temp;
+}
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -113,9 +139,25 @@ QString formatTime(DateDef& d)
     return QString("%1-%2-%3 %4:%5:%6").arg(2000+d.year).arg(d.month).arg(d.day).arg(d.hour).arg(d.min).arg(d.sec);
 }
 #include <QDateTime>
+
+bool MainWindow::checkAck(QString para,int oper,int value)
+{
+    if(oper == OPER_HOST_WRITE_DEV)
+    {
+        //写数据的回应.
+        if(value != 0)
+        {
+            QMessageBox::information(this,"title","write gps style failed");
+
+        }
+        return false;
+    }
+    return true;
+}
 void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
 {
-    if(head.cmd == 1)
+
+    if(head.cmd == CMD_DEV2HOST_ONE_WEIGHT)
     {
         PointWet* pwt =  (PointWet*)arg;
         qDebug() << "wet" << pwt->wet;
@@ -146,6 +188,61 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
 
         addItemContent(count,i++,qdt.toString("yyyy-MM-dd hh:mm:ss"));
         addItemContent(count,i++,QString("%1").arg(pwt->wet));
+    }
+    else if(head.cmd == CMD_VER)
+    {
+        int ver = *((int*)arg);
+        if(head.oper == OPER_HOST_WRITE_DEV)
+        {
+
+            return;
+        }
+
+        QString vers = QString("ver%1.%2.%3").arg((ver>>16)&0xFF).arg((ver>>8)&0xFF).arg((ver)&0xFF);
+        ui->edtVersion->setText(vers);
+    }
+    else if(head.cmd == CMD_GPS)
+    {
+        quint8 gps=  *((quint8*)arg);
+
+        if(!checkAck("gps",head.oper,gps))
+        {
+            return false;
+        }
+        if(gps == 0 || gps == 1)
+        {
+            ui->cbxGps->setCurrentIndex(gps);
+        }
+    }
+    else if(head.cmd == CMD_GPS_REPORT_TIME)
+    {
+        quint8 gpstime=  *((quint8*)arg);
+        if(head.oper == OPER_HOST_WRITE_DEV)
+        {
+            //写数据的回应.
+            if(gpstime != 0)
+            {
+                QMessageBox::information(this,"title","write gps time failed");
+
+            }
+            return;
+        }
+        ui->edtGpsTime->setText(QString("%d").arg(gpstime));
+    }
+    else if(head.cmd == CMD_DEV_REPORT_TIME)
+    {
+        quint8 devtime=  *((quint8*)arg);
+        if(head.oper == OPER_HOST_WRITE_DEV)
+        {
+            //写数据的回应.
+            if(gpstime != 0)
+            {
+                QMessageBox::information(this,"title","write gps time failed");
+
+            }
+            return;
+        }
+        ui->edtDevTime->setText(QString("%d").arg(devtime));
     }
 }
 
@@ -395,12 +492,25 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     else if(index == 1)
     {
 
-        //adc102.startReadWeight();
-        adc102.startReadPara();
+        if(isUart)
+        {
+            adc102.startReadPara();
+        }
+        else
+        {
+            network.readPara(CMD_VER);
+            network.readPara(CMD_GPS);
+            network.readPara(CMD_GPS_REPORT_TIME);
+            network.readPara(CMD_DEV_REPORT_TIME);
+        }
+
     }
     else if(index == 2)
     {
-        adc102.readCalibPoints();
+        if(isUart)
+        {
+            adc102.readCalibPoints();
+        }
     }
     else if(index == 3)
     {
@@ -607,7 +717,10 @@ void MainWindow::on_btnReset_clicked()
     if(isUart)
         adc102.reset();
     else
-        n
+    {
+        network.reset();
+    }
+
 }
 
 void MainWindow::on_btnZero_clicked()
