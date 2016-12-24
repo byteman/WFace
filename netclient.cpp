@@ -6,19 +6,24 @@
 #include <QFileInfo>
 
 #define MAX_RETRY_COUNT 3
+#define ONLINE_TIMEOUT (120*MAX_RETRY_COUNT)
+#define UPDATE_PACKET_SIZE 256
 NetClient::NetClient(QTcpSocket* socket):
     _socket(socket),
-    m_timeout(2000),
+    m_timeout(60000),
     m_timeout_retry(0),
     m_dev_id(0),
     _updateState(UPDATE_IDEL),
-    m_file_type(1)
+    m_file_type(1),
+    m_online(false)
 {
 
     connect(socket,SIGNAL(readyRead()),this,SLOT(onDataReceived()));
     connect(&m_timer,SIGNAL(timeout()),this,SLOT(timerHandler()));
+    connect(&m_online_timer,SIGNAL(timeout()),this,SLOT(onLineTimerHandler()));
 
     m_timer.stop();
+    m_online_timer.start(60*1000);
 }
 
 QTcpSocket* NetClient::getSocket()
@@ -47,6 +52,11 @@ void NetClient::updateComplete()
      sendUpdateEvent(UEVT_OK);
 }
 
+void NetClient::processOnline(Msg_Head& head,QByteArray& data)
+{
+    memcpy(&m_dev_id,data.data(),2);
+
+}
 void NetClient::processUpdateAck(Msg_Head& head,QByteArray& data)
 {
 
@@ -154,6 +164,10 @@ void NetClient::parse()
                 case CMD_UPDATE:
                     processUpdateAck(head,_data);
                     break;
+                case CMD_DEV_ONLINE:
+                    processOnline(head,_data);
+                break;
+            default:break;
             }
 
             _data.remove(0,head.len);
@@ -179,10 +193,15 @@ bool NetClient::sendpacket(quint8 cmd, quint8 oper, QByteArray data)
     QByteArray _send((const char*)&head, sizeof(Msg_Head));
 
     _send.append(data);
+    quint16 crc = 0;
+    crc = Reentrent_CRC16((quint8*)_send.data(),_send.size());
+    _send.append((const char*)&crc,2);
+
     m_timeout_retry++;
     if(_socket!=NULL)
     {
         qint64 n = _socket->write(_send);
+        qDebug() << "send --> " << _send.toHex();
         m_timer.start(m_timeout);
         return (n==_send.size());
     }
@@ -202,6 +221,7 @@ bool NetClient::isUpdateTimeout()
 }
 void NetClient::sendUpdateStartRequest()
 {
+    qDebug() << "sendUpdateStartRequest";
     if(isUpdateTimeout())
     {
         qDebug() << "sendUpdateStartRequest timeout";
@@ -253,7 +273,7 @@ void NetClient::sendUpdateEvent(int evt)
     par.total_pkg_index = m_total_packet;
     emit signalUpdateEvent(evt,par);
 }
-#define UPDATE_PACKET_SIZE 128
+
 void NetClient::sendUpdateData(int index)
 {
     int pos = index*UPDATE_PACKET_SIZE;
@@ -297,7 +317,8 @@ void NetClient::onDataReceived()
     QTcpSocket* client = static_cast<QTcpSocket*>(sender());
     QByteArray data = client->readAll();
     emit signalDataReady(data);
-    qDebug() << data;
+    qDebug() << "recv --> " << data;
+    m_online_timeout = 0;
     _data.append(data);
     parse();
 
@@ -318,8 +339,9 @@ int NetClient::StartUpgrade(QString file,int fileType)
     }
     m_file_type = fileType;
     _updateData = ufile.readAll();
+    qDebug() << "upload file size= " << _updateData.size();
     QFileInfo info = QFileInfo(file);
-
+    m_total_packet = (_updateData.size()+UPDATE_PACKET_SIZE-1)/UPDATE_PACKET_SIZE;
     m_file_name = info.fileName();
     sendUpdateStartRequest();
 
@@ -347,18 +369,35 @@ bool NetClient::reset()
     data.clear();
     return sendpacket(CMD_RESET,OPER_HOST_WRITE_DEV,data);
 }
+void NetClient::onLineTimerHandler()
+{
 
+    if(m_online_timeout++ > 3)
+    {
+        sendUpdateEvent(UEVT_DISCONNECT);
+        qDebug() << "heart beart timeout,close";
+        if(_socket)
+        {
+            _socket->close();
+        }
+    }
+}
 void NetClient::timerHandler()
 {
 
+    qDebug() << "update timeout";
     switch(_updateState)
     {
         case UPDATE_START:
+            qDebug() << "UPDATE_START timeout retry";
             sendUpdateStartRequest();
             break;
         case UPDATE_DATA:
+            qDebug() << "UPDATE_DATA timeout retry";
             sendUpdateData(m_packet_index);
+            break;
         case UPDATE_END:
+            qDebug() << "UPDATE_END timeout retry";
             sendUpdateStopRequest();
             break;
         default:

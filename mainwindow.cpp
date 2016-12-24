@@ -81,8 +81,8 @@ QUrl  MainWindow::GPSMark(const QString &GPSCoordinate)
     url.setQuery(urlQuery);
     //http://map.baidu.com/?latlng=40.047669,116.313082&title=my gps loclation
     //url = QUrl("http://map.baidu.com/?latlng=40.047669,116.313082&title=我的位置&content=百度奎科大厦&autoOpen=true&l");
-    ui->webView->load(url);
-    ui->webView->show();
+    //ui->webView->load(url);
+    //ui->webView->show();
 
     setWindowTitle(url.toString());
     return temp;
@@ -207,7 +207,7 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
 
         if(!checkAck("gps",head.oper,gps))
         {
-            return false;
+            return ;
         }
         if(gps == 0 || gps == 1)
         {
@@ -235,7 +235,7 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
         if(head.oper == OPER_HOST_WRITE_DEV)
         {
             //写数据的回应.
-            if(gpstime != 0)
+            if(devtime != 0)
             {
                 QMessageBox::information(this,"title","write gps time failed");
 

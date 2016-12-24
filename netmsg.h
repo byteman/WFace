@@ -28,7 +28,7 @@ extern "C"{
 #define CMD_GPS 11
 #define CMD_GPS_REPORT_TIME 12       //轨迹上发时间间隔
 #define CMD_DEV_REPORT_TIME 13       //设备运行情况上发时间间隔
-
+#define CMD_DEV_ONLINE 14
 
 typedef struct
 {

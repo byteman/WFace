@@ -11,11 +11,12 @@ enum UpdateState{
     UPDATE_END
 };
 enum UpdateEvent{
-    UEVT_TIMEOUT, //·¢ËÍ³¬Ê±
+    UEVT_TIMEOUT, //ï¿½ï¿½ï¿½Í³ï¿½Ê±
     UEVT_START,
     UEVT_DATA,
     UEVT_END,
-    UEVT_OK
+    UEVT_OK,
+    UEVT_DISCONNECT
 };
 struct UpdateEvtPara
 {
@@ -38,6 +39,7 @@ public:
     bool writePara(int para_addr, QByteArray para);
     QString getID();
     bool reset();
+    void processOnline(Msg_Head &head, QByteArray &data);
 signals:
     void signalMsg(Msg_Head head,void* msg);
     void signalDataReady(QByteArray data);
@@ -45,7 +47,7 @@ signals:
 private slots:
 
     void onDataReceived();
-
+    void onLineTimerHandler();
     void timerHandler();
 private:
     QTcpSocket *_socket;
@@ -54,14 +56,17 @@ private:
     QByteArray _data_notify;
     QString    m_file_name;
     QTimer      m_timer;
+    QTimer      m_online_timer;
     int m_file_type;
     int m_packet_index;
     int m_total_packet;
     int m_timeout;
     int m_timeout_retry;
     quint16 m_dev_id;
+    QString m_car_id;
     UpdateState _updateState;
     bool m_online;
+    int  m_online_timeout;
     void processOneWeight(Msg_Head& head,QByteArray &data);
     void processUpdateAck(Msg_Head& head,QByteArray& data);
     void parse();
