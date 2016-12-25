@@ -127,6 +127,7 @@ void NetWorkMgr::onDisConection()
          if(client != NULL) delete client;
          _clientList.erase(iter);
      }
+     _curClient = NULL;
      _socket->deleteLater();
      emit SignalRemoveClient(ip);
 }

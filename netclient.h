@@ -35,6 +35,7 @@ public:
     void updateComplete();
     void sendUpdateEvent(int evt);
     int  StartUpgrade(QString file,int fileType=1);
+    int  StopUpgrade();
     bool readPara(int  para_addr);
     bool writePara(int para_addr, QByteArray para);
     QString getID();
@@ -57,6 +58,7 @@ private:
     QString    m_file_name;
     QTimer      m_timer;
     QTimer      m_online_timer;
+    QByteArrayList m_cmd_list;
     int m_file_type;
     int m_packet_index;
     int m_total_packet;
@@ -71,7 +73,7 @@ private:
     void processUpdateAck(Msg_Head& head,QByteArray& data);
     void parse();
     bool send_update_packet(QByteArray data);
-    bool sendpacket(quint8 cmd,quint8 oper, QByteArray data);
+    bool sendpacket(quint8 cmd,quint8 oper, QByteArray data,bool queue=false);
     void sendUpdateStartRequest();
     void sendUpdateStopRequest();
     void sendUpdateData(int index);

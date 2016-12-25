@@ -7,10 +7,10 @@
 
 #define MAX_RETRY_COUNT 3
 #define ONLINE_TIMEOUT (120*MAX_RETRY_COUNT)
-#define UPDATE_PACKET_SIZE 256
+#define UPDATE_PACKET_SIZE 512
 NetClient::NetClient(QTcpSocket* socket):
     _socket(socket),
-    m_timeout(60000),
+    m_timeout(3000),
     m_timeout_retry(0),
     m_dev_id(0),
     _updateState(UPDATE_IDEL),
@@ -22,7 +22,7 @@ NetClient::NetClient(QTcpSocket* socket):
     connect(&m_timer,SIGNAL(timeout()),this,SLOT(timerHandler()));
     connect(&m_online_timer,SIGNAL(timeout()),this,SLOT(onLineTimerHandler()));
 
-    m_timer.stop();
+    //m_timer.start(m_timeout);
     m_online_timer.start(60*1000);
 }
 
@@ -69,7 +69,7 @@ void NetClient::processUpdateAck(Msg_Head& head,QByteArray& data)
         qDebug() << "processUpdateAck data size=" << data.size();
         return;
     }
-    m_timer.stop();
+    //m_timer.stop();
     int err = data[0];
     if(err != 0)
     {
@@ -149,6 +149,7 @@ void NetClient::parse()
             _data.remove(0,sizeof(Msg_Head)); //remove head bytes
             _data.remove(head.len,2); //remove 2 bytes crc
 
+
             switch(head.cmd)
             {
                 case CMD_DEV2HOST_ONE_WEIGHT:
@@ -181,7 +182,7 @@ bool NetClient::send_update_packet(QByteArray data)
 }
 
 
-bool NetClient::sendpacket(quint8 cmd, quint8 oper, QByteArray data)
+bool NetClient::sendpacket(quint8 cmd, quint8 oper, QByteArray data,bool queue)
 {
     Msg_Head head;
     head.dev_id = m_dev_id;
@@ -200,9 +201,16 @@ bool NetClient::sendpacket(quint8 cmd, quint8 oper, QByteArray data)
     m_timeout_retry++;
     if(_socket!=NULL)
     {
+//        if(queue)
+//        {
+//            m_cmd_list.push_back(_send);
+//            //m_timer.start(m_timeout);
+//            return true;
+//        }
+        _socket->flush();
         qint64 n = _socket->write(_send);
         qDebug() << "send --> " << _send.toHex();
-        m_timer.start(m_timeout);
+        //m_timer.start(m_timeout);
         return (n==_send.size());
     }
     return false;
@@ -213,7 +221,7 @@ bool NetClient::isUpdateTimeout()
     {
         //接收超时.
         _updateState = UPDATE_IDEL;
-        m_timer.stop();
+        //m_timer.stop();
         sendUpdateEvent(UEVT_TIMEOUT);
         return true;
     }
@@ -277,7 +285,7 @@ void NetClient::sendUpdateEvent(int evt)
 void NetClient::sendUpdateData(int index)
 {
     int pos = index*UPDATE_PACKET_SIZE;
-    qDebug() << "sendUpdateData index=" << index;
+    qDebug() << "sendUpdateData index=" << index << "total = " << m_total_packet;
     if(isUpdateTimeout())
     {
         qDebug() << "sendUpdateData timeout packet" << m_packet_index;
@@ -294,18 +302,19 @@ void NetClient::sendUpdateData(int index)
 
     QByteArray data;
 
-
-    int size = (_updateData.size() > UPDATE_PACKET_SIZE)?UPDATE_PACKET_SIZE:_updateData.size();
+    int left = _updateData.size()-pos;
+    int size = (left > UPDATE_PACKET_SIZE)?UPDATE_PACKET_SIZE:left;
     data.append((const char*)&index,sizeof(int)); //包序号
     data.append((const char*)&size,sizeof(int)); //包长度
 
-    qDebug() << "send" << index << " data " << size;
+    qDebug() << "left = " << left;
     data.append(_updateData.mid(pos,size));
+
 //    for(;size < UPDATE_PACKET_SIZE;size++)
 //    {
 //        data.append(0xFF);
 //    }
-    qDebug() << "packet size" << data.size();
+    qDebug() << "send  packet size" << data.size();
     send_update_packet(data);
 
     sendUpdateEvent(UEVT_DATA);
@@ -338,19 +347,35 @@ int NetClient::StartUpgrade(QString file,int fileType)
         return -1;
     }
     m_file_type = fileType;
+    _updateData.clear();
     _updateData = ufile.readAll();
     qDebug() << "upload file size= " << _updateData.size();
     QFileInfo info = QFileInfo(file);
     m_total_packet = (_updateData.size()+UPDATE_PACKET_SIZE-1)/UPDATE_PACKET_SIZE;
     m_file_name = info.fileName();
     sendUpdateStartRequest();
+    return 0;
+}
 
+int NetClient::StopUpgrade()
+{
+    // m_timer.stop();
+    _updateState=UPDATE_IDEL;
+    m_packet_index  = 0;
+    m_total_packet  = 0;
+
+    return 0;
 }
 
 bool NetClient::readPara(int para_addr)
 {
+    if(_updateState != UPDATE_IDEL)
+    {
+        qDebug() << "not idel";
+        return false;
+    }
     QByteArray data;
-    return sendpacket(para_addr, OPER_HOST_READ_DEV,data);
+    return sendpacket(para_addr, OPER_HOST_READ_DEV,data,true);
 }
 
 bool NetClient::writePara(int para_addr, QByteArray para)
@@ -384,25 +409,32 @@ void NetClient::onLineTimerHandler()
 }
 void NetClient::timerHandler()
 {
+    qDebug() << "update timeout deque cmd size=" << m_cmd_list.size();
+//    if(_updateState == UPDATE_IDEL && m_cmd_list.size() > 0)
+//    {
+//        QByteArray a = m_cmd_list.front();
+//        m_cmd_list.pop_front();
+//        _socket->write(a);
+//    }
 
-    qDebug() << "update timeout";
-    switch(_updateState)
-    {
-        case UPDATE_START:
-            qDebug() << "UPDATE_START timeout retry";
-            sendUpdateStartRequest();
-            break;
-        case UPDATE_DATA:
-            qDebug() << "UPDATE_DATA timeout retry";
-            sendUpdateData(m_packet_index);
-            break;
-        case UPDATE_END:
-            qDebug() << "UPDATE_END timeout retry";
-            sendUpdateStopRequest();
-            break;
-        default:
-            qDebug() << "timeout idle";
-            break;
+//    qDebug() << "update timeout";
+//   switch(_updateState)
+//    {
+//        case UPDATE_START:
+//            qDebug() << "UPDATE_START timeout retry";
+//            sendUpdateStartRequest();
+//            break;
+//        case UPDATE_DATA:
+//            qDebug() << "UPDATE_DATA timeout retry";
+//            sendUpdateData(m_packet_index);
+//            break;
+//        case UPDATE_END:
+//            qDebug() << "UPDATE_END timeout retry";
+//            sendUpdateStopRequest();
+//            break;
+//        default:
+//            qDebug() << "timeout idle";
+//            break;
 
-    }
+//    }
 }

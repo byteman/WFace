@@ -46,7 +46,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     connect(&adc102,SIGNAL(calibPointResult(Sensor*,int,int)),SLOT(onReadCalibPointResult(Sensor*,int,int)));
     connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
 
-
+    connect(&m_timer,SIGNAL(timeout()),SLOT(onTimerHandle()));
     signalMapper  = new QSignalMapper(this);
     signalMapper2 = new QSignalMapper(this);
 
@@ -102,6 +102,21 @@ void MainWindow::addItemContent(int row, int column, QString content)
       ui->tableWidget->setItem(row, column, item);
 
 }
+
+void MainWindow::onTimerHandle()
+{
+    qDebug() << "timeout cmd = " << m_read_cmds.size();
+    if(m_read_cmds.size() > 0)
+    {
+        network.readPara(m_read_cmds.front());
+        m_timer.stop();
+        m_timer.start(5000);
+    }
+    else
+    {
+        m_timer.stop();
+    }
+}
 void MainWindow::addItem(QString id)
 {
     QString title = QString("%1").arg(id);
@@ -154,6 +169,33 @@ bool MainWindow::checkAck(QString para,int oper,int value)
     }
     return true;
 }
+void MainWindow::removeCmd(int cmd)
+{
+    QList<int> removes;
+    m_timer.stop();
+    if(m_read_cmds.size() == 0)
+    {
+
+        return;
+    }
+
+    for(int i = 0; i < m_read_cmds.size(); i++)
+    {
+        if(m_read_cmds[i] == cmd)
+        {
+            removes.append(i);
+        }
+    }
+    for(int i = 0; i < removes.size(); i++)
+    {
+        m_read_cmds.removeAt(removes[i]);
+    }
+    if(m_read_cmds.size() > 0)
+    {
+        network.readPara(m_read_cmds.front());
+        m_timer.start(5000);
+    }
+}
 void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
 {
 
@@ -197,7 +239,7 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
 
             return;
         }
-
+        removeCmd(CMD_VER);
         QString vers = QString("ver%1.%2.%3").arg((ver>>16)&0xFF).arg((ver>>8)&0xFF).arg((ver)&0xFF);
         ui->edtVersion->setText(vers);
     }
@@ -205,10 +247,21 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
     {
         quint8 gps=  *((quint8*)arg);
 
-        if(!checkAck("gps",head.oper,gps))
+        if(head.oper == OPER_HOST_WRITE_DEV)
         {
-            return ;
+            //写数据的回应.
+            if(gps != 0)
+            {
+                QMessageBox::information(this,"title","write gps style failed");
+
+            }
+            else
+            {
+                QMessageBox::information(this,"title","write gps style ok");
+            }
+            return;
         }
+        removeCmd(CMD_GPS);
         if(gps == 0 || gps == 1)
         {
             ui->cbxGps->setCurrentIndex(gps);
@@ -216,6 +269,7 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
     }
     else if(head.cmd == CMD_GPS_REPORT_TIME)
     {
+
         quint8 gpstime=  *((quint8*)arg);
         if(head.oper == OPER_HOST_WRITE_DEV)
         {
@@ -225,9 +279,14 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
                 QMessageBox::information(this,"title","write gps time failed");
 
             }
+            else
+            {
+                QMessageBox::information(this,"title","write gps time ok");
+            }
             return;
         }
-        ui->edtGpsTime->setText(QString("%d").arg(gpstime));
+        removeCmd(CMD_GPS_REPORT_TIME);
+        ui->edtGpsTime->setText(QString("%1").arg(gpstime));
     }
     else if(head.cmd == CMD_DEV_REPORT_TIME)
     {
@@ -237,12 +296,15 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
             //写数据的回应.
             if(devtime != 0)
             {
-                QMessageBox::information(this,"title","write gps time failed");
+                QMessageBox::information(this,"title","write dev time failed");
 
             }
+            else
+                 QMessageBox::information(this,"title","write dev time ok");
             return;
         }
-        ui->edtDevTime->setText(QString("%d").arg(devtime));
+        removeCmd(CMD_DEV_REPORT_TIME);
+        ui->edtDevTime->setText(QString("%1").arg(devtime));
     }
 }
 
@@ -428,6 +490,7 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
     {
         curDev = item->text();
         isUart = false;
+        network.setCurrentClient(curDev);
     }
     ui->tabWidget->setCurrentIndex(1);
 
@@ -498,10 +561,17 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         }
         else
         {
+            //network.readPara(CMD_VER);
+            m_read_cmds.clear();
+            m_read_cmds.append(CMD_VER);
+            m_read_cmds.append(CMD_GPS);
+            m_read_cmds.append(CMD_GPS_REPORT_TIME);
+            m_read_cmds.append(CMD_DEV_REPORT_TIME);
             network.readPara(CMD_VER);
-            network.readPara(CMD_GPS);
-            network.readPara(CMD_GPS_REPORT_TIME);
-            network.readPara(CMD_DEV_REPORT_TIME);
+            m_timer.start(5000);
+            //network.readPara(CMD_GPS);
+            //network.readPara(CMD_GPS_REPORT_TIME);
+            //network.readPara(CMD_DEV_REPORT_TIME);
         }
 
     }
@@ -811,6 +881,7 @@ void MainWindow::onRemoveClient(int)
     ui->tabWidget->setCurrentIndex(0);
     for(int i = 0 ; i <devs.size();i++)
         addItem(devs[i]);
+    m_timer.stop();
 
 }
 
@@ -892,4 +963,69 @@ void MainWindow::on_radioHand_clicked()
 void MainWindow::closeEvent(QCloseEvent *)
 {
     closed = true;
+}
+
+void MainWindow::on_edtVersion_returnPressed()
+{
+    qDebug() << "return";
+}
+
+void MainWindow::on_edtDevTime_returnPressed()
+{
+    qDebug() << "return";
+    bool ok = false;
+    quint8 val = ui->edtDevTime->text().toInt(&ok);
+    if(!ok)
+    {
+        return ;
+    }
+    QByteArray data;
+    data.append(val);
+
+    network.writePara(CMD_DEV_REPORT_TIME,data);
+}
+
+void MainWindow::on_edtGpsTime_returnPressed()
+{
+    qDebug() << "return";
+    bool ok = false;
+    quint8 val = ui->edtGpsTime->text().toInt(&ok);
+    if(!ok)
+    {
+        return ;
+    }
+    QByteArray data;
+    data.append(val);
+
+    network.writePara(CMD_GPS_REPORT_TIME,data);
+}
+
+void MainWindow::on_cbxGps_currentIndexChanged(int index)
+{
+
+    quint8 val = ui->cbxGps->currentIndex();
+
+    QByteArray data;
+    data.append(val);
+
+    network.writePara(CMD_GPS,data);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    if(isUart)
+    {
+        adc102.startReadPara();
+    }
+    else
+    {
+        m_read_cmds.clear();
+        m_read_cmds.append(CMD_VER);
+        m_read_cmds.append(CMD_GPS);
+        m_read_cmds.append(CMD_GPS_REPORT_TIME);
+        m_read_cmds.append(CMD_DEV_REPORT_TIME);
+        network.readPara(CMD_VER);
+        m_timer.start(5000);
+
+    }
 }

@@ -25,6 +25,7 @@ public:
     void addItemContent(int row, int column, QString content);
 
 private slots:
+    void onTimerHandle();
     void onNewClient(NetClient*);
     void onOneMsg(NetClient*,Msg_Head,void*);
     void on_actionChagne_triggered();
@@ -78,17 +79,29 @@ private slots:
 
     void on_radioHand_clicked();
 
+    void on_edtVersion_returnPressed();
+
+    void on_edtDevTime_returnPressed();
+
+    void on_edtGpsTime_returnPressed();
+
+    void on_cbxGps_currentIndexChanged(int index);
+
+    void on_pushButton_clicked();
+
 private:
     void initCalibPoints(int count);
     Ui::MainWindow *ui;
     ADC102 adc102;
     QApplication &_app;
+    QTimer m_timer;
     QSignalMapper *signalMapper;
     QSignalMapper *signalMapper2;
     NetWorkMgr network;
     QString curDev;
     bool closed;
     bool isUart;
+    QList<int> m_read_cmds;
     // QObject interface
 public:
 
@@ -99,6 +112,7 @@ public:
     // QWidget interface
     QUrl GPSMark(const QString &GPSCoordinate);
     bool checkAck(QString para, int oper,int value);
+    void removeCmd(int cmd);
 protected:
     void closeEvent(QCloseEvent *);
 };
