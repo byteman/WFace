@@ -152,8 +152,17 @@ bool ADC102::stopReadPara()
 bool ADC102::startCalib(int index, int weight)
 {
 
-    CalibHandler* handler = (CalibHandler*)m_handlers[3];
-    return handler->calibSet(index,weight,0);
+    ParaHandler* handler1 = (ParaHandler*)m_handlers[2];
+    if(handler1!=NULL)
+    {
+
+        if(!handler1->paraRead(m_para))
+        {
+            return false;
+        }
+    }
+    CalibHandler* handler2 = (CalibHandler*)m_handlers[3];
+    return handler2->calibSet(index,weight,0);
 
 }
 
@@ -272,5 +281,10 @@ bool ADC102::startUpdate(QString file)
     }
 
     return true;
+}
+
+void ADC102::getRXTX(int &rx, int &tx)
+{
+    modbus.get_rx_tx(rx,tx);
 }
 

@@ -48,6 +48,7 @@ public slots:
     bool modifyAddr(quint16 oldAddr, quint16 newAddr);
     bool reset();
     bool startUpdate(QString file);
+    void getRXTX(int& rx, int& tx);
 private:
     UpdateHandler* handler_update;
     RTU_Modbus modbus;

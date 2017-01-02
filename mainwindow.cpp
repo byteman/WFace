@@ -31,7 +31,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
         ui->cbxPort->addItem(port.portName);
     }
     ui->cbxBaud->setCurrentIndex(1);
-    ui->progressBar->hide();
+    //ui->progressBar->hide();
     ui->scanPb->hide();
     //int version = 21101;
     //ui->edtVersion->setText(QString("V%1.%2.%3").arg(version/10000).arg((version%10000)/100).arg(version%100));
@@ -46,7 +46,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
     initCalibPoints();
 
-
+    this->startTimer(500);
     //connect(ui->btnGN,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
     //this->setStyleSheet(res);
 }
@@ -73,14 +73,15 @@ void MainWindow::onParaReadResult(Para _para)
 {
     ui->cbxDot->setCurrentIndex(_para.dot);
     ui->edtFullLow->setText(QString("%1").arg(_para.span_low));
-    ui->lbl_display_wet_2->setText(QString("Max1: %1").arg(_para.span_low));
+    ui->lbl_display_wet_4->setText(QString("Mid: %1").arg(_para.span_low));
     ui->edtFullHigh->setText(QString("%1").arg(_para.span_high));
-    ui->lbl_display_wet_3->setText(QString("Max2: %1").arg(_para.span_high));
+    ui->lbl_display_wet_2->setText(QString("Max: %1").arg(_para.span_high));
     ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
-    ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_high));
+    ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_low));
     ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
-    ui->lbl_display_wet_4->setText(QString("d1: %1").arg(_para.div_low));
+    ui->lbl_display_wet_3->setText(QString("d1: %1").arg(_para.div_high));
     ui->cbxUnit->setCurrentIndex(_para.unit);
+    ui->edtSerial->setText(QString("%1").arg(_para.serial));
     if(_para.unit == 0) {
         ui->lblunit->setText("kg");
         unit = "kg";
@@ -102,6 +103,7 @@ void MainWindow::onParaReadResult(Para _para)
     ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
     ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
     ui->cbxAdRate->setCurrentIndex(_para.adRate);
+
     ui->edtVersion->setText(QString("V%1.%2.%3").arg(_para.version/10000).arg((_para.version%10000)/100).arg(_para.version%100));
 }
 
@@ -138,7 +140,7 @@ void MainWindow::onUpdateResult(int result, int pos, int total)
     {
     case -1:
         QMessageBox::information(this,tr("error"),tr("start update failed"));
-        ui->progressBar->hide();
+        //ui->progressBar->hide();
         break;
     case 1:
 
@@ -152,19 +154,19 @@ void MainWindow::onUpdateResult(int result, int pos, int total)
         break;
     case 4:
         ui->statusBar->showMessage(tr("ready send file.."));
-        ui->progressBar->show();
-        if(total > 0)
-            ui->progressBar->setValue(pos*100/total);
+        //ui->progressBar->show();
+        //if(total > 0)
+        //    ui->progressBar->setValue(pos*100/total);
         break;
     case 5:
         ui->statusBar->showMessage(tr("send file complete.."),2000);
         QMessageBox::information(this,tr("info"),tr("update complete"));
-        ui->progressBar->setValue(0);
-        ui->progressBar->hide();
+        //ui->progressBar->setValue(0);
+        //ui->progressBar->hide();
         break;
     default:
-        ui->statusBar->showMessage(tr("update unkown error"));
-        ui->progressBar->hide();
+        //ui->statusBar->showMessage(tr("update unkown error"));
+        //ui->progressBar->hide();
         break;
     }
 }
@@ -332,6 +334,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     }
     else if(index == 3)
     {
+        adc102.startReadWeight();
         adc102.readCalibPoints();
     }
 }
@@ -460,42 +463,42 @@ void MainWindow::on_btnGN_clicked()
 
 void MainWindow::on_btnUpdate_clicked()
 {
-    QString file = ui->edtFile->text();
-    QFile f(file);
-    if(!f.exists())
-    {
-        QMessageBox::information(this,tr("error"),tr("file do not exist"));
-        return;
-    }
-    if(!adc102.reset())
-    {
-        //自动复位失败，则提示手动复位...,程序还是一直发送空格...
-        QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
-    }
-    if(!adc102.startUpdate(file))
-    {
-         QMessageBox::information(this,tr("error"),tr("file update failed"));
-    }
-    else
-    {
-        //QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
-    }
+//    QString file = ui->edtFile->text();
+//    QFile f(file);
+//    if(!f.exists())
+//    {
+//        QMessageBox::information(this,tr("error"),tr("file do not exist"));
+//        return;
+//    }
+//    if(!adc102.reset())
+//    {
+//        //自动复位失败，则提示手动复位...,程序还是一直发送空格...
+//        QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
+//    }
+//    if(!adc102.startUpdate(file))
+//    {
+//         QMessageBox::information(this,tr("error"),tr("file update failed"));
+//    }
+//    else
+//    {
+//        //QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
+//    }
 }
 
 void MainWindow::on_btnSelFile_clicked()
 {
-   QFileDialog *fileDialog = new QFileDialog(this);
-   fileDialog->setWindowTitle(tr("Open Image"));
-   fileDialog->setDirectory(".");
-   //fileDialog->setFilter(tr("Image Files(*.jpg *.png)"));
-   if(fileDialog->exec() == QDialog::Accepted) {
-           QString path = fileDialog->selectedFiles()[0];
-           ui->edtFile->setText(path);
-           //QMessageBox::information(NULL, tr("Path"), tr("You selected ") + path);
-   } else {
-           QMessageBox::information(NULL, tr("Path"), tr("You didn't select any files."));
-   }
-   delete fileDialog;
+//   QFileDialog *fileDialog = new QFileDialog(this);
+//   fileDialog->setWindowTitle(tr("Open Image"));
+//   fileDialog->setDirectory(".");
+//   //fileDialog->setFilter(tr("Image Files(*.jpg *.png)"));
+//   if(fileDialog->exec() == QDialog::Accepted) {
+//           QString path = fileDialog->selectedFiles()[0];
+//           //ui->edtFile->setText(path);
+//           //QMessageBox::information(NULL, tr("Path"), tr("You selected ") + path);
+//   } else {
+//           QMessageBox::information(NULL, tr("Path"), tr("You didn't select any files."));
+//   }
+//   delete fileDialog;
 
 }
 
@@ -530,4 +533,19 @@ void MainWindow::on_listWidget_itemActivated(QListWidgetItem *item)
 void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     ui->edtAddr->setText(item->text());
+}
+
+void MainWindow::on_btnSensorWrite_clicked()
+{
+    on_btnSave_clicked();
+}
+
+
+void MainWindow::timerEvent(QTimerEvent *)
+{
+    int rx = 0,tx = 0;
+    adc102.getRXTX(rx,tx);
+    QString msg = QString("TX:%1|RX:%2 ").arg(tx).arg(rx);
+
+    ui->statusBar->showMessage(msg);
 }

@@ -22,11 +22,14 @@ public:
     int  read_registers(int reg_addr, int nb,quint16* value);
     int  read_input_registers(int reg_addr, int nb,quint16* value);
     QString port() const;
+    void get_rx_tx(int& rx, int &tx);
 
 private:
     modbus_t * m_modbus;
     int m_slave_addr;
     QString m_port;
+    int m_tx_cout;
+    int m_rx_cout;
 };
 
 class Modbus_Factory

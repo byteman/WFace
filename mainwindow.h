@@ -58,12 +58,18 @@ private slots:
 
     void on_listWidget_itemClicked(QListWidgetItem *item);
 
+    void on_btnSensorWrite_clicked();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
     ADC102 adc102;
     QApplication &_app;
 
+
+    // QObject interface
+protected:
+    void timerEvent(QTimerEvent *);
 };
 
 #endif // MAINWINDOW_H
