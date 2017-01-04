@@ -288,3 +288,13 @@ void ADC102::getRXTX(int &rx, int &tx)
     modbus.get_rx_tx(rx,tx);
 }
 
+bool ADC102::read_registers(int reg_addr, int nb, quint16 *value)
+{
+    return (modbus.read_registers(reg_addr,nb,value) == nb);
+}
+
+bool ADC102::write_registers(int reg_addr, int nb, quint16 *value)
+{
+    return (modbus.write_registers(reg_addr,nb,value) == nb);
+}
+

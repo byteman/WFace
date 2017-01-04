@@ -45,20 +45,14 @@ bool ParaHandler::paraSave(Para _para)
            if(_rtu->write_registers(14,6,values+7) != 6)return false;
 
 
-           values[0] = (_para.sensor_full_span&0xFFFF);
-           values[1] = (_para.sensor_full_span>>16)&0xFFFF;
-           values[2] = (_para.sensor_mv&0xFFFF);
-           values[3] = (_para.sensor_mv>>16)&0xFFFF;
-           //values[4] = _para.slave_addr;
-           if(4 == _rtu->write_registers(26,4,values))
-           {
+
                int err = _rtu->write_registers(96,1,&_para.adRate);
                _rtu->read_registers(96,1,values);
                if(_para.adRate == values[0])
                {
                     return true;
                }
-           }
+
 
        }
 

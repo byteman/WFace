@@ -537,7 +537,24 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 
 void MainWindow::on_btnSensorWrite_clicked()
 {
-    on_btnSave_clicked();
+    quint32 sensor_full_span; // 传感器总量程（所有传感器量程和）
+    quint32 sensor_mv;
+    quint16 values[4];
+    sensor_full_span = ui->edtSensorFullSpan->text().toInt();
+    sensor_mv = ui->edtSensorMv->text().toInt();
+
+    values[0] = (sensor_full_span&0xFFFF);
+    values[1] = (sensor_full_span>>16)&0xFFFF;
+    values[2] = (sensor_mv&0xFFFF);
+    values[3] = (sensor_mv>>16)&0xFFFF;
+    //values[4] = _para.slave_addr;
+
+    if(adc102.write_registers(26,4,values)){
+        QMessageBox::information(this,"提示","保存成功");
+    }else
+    {
+        QMessageBox::information(this,"提示","保存失败");
+    }
 }
 
 

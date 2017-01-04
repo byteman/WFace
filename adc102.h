@@ -49,6 +49,8 @@ public slots:
     bool reset();
     bool startUpdate(QString file);
     void getRXTX(int& rx, int& tx);
+    bool  read_registers(int reg_addr, int nb,quint16* value);
+    bool  write_registers(int reg_addr, int nb,quint16* value);
 private:
     UpdateHandler* handler_update;
     RTU_Modbus modbus;
