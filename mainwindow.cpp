@@ -18,6 +18,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+qRegisterMetaType<Para>("Para");
     QFile file(":/mystyle.txt");
     file.open(QFile::ReadOnly);
 

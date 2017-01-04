@@ -30,7 +30,7 @@
 
 #include "modbus-rtu.h"
 #include "modbus-rtu-private.h"
-
+#include "PCOMM.H"
 #if HAVE_DECL_TIOCSRS485 || HAVE_DECL_TIOCM_RTS
 #include <sys/ioctl.h>
 #endif
@@ -189,6 +189,7 @@ static void win32_ser_init(struct win32_ser *ws) {
 
     /* Set file handle to invalid */
     ws->fd = INVALID_HANDLE_VALUE;
+    ws->port = -1;
 }
 
 /* FIXME Try to remove length_to_read -> max_len argument, only used by win32 */
@@ -196,7 +197,7 @@ static int win32_ser_select(struct win32_ser *ws, int max_len,
                             const struct timeval *tv) {
     COMMTIMEOUTS comm_to;
     unsigned int msec = 0;
-
+    int size = 0;
     /* Check if some data still in the buffer to be consumed */
     if (ws->n_bytes > 0) {
         return 1;
@@ -215,31 +216,36 @@ static int win32_ser_select(struct win32_ser *ws, int max_len,
             msec = 1;
     }
 
-    comm_to.ReadIntervalTimeout = msec;
-    comm_to.ReadTotalTimeoutMultiplier = 0;
-    comm_to.ReadTotalTimeoutConstant = msec;
-    comm_to.WriteTotalTimeoutMultiplier = 0;
-    comm_to.WriteTotalTimeoutConstant = 1000;
-    SetCommTimeouts(ws->fd, &comm_to);
-
+    sio_SetReadTimeouts(ws->port,msec,msec);
     /* Read some bytes */
     if ((max_len > PY_BUF_SIZE) || (max_len < 0)) {
         max_len = PY_BUF_SIZE;
     }
 
-    if (ReadFile(ws->fd, &ws->buf, max_len, &ws->n_bytes, NULL)) {
-        /* Check if some bytes available */
-        if (ws->n_bytes > 0) {
-            /* Some bytes read */
-            return 1;
-        } else {
-            /* Just timed out */
-            return 0;
-        }
-    } else {
-        /* Some kind of error */
+    size = sio_read(ws->port,ws->buf,max_len);
+    if(size == 0){
+        return 0;
+    }
+    if(size < 0){
         return -1;
     }
+    else{
+        ws->n_bytes = size;
+        return 1;
+    }
+//    if (ReadFile(ws->fd, &ws->buf, max_len, &ws->n_bytes, NULL)) {
+//        /* Check if some bytes available */
+//        if (ws->n_bytes > 0) {
+//            /* Some bytes read */
+//            return 1;
+//        } else {
+//            /* Just timed out */
+//            return 0;
+//        }
+//    } else {
+//        /* Some kind of error */
+//        return -1;
+//    }
 }
 
 static int win32_ser_read(struct win32_ser *ws, uint8_t *p_msg,
@@ -280,7 +286,11 @@ static ssize_t _modbus_rtu_send(modbus_t *ctx, const uint8_t *req, int req_lengt
 #if defined(_WIN32)
     modbus_rtu_t *ctx_rtu = ctx->backend_data;
     DWORD n_bytes = 0;
-    return (WriteFile(ctx_rtu->w_ser.fd, req, req_length, &n_bytes, NULL)) ? (ssize_t)n_bytes : -1;
+    int size = sio_write(ctx_rtu->w_ser.port,req,req_length);
+    if(size <= 0) return -1;
+    n_bytes = size;
+    return n_bytes;
+    //return (WriteFile(ctx_rtu->w_ser.fd, req, req_length, &n_bytes, NULL)) ? (ssize_t)n_bytes : -1;
 #else
 #if HAVE_DECL_TIOCM_RTS
     modbus_rtu_t *ctx_rtu = ctx->backend_data;
@@ -406,6 +416,9 @@ static int _modbus_rtu_connect(modbus_t *ctx)
 {
 #if defined(_WIN32)
     DCB dcb;
+    int baud = 0;
+    int mode = 0;
+    int err = 0;
 #else
     struct termios tios;
     speed_t speed;
@@ -427,97 +440,67 @@ static int _modbus_rtu_connect(modbus_t *ctx)
 
     /* ctx_rtu->device should contain a string like "COMxx:" xx being a decimal
      * number */
-    ctx_rtu->w_ser.fd = CreateFileA(ctx_rtu->device,
-                                    GENERIC_READ | GENERIC_WRITE,
-                                    0,
-                                    NULL,
-                                    OPEN_EXISTING,
-                                    0,
-                                    NULL);
-
-    /* Error checking */
-    if (ctx_rtu->w_ser.fd == INVALID_HANDLE_VALUE) {
-        if (ctx->debug) {
-            fprintf(stderr, "ERROR Can't open the device %s (LastError %d)\n",
-                    ctx_rtu->device, (int)GetLastError());
+//    ctx_rtu->w_ser.fd = CreateFileA(ctx_rtu->device,
+//                                    GENERIC_READ | GENERIC_WRITE,
+//                                    0,
+//                                    NULL,
+//                                    OPEN_EXISTING,
+//                                    0,
+//                                    NULL);
+    {
+        int err = -1;
+        int port = atoi(ctx_rtu->device+3);
+        ctx_rtu->w_ser.port = port;
+        err = sio_open(port);
+        if(err != 0){
+            if (ctx->debug) {
+                fprintf(stderr, "ERROR Can't open the device %s (LastError %d)\n",
+                        ctx_rtu->device, (int)GetLastError());
+            }
+            return -1;
         }
-        return -1;
     }
 
-    /* Save params */
-    ctx_rtu->old_dcb.DCBlength = sizeof(DCB);
-    if (!GetCommState(ctx_rtu->w_ser.fd, &ctx_rtu->old_dcb)) {
-        if (ctx->debug) {
-            fprintf(stderr, "ERROR Error getting configuration (LastError %d)\n",
-                    (int)GetLastError());
-        }
-        CloseHandle(ctx_rtu->w_ser.fd);
-        ctx_rtu->w_ser.fd = INVALID_HANDLE_VALUE;
-        return -1;
-    }
-
-    /* Build new configuration (starting from current settings) */
-    dcb = ctx_rtu->old_dcb;
 
     /* Speed setting */
     switch (ctx_rtu->baud) {
     case 110:
-        dcb.BaudRate = CBR_110;
+        baud = B110;
         break;
     case 300:
-        dcb.BaudRate = CBR_300;
+        baud = B300;
         break;
     case 600:
-        dcb.BaudRate = CBR_600;
+        baud = B600;
         break;
     case 1200:
-        dcb.BaudRate = CBR_1200;
+        baud = B1200;
         break;
     case 2400:
-        dcb.BaudRate = CBR_2400;
+        baud = B2400;
         break;
     case 4800:
-        dcb.BaudRate = CBR_4800;
+        baud = B4800;
         break;
     case 9600:
-        dcb.BaudRate = CBR_9600;
+        baud = B9600;
         break;
-    case 14400:
-        dcb.BaudRate = CBR_14400;
-        break;
+
     case 19200:
-        dcb.BaudRate = CBR_19200;
+        baud = B19200;
         break;
     case 38400:
-        dcb.BaudRate = CBR_38400;
+        baud = B38400;
         break;
     case 57600:
-        dcb.BaudRate = CBR_57600;
+        baud = B57600;
         break;
     case 115200:
-        dcb.BaudRate = CBR_115200;
+        baud = B115200;
         break;
-    case 230400:
-        /* CBR_230400 - not defined */
-        dcb.BaudRate = 230400;
-        break;
-    case 250000:
-        dcb.BaudRate = 250000;
-        break;
-    case 460800:
-        dcb.BaudRate = 460800;
-        break;
-    case 500000:
-        dcb.BaudRate = 500000;
-        break;
-    case 921600:
-        dcb.BaudRate = 921600;
-        break;
-    case 1000000:
-        dcb.BaudRate = 1000000;
-        break;
+
     default:
-        dcb.BaudRate = CBR_9600;
+        baud = B9600;
         if (ctx->debug) {
             fprintf(stderr, "WARNING Unknown baud rate %d for %s (B9600 used)\n",
                     ctx_rtu->baud, ctx_rtu->device);
@@ -527,62 +510,38 @@ static int _modbus_rtu_connect(modbus_t *ctx)
     /* Data bits */
     switch (ctx_rtu->data_bit) {
     case 5:
-        dcb.ByteSize = 5;
+        mode|=BIT_5;
         break;
     case 6:
-        dcb.ByteSize = 6;
+        mode|=BIT_6;
         break;
     case 7:
-        dcb.ByteSize = 7;
+        mode|=BIT_7;
         break;
     case 8:
     default:
-        dcb.ByteSize = 8;
+        mode|=BIT_8;
         break;
     }
 
     /* Stop bits */
     if (ctx_rtu->stop_bit == 1)
-        dcb.StopBits = ONESTOPBIT;
+        mode|=STOP_1;
     else /* 2 */
-        dcb.StopBits = TWOSTOPBITS;
+        mode|=STOP_2;
 
     /* Parity */
     if (ctx_rtu->parity == 'N') {
-        dcb.Parity = NOPARITY;
-        dcb.fParity = FALSE;
+        mode|=P_NONE;
     } else if (ctx_rtu->parity == 'E') {
-        dcb.Parity = EVENPARITY;
-        dcb.fParity = TRUE;
+       mode|=P_EVEN;
     } else {
         /* odd */
-        dcb.Parity = ODDPARITY;
-        dcb.fParity = TRUE;
+       mode|=P_ODD;
     }
+    err = sio_ioctl(ctx_rtu->w_ser.port,baud,mode);
+    return err;
 
-    /* Hardware handshaking left as default settings retrieved */
-
-    /* No software handshaking */
-    dcb.fTXContinueOnXoff = TRUE;
-    dcb.fOutX = FALSE;
-    dcb.fInX = FALSE;
-
-    /* Binary mode (it's the only supported on Windows anyway) */
-    dcb.fBinary = TRUE;
-
-    /* Don't want errors to be blocking */
-    dcb.fAbortOnError = FALSE;
-
-    /* Setup port */
-    if (!SetCommState(ctx_rtu->w_ser.fd, &dcb)) {
-        if (ctx->debug) {
-            fprintf(stderr, "ERROR Error setting new configuration (LastError %d)\n",
-                    (int)GetLastError());
-        }
-        CloseHandle(ctx_rtu->w_ser.fd);
-        ctx_rtu->w_ser.fd = INVALID_HANDLE_VALUE;
-        return -1;
-    }
 #else
     /* The O_NOCTTY flag tells UNIX that this program doesn't want
        to be the "controlling terminal" for that port. If you
@@ -1043,15 +1002,16 @@ static void _modbus_rtu_close(modbus_t *ctx)
 
 #if defined(_WIN32)
     /* Revert settings */
-    if (!SetCommState(ctx_rtu->w_ser.fd, &ctx_rtu->old_dcb) && ctx->debug) {
-        fprintf(stderr, "ERROR Couldn't revert to configuration (LastError %d)\n",
-                (int)GetLastError());
-    }
+//    if (!SetCommState(ctx_rtu->w_ser.fd, &ctx_rtu->old_dcb) && ctx->debug) {
+//        fprintf(stderr, "ERROR Couldn't revert to configuration (LastError %d)\n",
+//                (int)GetLastError());
+//    }
 
-    if (!CloseHandle(ctx_rtu->w_ser.fd) && ctx->debug) {
-        fprintf(stderr, "ERROR Error while closing handle (LastError %d)\n",
-                (int)GetLastError());
-    }
+//    if (!CloseHandle(ctx_rtu->w_ser.fd) && ctx->debug) {
+//        fprintf(stderr, "ERROR Error while closing handle (LastError %d)\n",
+//                (int)GetLastError());
+//    }
+    sio_close(ctx_rtu->w_ser.port);
 #else
     if (ctx->s != -1) {
         tcsetattr(ctx->s, TCSANOW, &(ctx_rtu->old_tios));
@@ -1066,7 +1026,8 @@ static int _modbus_rtu_flush(modbus_t *ctx)
 #if defined(_WIN32)
     modbus_rtu_t *ctx_rtu = ctx->backend_data;
     ctx_rtu->w_ser.n_bytes = 0;
-    return (PurgeComm(ctx_rtu->w_ser.fd, PURGE_RXCLEAR) == FALSE);
+    return (sio_flush(ctx_rtu->w_ser.port,0) == 0);
+    //return (PurgeComm(ctx_rtu->w_ser.fd, PURGE_RXCLEAR) == FALSE);
 #else
     return tcflush(ctx->s, TCIOFLUSH);
 #endif

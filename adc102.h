@@ -18,6 +18,7 @@ public:
     explicit ADC102(QObject *parent = 0);
     bool setSlaveAddr(int addr);
     bool hasConnect();
+    bool restart(int time);
 signals:
     void updateResult(int result, int pos, int total);
     void scanResult(int type, int addr);

@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     paramconfig.cpp \
     netclient.cpp \
     networkmgr.cpp \
-    crc16.cpp
+    crc16.cpp \
+    timerworker.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/qextserialport/qextserialport.h \
@@ -48,7 +49,8 @@ HEADERS  += mainwindow.h \
     wcommon.h \
     cwSCSqlite.h \
     netclient.h \
-    networkmgr.h
+    networkmgr.h \
+    timerworker.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src 3rdparty/qextserialport
 

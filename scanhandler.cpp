@@ -33,7 +33,7 @@ bool ScanHandler::myrun()
             _rtu->setDeviceAddr(m_addr);
             int len = _rtu->read_registers(3,1,&state);
             qDebug() << "addr=" << m_addr << " len=" << len;
-            //if(len == 1)
+            if(len == 1)
             {
                 emit scanResult(0,m_addr);
                 if(m_findone)
