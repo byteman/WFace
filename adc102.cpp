@@ -25,6 +25,9 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handlers.push_back(handler_weight);
     m_handlers.push_back(handler_para);
     m_handlers.push_back(handler_calib);
+    m_thread.start();
+    gWorker.moveToThread(&m_thread);
+
     //m_handlers.push_back(handler_update);
 }
 
@@ -92,7 +95,8 @@ bool ADC102::startScan(QString port, int baud, char parity, char databit, char s
     //m_handlers.push_back();
     m_handler = handler;
     m_interval = 100;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
+
     return true;
 }
 bool ADC102::stopScan()
@@ -118,7 +122,8 @@ bool ADC102::startReadWeight()
     }
     m_handler = m_handlers[1];
     m_interval = 100;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
     return true;
 }
 
@@ -135,7 +140,8 @@ bool ADC102::startReadPara()
         handler->start();
     }
     m_interval = 1000;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
     return true;
 }
 

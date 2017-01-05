@@ -8,6 +8,7 @@
 #include "parahandler.h"
 #include <QList>
 #include "updatehandler.h"
+#include "timerworker.h"
 class ADC102 : public QObject
 {
     Q_OBJECT
@@ -55,12 +56,14 @@ private:
     UpdateHandler* handler_update;
     RTU_Modbus modbus;
     QTimer timer;
+    TimerWorker gWorker;
     CmdHandler* m_handler;
     bool m_connect;
     QList<CmdHandler*> m_handlers;
     int m_interval;
     int m_slaveAddr;
     Para m_para;
+    QThread m_thread;
 };
 
 #endif // ADC102_H

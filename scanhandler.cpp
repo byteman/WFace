@@ -51,7 +51,7 @@ bool ScanHandler::run()
 
 bool ScanHandler::stop()
 {
-    m_addr = 33;
+    m_addr = 1;
     emit scanResult(1,m_addr);
     return true;
 }

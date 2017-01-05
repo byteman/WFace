@@ -3,9 +3,9 @@
 #include "QFile"
 #include <QMessageBox>
 #include <qdebug.h>
-#include "3rdparty/qextserialport/qextserialenumerator.h"
 #include <QSignalMapper>
 #include <QTranslator>
+#include <QSerialPortInfo>
 #include "pcomm.h"
 #include <QFileDialog>
 #include <QFile>
@@ -17,6 +17,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+qRegisterMetaType<Para>("Para");
     QFile file(":/mystyle.txt");
     file.open(QFile::ReadOnly);
 
@@ -24,11 +25,11 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QByteArray res = file.readAll();
 
 
-    QextSerialEnumerator serialEnum;
-    QList<QextPortInfo> ports = serialEnum.getPorts();
-    QextPortInfo port;
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+
+    QSerialPortInfo port;
     foreach(port,ports){
-        ui->cbxPort->addItem(port.portName);
+        ui->cbxPort->addItem(port.portName());
     }
     ui->cbxBaud->setCurrentIndex(1);
     //ui->progressBar->hide();
