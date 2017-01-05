@@ -25,6 +25,8 @@ public:
     void addItemContent(int row, int column, QString content);
 
 private slots:
+    void onTimerHandle();
+    void onNewClient(NetClient*);
     void onOneMsg(NetClient*,Msg_Head,void*);
     void on_actionChagne_triggered();
     void calibrate_click(int id);
@@ -36,7 +38,7 @@ private slots:
     void onCalibProcessResult(int index, int result);
     void onReadCalibPointResult(Sensor *sensors, int num,int weight);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
-
+    void onUpdateEvent(NetClient* _client,int evt, UpdateEvtPara para);
     void on_btnSearch_clicked();
 
     void on_tabWidget_currentChanged(int index);
@@ -66,7 +68,7 @@ private slots:
     void on_btnCalibAllZero_clicked();
 
     void on_btnCalibAllWt_clicked();
-
+    void onRemoveClient(int);
 
 
     void on_btnModifyK_clicked();
@@ -77,20 +79,42 @@ private slots:
 
     void on_radioHand_clicked();
 
+    void on_edtVersion_returnPressed();
+
+    void on_edtDevTime_returnPressed();
+
+    void on_edtGpsTime_returnPressed();
+
+    void on_cbxGps_currentIndexChanged(int index);
+
+    void on_pushButton_clicked();
+
 private:
     void initCalibPoints(int count);
     Ui::MainWindow *ui;
     ADC102 adc102;
     QApplication &_app;
+    QTimer m_timer;
     QSignalMapper *signalMapper;
     QSignalMapper *signalMapper2;
     NetWorkMgr network;
-
+    QString curDev;
+    bool closed;
+    bool isUart;
+    QList<int> m_read_cmds;
     // QObject interface
 public:
 
     void parse();
     void processOneWeight(QByteArray &data);
+    void addItem(QString id);
+
+    // QWidget interface
+    QUrl GPSMark(const QString &GPSCoordinate);
+    bool checkAck(QString para, int oper,int value);
+    void removeCmd(int cmd);
+protected:
+    void closeEvent(QCloseEvent *);
 };
 
 #endif // MAINWINDOW_H

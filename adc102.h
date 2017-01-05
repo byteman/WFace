@@ -11,6 +11,7 @@
 #include "calibhandler.h"
 #include <QThread>
 #include <QTimer>
+#include "timerworker.h"
 class ADC102 : public QObject
 {
     Q_OBJECT
@@ -62,6 +63,7 @@ private:
     UpdateHandler* handler_update;
     RTU_Modbus modbus;
     QTimer timer;
+    TimerWorker gWorker;
     CmdHandler* m_handler;
     bool m_connect;
     QList<CmdHandler*> m_handlers;

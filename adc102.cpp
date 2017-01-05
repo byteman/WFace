@@ -4,9 +4,9 @@
 #include "calibhandler.h"
 #include "updatehandler.h"
 #include <qdebug>
-#include "timerworker.h"
 
-static TimerWorker gWorker;
+
+
 ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handler(NULL),
     m_interval(100),

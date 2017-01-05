@@ -3,9 +3,9 @@
 #include "QFile"
 #include <QMessageBox>
 #include <qdebug.h>
-#include "3rdparty/qextserialport/qextserialenumerator.h"
 #include <QSignalMapper>
 #include <QTranslator>
+#include <QSerialPortInfo>
 #include "pcomm.h"
 #include <QFileDialog>
 #include <QFile>
@@ -26,11 +26,11 @@ qRegisterMetaType<Para>("Para");
     QByteArray res = file.readAll();
 
 
-    QextSerialEnumerator serialEnum;
-    QList<QextPortInfo> ports = serialEnum.getPorts();
-    QextPortInfo port;
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+
+    QSerialPortInfo port;
     foreach(port,ports){
-        ui->cbxPort->addItem(port.portName);
+        ui->cbxPort->addItem(port.portName());
     }
     ui->cbxBaud->setCurrentIndex(4);
     ui->progressBar->hide();
@@ -46,14 +46,21 @@ qRegisterMetaType<Para>("Para");
     connect(&adc102,SIGNAL(calibPointResult(Sensor*,int,int)),SLOT(onReadCalibPointResult(Sensor*,int,int)));
     connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
 
-
+    connect(&m_timer,SIGNAL(timeout()),SLOT(onTimerHandle()));
     signalMapper  = new QSignalMapper(this);
     signalMapper2 = new QSignalMapper(this);
 
     network.start(8383);
     connect(&network,SIGNAL(SignalOneMsg(NetClient*,Msg_Head,void*)),SLOT(onOneMsg(NetClient*,Msg_Head,void*)));
-    setWindowState(Qt::WindowMaximized);
+    connect(&network,SIGNAL(SignalUpdateEvent(NetClient*,int, UpdateEvtPara)), SLOT(onUpdateEvent(NetClient*,int, UpdateEvtPara)));
+    connect(&network,SIGNAL(SignalNewClient(NetClient*)), SLOT(onNewClient(NetClient*)));
+    connect(&network,SIGNAL(SignalRemoveClient(int)), SLOT(onRemoveClient(int)));
 
+    setWindowState(Qt::WindowMaximized);
+    for(int i = 0; i < ui->tableWidget->columnCount(); i++)
+        ui->tableWidget->setColumnWidth(i,200);
+    //GPSMark("40.047669,116.313082");
+    //ui->webView->load();
 }
 
 MainWindow::~MainWindow()
@@ -70,6 +77,35 @@ void MainWindow::addItemContent(int row, int column, QString content)
 
       ui->tableWidget->setItem(row, column, item);
 
+}
+
+void MainWindow::onTimerHandle()
+{
+    qDebug() << "timeout cmd = " << m_read_cmds.size();
+    if(m_read_cmds.size() > 0)
+    {
+        network.readPara(m_read_cmds.front());
+        m_timer.stop();
+        m_timer.start(5000);
+    }
+    else
+    {
+        m_timer.stop();
+    }
+}
+void MainWindow::addItem(QString id)
+{
+    QString title = QString("%1").arg(id);
+    QListWidgetItem* item = new QListWidgetItem(QIcon(":/monitor.png"),title);
+    ui->listWidget->addItem(item);
+}
+
+void MainWindow::onNewClient(NetClient *client)
+{
+    QString id = "unkown";
+    if(client!=NULL)
+        id = client->getID();
+    addItem(id);
 }
 QString formatGps(GpsDef* gps)
 {
@@ -89,15 +125,68 @@ QString formatGps(GpsDef* gps)
 
     return gpss;
 }
+QString formatTime(DateDef& d)
+{
+    return QString("%1-%2-%3 %4:%5:%6").arg(2000+d.year).arg(d.month).arg(d.day).arg(d.hour).arg(d.min).arg(d.sec);
+}
+#include <QDateTime>
+
+bool MainWindow::checkAck(QString para,int oper,int value)
+{
+    if(oper == OPER_HOST_WRITE_DEV)
+    {
+        //写数据的回应.
+        if(value != 0)
+        {
+            QMessageBox::information(this,"title","write gps style failed");
+
+        }
+        return false;
+    }
+    return true;
+}
+void MainWindow::removeCmd(int cmd)
+{
+    QList<int> removes;
+    m_timer.stop();
+    if(m_read_cmds.size() == 0)
+    {
+
+        return;
+    }
+
+    for(int i = 0; i < m_read_cmds.size(); i++)
+    {
+        if(m_read_cmds[i] == cmd)
+        {
+            removes.append(i);
+        }
+    }
+    for(int i = 0; i < removes.size(); i++)
+    {
+        m_read_cmds.removeAt(removes[i]);
+    }
+    if(m_read_cmds.size() > 0)
+    {
+        network.readPara(m_read_cmds.front());
+        m_timer.start(5000);
+    }
+}
 void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
 {
-    if(head.cmd == 1)
+
+    if(head.cmd == CMD_DEV2HOST_ONE_WEIGHT)
     {
         PointWet* pwt =  (PointWet*)arg;
         qDebug() << "wet" << pwt->wet;
 
         QTextCodec *codec = QTextCodec::codecForName("GB18030");
-        QString duty = codec->toUnicode(pwt->duty);
+        char buffer[32] = {0,};
+        memcpy(buffer,pwt->duty,DUTY_LEN);
+        QString duty = codec->toUnicode(buffer);
+        memset(buffer,0,32);
+        memcpy(buffer,pwt->license_plate,LICENSE_LEN);
+        QString card = codec->toUnicode(buffer);
         //QMessageBox::information(this,"title",duty);
         qDebug() << "wet" << duty;
         int count = ui->tableWidget->rowCount();
@@ -105,10 +194,93 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
 
         //QTableWidgetItem *item = new QTableWidgetItem (content);
         QString host = _socket->getSocket()->peerAddress().toString();
-        addItemContent(count,0,host);
-        addItemContent(count,1,QString("%1").arg(pwt->wet));
 
-        addItemContent(count,2,formatGps(&pwt->gps));
+        int i = 0;
+
+        addItemContent(count,i++,card);
+        addItemContent(count,i++,host);
+
+        addItemContent(count,i++,formatGps(&pwt->gps));
+        addItemContent(count,i++,formatTime(pwt->wet_date));
+        QDateTime qdt = QDateTime::currentDateTime();
+
+        addItemContent(count,i++,qdt.toString("yyyy-MM-dd hh:mm:ss"));
+        addItemContent(count,i++,QString("%1").arg(pwt->wet));
+    }
+    else if(head.cmd == CMD_VER)
+    {
+        int ver = *((int*)arg);
+        if(head.oper == OPER_HOST_WRITE_DEV)
+        {
+
+            return;
+        }
+        removeCmd(CMD_VER);
+        QString vers = QString("ver%1.%2.%3").arg((ver>>16)&0xFF).arg((ver>>8)&0xFF).arg((ver)&0xFF);
+        ui->edtVersion->setText(vers);
+    }
+    else if(head.cmd == CMD_GPS)
+    {
+        quint8 gps=  *((quint8*)arg);
+
+        if(head.oper == OPER_HOST_WRITE_DEV)
+        {
+            //写数据的回应.
+            if(gps != 0)
+            {
+                QMessageBox::information(this,"title","write gps style failed");
+
+            }
+            else
+            {
+                QMessageBox::information(this,"title","write gps style ok");
+            }
+            return;
+        }
+        removeCmd(CMD_GPS);
+        if(gps == 0 || gps == 1)
+        {
+            ui->cbxGps->setCurrentIndex(gps);
+        }
+    }
+    else if(head.cmd == CMD_GPS_REPORT_TIME)
+    {
+
+        quint8 gpstime=  *((quint8*)arg);
+        if(head.oper == OPER_HOST_WRITE_DEV)
+        {
+            //写数据的回应.
+            if(gpstime != 0)
+            {
+                QMessageBox::information(this,"title","write gps time failed");
+
+            }
+            else
+            {
+                QMessageBox::information(this,"title","write gps time ok");
+            }
+            return;
+        }
+        removeCmd(CMD_GPS_REPORT_TIME);
+        ui->edtGpsTime->setText(QString("%1").arg(gpstime));
+    }
+    else if(head.cmd == CMD_DEV_REPORT_TIME)
+    {
+        quint8 devtime=  *((quint8*)arg);
+        if(head.oper == OPER_HOST_WRITE_DEV)
+        {
+            //写数据的回应.
+            if(devtime != 0)
+            {
+                QMessageBox::information(this,"title","write dev time failed");
+
+            }
+            else
+                 QMessageBox::information(this,"title","write dev time ok");
+            return;
+        }
+        removeCmd(CMD_DEV_REPORT_TIME);
+        ui->edtDevTime->setText(QString("%1").arg(devtime));
     }
 }
 
@@ -181,9 +353,7 @@ void MainWindow::onScanResult(int type,int addr)
 {
     if(type == 0)
     {
-        QString title = QString("%1").arg(addr);
-        QListWidgetItem* item = new QListWidgetItem(QIcon(":/monitor.png"),title);
-        ui->listWidget->addItem(item);
+        addItem(QString("%1").arg(addr));
     }
     else
     {
@@ -284,8 +454,47 @@ void MainWindow::onReadCalibPointResult(Sensor* sensors, int num,int weight)
 
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
-    adc102.setSlaveAddr(item->text().toInt());
+    int id = 0;
+    bool ok = false;
+    id = (item->text().toInt(&ok));
+    if(ok && id <= 32)
+    {
+        adc102.setSlaveAddr(item->text().toInt());
+        isUart = true;
+    }
+    else
+    {
+        curDev = item->text();
+        isUart = false;
+        network.setCurrentClient(curDev);
+    }
     ui->tabWidget->setCurrentIndex(1);
+
+}
+
+void MainWindow::onUpdateEvent(NetClient *_client, int evt, UpdateEvtPara para)
+{
+    switch(evt)
+    {
+        case UEVT_START:
+            ui->updateLog->setText("ready update");
+            break;
+        case UEVT_DATA:
+            {
+                ui->progressBar->show();
+                if(para.total_pkg_index > 0)
+                {
+                    ui->progressBar->setValue(para.cur_pkg_index*100/para.total_pkg_index);
+                }
+            }
+            break;
+        case UEVT_END:
+            
+            break;
+    case UEVT_OK:
+            break;
+    default:break;
+    }
 }
 
 void MainWindow::on_btnSearch_clicked()
@@ -322,12 +531,32 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     else if(index == 1)
     {
 
-        //adc102.startReadWeight();
-        adc102.startReadPara();
+        if(isUart)
+        {
+            adc102.startReadPara();
+        }
+        else
+        {
+            //network.readPara(CMD_VER);
+            m_read_cmds.clear();
+            m_read_cmds.append(CMD_VER);
+            m_read_cmds.append(CMD_GPS);
+            m_read_cmds.append(CMD_GPS_REPORT_TIME);
+            m_read_cmds.append(CMD_DEV_REPORT_TIME);
+            network.readPara(CMD_VER);
+            m_timer.start(5000);
+            //network.readPara(CMD_GPS);
+            //network.readPara(CMD_GPS_REPORT_TIME);
+            //network.readPara(CMD_DEV_REPORT_TIME);
+        }
+
     }
     else if(index == 2)
     {
-        adc102.readCalibPoints();
+        if(isUart)
+        {
+            adc102.readCalibPoints();
+        }
     }
     else if(index == 3)
     {
@@ -496,19 +725,20 @@ void MainWindow::on_btnUpdate_clicked()
         QMessageBox::information(this,tr("error"),tr("file do not exist"));
         return;
     }
-    if(!adc102.reset())
-    {
-        //自动复位失败，则提示手动复位...,程序还是一直发送空格...
-        QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
-    }
-    if(!adc102.startUpdate(file))
-    {
-         QMessageBox::information(this,tr("error"),tr("file update failed"));
-    }
-    else
-    {
-        //QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
-    }
+//    if(!adc102.reset())
+//    {
+//        //自动复位失败，则提示手动复位...,程序还是一直发送空格...
+//        QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
+//    }
+//    if(!adc102.startUpdate(file))
+//    {
+//         QMessageBox::information(this,tr("error"),tr("file update failed"));
+//    }
+//    else
+//    {
+//        //QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
+//    }
+    network.startUpdate(curDev,file);
 }
 
 void MainWindow::on_btnSelFile_clicked()
@@ -530,7 +760,13 @@ void MainWindow::on_btnSelFile_clicked()
 
 void MainWindow::on_btnReset_clicked()
 {
-    adc102.reset();
+    if(isUart)
+        adc102.reset();
+    else
+    {
+        network.reset();
+    }
+
 }
 
 void MainWindow::on_btnZero_clicked()
@@ -611,6 +847,20 @@ void MainWindow::on_btnCalibAllWt_clicked()
     QMessageBox::information(this,"提示","标定成功!");
 }
 
+void MainWindow::onRemoveClient(int)
+{
+    if(closed) return;
+    ui->listWidget->clear();
+    curDev.clear();
+    QStringList devs;
+    network.getOnLineClients(devs);
+    ui->tabWidget->setCurrentIndex(0);
+    for(int i = 0 ; i <devs.size();i++)
+        addItem(devs[i]);
+    m_timer.stop();
+
+}
+
 void MainWindow::on_btnModifyK_clicked()
 {
     int num = ui->tblCalib->rowCount();
@@ -682,5 +932,76 @@ void MainWindow::on_radioHand_clicked()
 
         if(widget!=NULL)
             widget->setText("标重");
+    }
+}
+
+
+void MainWindow::closeEvent(QCloseEvent *)
+{
+    closed = true;
+}
+
+void MainWindow::on_edtVersion_returnPressed()
+{
+    qDebug() << "return";
+}
+
+void MainWindow::on_edtDevTime_returnPressed()
+{
+    qDebug() << "return";
+    bool ok = false;
+    quint8 val = ui->edtDevTime->text().toInt(&ok);
+    if(!ok)
+    {
+        return ;
+    }
+    QByteArray data;
+    data.append(val);
+
+    network.writePara(CMD_DEV_REPORT_TIME,data);
+}
+
+void MainWindow::on_edtGpsTime_returnPressed()
+{
+    qDebug() << "return";
+    bool ok = false;
+    quint8 val = ui->edtGpsTime->text().toInt(&ok);
+    if(!ok)
+    {
+        return ;
+    }
+    QByteArray data;
+    data.append(val);
+
+    network.writePara(CMD_GPS_REPORT_TIME,data);
+}
+
+void MainWindow::on_cbxGps_currentIndexChanged(int index)
+{
+
+    quint8 val = ui->cbxGps->currentIndex();
+
+    QByteArray data;
+    data.append(val);
+
+    network.writePara(CMD_GPS,data);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    if(isUart)
+    {
+        adc102.startReadPara();
+    }
+    else
+    {
+        m_read_cmds.clear();
+        m_read_cmds.append(CMD_VER);
+        m_read_cmds.append(CMD_GPS);
+        m_read_cmds.append(CMD_GPS_REPORT_TIME);
+        m_read_cmds.append(CMD_DEV_REPORT_TIME);
+        network.readPara(CMD_VER);
+        m_timer.start(5000);
+
     }
 }
