@@ -5,21 +5,8 @@
 #include "updatehandler.h"
 #include <qdebug>
 
-//class Worker : public QObject
-//{
-//    Q_OBJECT
 
-//public slots:
-//    void doWork(const QString &parameter) {
-//        QString result;
-//        /* ... here is the expensive or blocking operation ... */
-//        emit resultReady(result);
-//    }
 
-//signals:
-//    void resultReady(const QString &result);
-//};
-//Worker gWorker;
 ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handler(NULL),
     m_interval(100),
@@ -41,8 +28,9 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handlers.push_back(handler_weight);
     m_handlers.push_back(handler_para);
     m_handlers.push_back(handler_calib);
-//    gWorker.moveToThread(&m_thread);
-//    m_thread.start();
+    m_thread.start();
+    gWorker.moveToThread(&m_thread);
+
     //m_handlers.push_back(handler_update);
     //this->moveToThread(&m_thread);
 }
@@ -109,7 +97,8 @@ bool ADC102::startScan(QString port, int baud, char parity, char databit, char s
     //m_handlers.push_back();
     m_handler = handler;
     m_interval = 100;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
+
     return true;
 }
 
@@ -131,7 +120,8 @@ bool ADC102::startReadWeight()
     }
     m_handler = m_handlers[1];
     m_interval = 100;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
     return true;
 }
 
@@ -148,7 +138,8 @@ bool ADC102::startReadPara()
         handler->start();
     }
     m_interval = 1000;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
     return true;
 }
 
@@ -187,7 +178,8 @@ bool ADC102::readCalibPoints(int index)
     m_handler = m_handlers[3];
     handler->readPara(index);
     m_interval = 500;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
     return true;
 }
 

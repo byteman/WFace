@@ -3,10 +3,9 @@
 #include "QFile"
 #include <QMessageBox>
 #include <qdebug.h>
-#include "3rdparty/qextserialport/qextserialenumerator.h"
 #include <QSignalMapper>
 #include <QTranslator>
-#include <QtWebKitWidgets/QWebView>
+#include <QSerialPortInfo>
 #include "pcomm.h"
 #include <QFileDialog>
 #include <QFile>
@@ -19,18 +18,19 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+qRegisterMetaType<Para>("Para");
     QFile file(":/mystyle.txt");
     file.open(QFile::ReadOnly);
 
 
     QByteArray res = file.readAll();
 
-    closed = false;
-    QextSerialEnumerator serialEnum;
-    QList<QextPortInfo> ports = serialEnum.getPorts();
-    QextPortInfo port;
+
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+
+    QSerialPortInfo port;
     foreach(port,ports){
-        ui->cbxPort->addItem(port.portName);
+        ui->cbxPort->addItem(port.portName());
     }
     ui->cbxBaud->setCurrentIndex(4);
     ui->progressBar->hide();
@@ -62,31 +62,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     //GPSMark("40.047669,116.313082");
     //ui->webView->load();
 }
-#include <QUrl>
-#include <QUrlQuery>
-QUrl  MainWindow::GPSMark(const QString &GPSCoordinate)
-{
-    QUrl temp;
-    QString ret;
-    //HttpClient * http = new HttpClient();
-    QUrl url;
-    url.setUrl("http://api.map.baidu.com/marker");
-    QUrlQuery urlQuery;
-    urlQuery.addQueryItem("location", GPSCoordinate);
-    urlQuery.addQueryItem("title", tr("my GPS location"));  //标点的标题
-    urlQuery.addQueryItem("content", tr("current location"));       //标点的内容
-    urlQuery.addQueryItem("output", "html");
-    //urlQuery.addQueryItem("coord_type", "bd09");
-    urlQuery.addQueryItem("src", "map");
-    url.setQuery(urlQuery);
-    //http://map.baidu.com/?latlng=40.047669,116.313082&title=my gps loclation
-    //url = QUrl("http://map.baidu.com/?latlng=40.047669,116.313082&title=我的位置&content=百度奎科大厦&autoOpen=true&l");
-    //ui->webView->load(url);
-    //ui->webView->show();
 
-    setWindowTitle(url.toString());
-    return temp;
-}
 MainWindow::~MainWindow()
 {
     delete ui;

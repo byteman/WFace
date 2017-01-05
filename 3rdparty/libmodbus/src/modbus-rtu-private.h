@@ -55,6 +55,7 @@ struct win32_ser {
     uint8_t buf[PY_BUF_SIZE];
     /* Received chars */
     DWORD n_bytes;
+    int port;
 };
 #endif /* _WIN32 */
 
