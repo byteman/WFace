@@ -36,10 +36,22 @@ bool ParaHandler::paraSave(Para _para)
 
        values[0] = _para.sensorNum;
        values[1] = _para.div_high;
-       if(2 == _rtu->write_registers(8,2,values))
+       if(2 != _rtu->write_registers(8,2,values))
+       {
+            return false;
+       }
+       values[0] = _para.serverPort;
+       values[1] = (_para.serverIp)&0xFFFF;
+
+       values[2] = (_para.serverIp>>16)&0xFFFF;
+
+       memcpy(values+3,_para.plate,10);
+       memcpy(values+8,_para.simCard,12);
+       if(14 == _rtu->write_registers(21,14,values))
        {
             return true;
        }
+
 
 
     }
@@ -84,6 +96,10 @@ bool ParaHandler::paraRead(Para &_para)
 
     if(36 == _rtu->read_registers(1,36,values))
     {
+        _para.serverPort = values[20];
+        _para.serverIp =values[21] + (values[22] << 16);
+        memcpy(_para.plate,values+23,10);
+        memcpy(_para.simCard,values+28,12);
         _para.sensorNum = values[7];
         _para.div_high = values[8];
         _para.max_weight = values[0] + (values[1] << 16);

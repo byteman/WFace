@@ -113,6 +113,7 @@ public:
     QUrl GPSMark(const QString &GPSCoordinate);
     bool checkAck(QString para, int oper,int value);
     void removeCmd(int cmd);
+    void traversalControl(const QObjectList &q);
 protected:
     void closeEvent(QCloseEvent *);
 };

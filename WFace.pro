@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = WFace
 TEMPLATE = app
-
+QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01
 
 SOURCES += main.cpp\
         mainwindow.cpp \

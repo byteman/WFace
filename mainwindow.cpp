@@ -328,23 +328,25 @@ void MainWindow::calibrate_click(int id)
 
 void MainWindow::onParaReadResult(Para _para)
 {
-   // ui->cbxDot->setCurrentIndex(_para.dot);
-    //ui->edtFullLow->setText(QString("%1").arg(_para.span_low));
-    //ui->lbl_display_wet_2->setText(QString("Max1: %1").arg(_para.span_low));
+
+    QString ip=QString("%1.%2.%3.%4").arg((_para.serverIp>>24)&0xff).arg((_para.serverIp>>16)&0xff).arg((_para.serverIp>>8)&0xff).arg(_para.serverIp&0xff);
+    ui->edtServerIp->setText(ip);
+    ui->edtServerPort->setText(QString("%1").arg(_para.serverPort));
     ui->edtFullHigh->setText(QString("%1").arg(_para.max_weight));
-    //ui->lbl_display_wet_3->setText(QString("Max2: %1").arg(_para.span_high));
+
     ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
-    //ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_high));
-    //ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
-   // ui->lbl_display_wet_4->setText(QString("d1: %1").arg(_para.div_low));
 
-    //ui->edtZeroSpan->setText(QString("%1").arg(_para.zero_track_span));
-
-    //ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
-
-    //ui->cbxFilterLvl-(_para.filter_level);
     ui->edtSensorNum->setText(QString("%1").arg(_para.sensorNum));
-    //ui->edtVersion->setText(QString("V%1.%2.%3").arg(_para.version/10000).arg((_para.version%10000)/100).arg(_para.version%100));
+
+    QTextCodec *codec = QTextCodec::codecForName("GB18030");
+
+
+    QString plate(codec->toUnicode((char*)_para.plate));
+
+    ui->edtPlate->setText(plate);
+
+    QString simCard((char*)_para.simCard);
+    ui->edtSimCard->setText(simCard);
 }
 
 
@@ -513,16 +515,6 @@ void MainWindow::on_btnSearch_clicked()
 
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-//    if(!adc102.hasConnect())
-//    {
-//        if(index != 0)
-//        {
-//            ui->tabWidget->setCurrentIndex(0);
-//            QMessageBox::information(this,tr("info"),tr("please scan device first"));
-//        }
-
-//        return ;
-//    }
 
     if(index == 0)
     {
@@ -533,6 +525,8 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
         if(isUart)
         {
+            traversalControl(ui->grpParas1->children());
+            traversalControl(ui->grpParas2->children());
             adc102.startReadPara();
         }
         else
@@ -545,9 +539,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
             m_read_cmds.append(CMD_DEV_REPORT_TIME);
             network.readPara(CMD_VER);
             m_timer.start(5000);
-            //network.readPara(CMD_GPS);
-            //network.readPara(CMD_GPS_REPORT_TIME);
-            //network.readPara(CMD_DEV_REPORT_TIME);
+
         }
 
     }
@@ -555,6 +547,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     {
         if(isUart)
         {
+
             adc102.readCalibPoints();
         }
     }
@@ -565,27 +558,56 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
     }
 }
+void MainWindow::traversalControl(const QObjectList& q)
+{
+    foreach(QObject* obj,q)
+    {
+           QString class_name=obj->metaObject()->className();
 
+           if(class_name=="QLineEdit")
+           {
+               QLineEdit* le=(QLineEdit*)obj;
+
+               le->setText("");
+           }
+           else if(class_name=="QComboBox")
+           {
+               QComboBox* cbx=(QComboBox*)obj;
+
+               cbx->setCurrentText("");
+           }
+    }
+
+}
 void MainWindow::on_btnSave_clicked()
 {
     Para p;
-    //p.filter_level = ui->cbxFilterLvl->currentIndex();
+
+    QString plate = ui->edtPlate->text();
+    //QString s = UTF82GBK(plate);
+    QTextCodec *gbk = QTextCodec::codecForName("GB18030");
+
+
+
+    QByteArray b;//ip.toIPv4Address(); = s.to
+    b = gbk->fromUnicode(plate);
+//b.append(s);
+    for(int i = 0; i < b.size(); i++)
+    {
+        p.plate[i] = b[i];
+        if(i>=10) break;
+    }
+    QHostAddress ip(ui->edtServerIp->text());
+
+    p.serverIp = ip.toIPv4Address();
+    p.serverPort = ui->edtServerPort->text().toInt();
+
     p.div_high = ui->cbxDivHigh->currentText().toInt();
-    //p.div_low = ui->cbxDivLow->currentText().toInt();
-    //p.dot = ui->cbxDot->currentIndex();
-    //p.hand_zero_span = ui->edtHandZeroSpan->text().toInt();
-//    p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt();
-//    p.sensor_full_span = ui->edtSensorFullSpan->text().toInt();
-//    p.sensor_mv = ui->edtSensorMv->text().toInt();
-//    p.slave_addr = ui->edtSlaveAddr->text().toInt();
+
     p.max_weight = ui->edtFullHigh->text().toInt();
-//    p.span_low = ui->edtFullLow->text().toInt();
-//    p.stable_span = ui->edtStableSpan->text().toInt();
-//    p.unit = ui->cbxUnit->currentIndex();
-    //p.zero_track_span = ui->edtZeroSpan->text().toInt();
+
     p.sensorNum = ui->edtSensorNum->text().toInt();
 
-    //p.adRate = ui->cbxAdRate->currentIndex();
     if(adc102.paraSave(p))
     {
         QMessageBox::information(this,tr("info"),tr("save successful"));

@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -349,7 +349,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_10">
           <item>
-           <widget class="QGroupBox" name="groupBox_4">
+           <widget class="QGroupBox" name="grpParas1">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -394,7 +394,7 @@
               </widget>
              </item>
              <item row="0" column="3">
-              <widget class="QLineEdit" name="lineEdit">
+              <widget class="QLineEdit" name="edtPlate">
                <property name="font">
                 <font>
                  <family>黑体</family>
@@ -407,7 +407,7 @@
               </widget>
              </item>
              <item row="2" column="3">
-              <widget class="QLineEdit" name="edtZeroSpan">
+              <widget class="QLineEdit" name="edtServerIp">
                <property name="font">
                 <font>
                  <family>黑体</family>
@@ -427,7 +427,7 @@
               </widget>
              </item>
              <item row="1" column="3">
-              <widget class="QLineEdit" name="lineEdit_2">
+              <widget class="QLineEdit" name="edtSimCard">
                <property name="font">
                 <font>
                  <family>黑体</family>
@@ -549,7 +549,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox_7">
+           <widget class="QGroupBox" name="grpParas2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -1000,12 +1000,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_5">
-       <attribute name="title">
-        <string>页</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_4"/>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -1016,7 +1010,7 @@
      <x>0</x>
      <y>0</y>
      <width>977</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuChange">

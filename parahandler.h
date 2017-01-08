@@ -22,13 +22,20 @@ public:
     quint16 version; //万位是产品编号，百位和千位是发行版本号，个位和十位是临时版本号
     quint16 adRate; //AD采样率.
     //cz400
-    quint8 carNo[10]; //
-    quint8 simCard[12];
+    quint8 plate[11]; //
+    quint8 simCard[13];
+    quint16 serverPort;
+    quint32 serverIp;
+
     qint16 sensorNum;
     quint32 max_weight;
     quint32 limit_weight;
     qint32  zero;
-
+    Para()
+    {
+        memset(plate,0,11);
+        memset(simCard,0,13);
+    }
 };
 class ParaHandler : public CmdHandler
 {
