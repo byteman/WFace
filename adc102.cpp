@@ -34,6 +34,9 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
 bool ADC102::setSlaveAddr(int addr)
 {
     bool ret = true;
+    if(addr == -1){
+        return false;
+    }
     m_slaveAddr = addr;
 
     modbus.setDeviceAddr(addr);
@@ -79,10 +82,7 @@ bool ADC102::paraSave(Para _para)
 
 bool ADC102::startScan(QString port, int baud, char parity, char databit, char stopbit,bool findOne)
 {
-    if(m_handler!=NULL)
-    {
-        m_handler->stop();
-    }
+    gWorker.Stop();
     if(!modbus.open(port.toStdString().c_str(),baud,parity,databit,stopbit))
     {
 
@@ -183,7 +183,8 @@ bool ADC102::readCalibPoints(int index)
     m_handler = m_handlers[3];
     handler->readPara(index);
     m_interval = 500;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
     return true;
 }
 

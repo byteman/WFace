@@ -15,6 +15,7 @@ bool RTU_Modbus::open(const char* port, int baud, char parity, char databit, cha
     {
         modbus_close( m_modbus );
         modbus_free( m_modbus );
+        m_modbus = NULL;
     }
     m_modbus = modbus_new_rtu(port,
             baud,

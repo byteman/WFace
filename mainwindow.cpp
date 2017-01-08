@@ -287,6 +287,7 @@ void MainWindow::on_btnSearch_clicked()
     if(!scan)
     {
         QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
+
         if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1,!ui->cbxFindAll->isChecked()))
         {
             QMessageBox::information(this,tr("error"),tr("uart open failed"));
@@ -306,7 +307,45 @@ void MainWindow::on_btnSearch_clicked()
 
 
 }
+void MainWindow::traversalControl(const QObjectList& q)
+{
+    foreach(QObject* obj,q)
+    {
+           QString class_name=obj->metaObject()->className();
 
+           if(class_name=="QLineEdit")
+           {
+               QLineEdit* le=(QLineEdit*)obj;
+
+               le->setText("");
+           }
+           else if(class_name=="QComboBox")
+           {
+               QComboBox* cbx=(QComboBox*)obj;
+
+               cbx->setCurrentText("");
+           }
+    }
+
+}
+void MainWindow::clearCalib()
+{
+    int rows = ui->tblCalib->rowCount();
+    int cols = ui->tblCalib->columnCount();
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < cols; j++)
+        {
+            QTableWidgetItem* item = ui->tblCalib->item(i,j);
+            if(item!=NULL)
+                item->setText("");
+        }
+    }
+    ui->edtSensorFullSpan->setText("");
+    ui->edtSensorMv->setText("");
+
+
+}
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
     if(!adc102.hasConnect())
@@ -331,12 +370,20 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     }
     else if(index == 2)
     {
+        traversalControl(ui->grpParas->children());
         adc102.startReadPara();
     }
     else if(index == 3)
     {
-        adc102.startReadWeight();
-        adc102.readCalibPoints();
+        clearCalib();
+        if(!adc102.startReadWeight())
+        {
+            qDebug() << "read Params failed ";
+        }
+        if(!adc102.readCalibPoints())
+        {
+            qDebug() << "read calib failed ";
+        }
     }
 }
 

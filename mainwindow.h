@@ -68,6 +68,8 @@ private:
 
 
     // QObject interface
+    void traversalControl(const QObjectList &q);
+    void clearCalib();
 protected:
     void timerEvent(QTimerEvent *);
 };
