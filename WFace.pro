@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     netclient.cpp \
     networkmgr.cpp \
     crc16.cpp \
-    timerworker.cpp
+    timerworker.cpp \
+    customparams.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -48,7 +49,8 @@ HEADERS  += mainwindow.h \
     netclient.h \
     networkmgr.h \
     netmsg.h \
-    timerworker.h
+    timerworker.h \
+    customparams.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 

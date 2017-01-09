@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -363,38 +363,8 @@
              <property name="verticalSpacing">
               <number>16</number>
              </property>
-             <item row="4" column="3">
-              <widget class="QLineEdit" name="edtVersion">
-               <property name="font">
-                <font>
-                 <family>黑体</family>
-                 <pointsize>12</pointsize>
-                 <weight>50</weight>
-                 <italic>false</italic>
-                 <bold>false</bold>
-                </font>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_7">
-               <property name="text">
-                <string>车牌号</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_9">
-               <property name="text">
-                <string>SIM卡号</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <widget class="QLineEdit" name="edtPlate">
+             <item row="3" column="3">
+              <widget class="QLineEdit" name="edtServerPort">
                <property name="font">
                 <font>
                  <family>黑体</family>
@@ -406,8 +376,75 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="3">
-              <widget class="QLineEdit" name="edtServerIp">
+             <item row="5" column="3">
+              <widget class="QComboBox" name="cbxGps">
+               <item>
+                <property name="text">
+                 <string>GPS</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>北斗</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_4">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>ServerIp</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="3">
+              <widget class="QLineEdit" name="edtDevTime"/>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>定位方式</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="3">
+              <widget class="QLineEdit" name="edtGpsTime"/>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>轨迹上发间隔</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>设备上报间隔</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_16">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Version</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QLineEdit" name="edtSimCard">
                <property name="font">
                 <font>
                  <family>黑体</family>
@@ -426,8 +463,8 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="3">
-              <widget class="QLineEdit" name="edtSimCard">
+             <item row="0" column="3">
+              <widget class="QLineEdit" name="edtPlate">
                <property name="font">
                 <font>
                  <family>黑体</family>
@@ -439,21 +476,15 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_16">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_9">
                <property name="text">
-                <string>Version</string>
+                <string>SIM卡号</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="3">
-              <widget class="QLineEdit" name="edtServerPort">
+             <item row="2" column="3">
+              <widget class="QLineEdit" name="edtServerIp">
                <property name="font">
                 <font>
                  <family>黑体</family>
@@ -465,83 +496,26 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_4">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_7">
                <property name="text">
-                <string>ServerIp</string>
+                <string>车牌号</string>
                </property>
               </widget>
              </item>
-             <item row="8" column="3">
-              <spacer name="verticalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
+             <item row="4" column="3">
+              <widget class="QLineEdit" name="edtVersion">
+               <property name="font">
+                <font>
+                 <family>黑体</family>
+                 <pointsize>12</pointsize>
+                 <weight>50</weight>
+                 <italic>false</italic>
+                 <bold>false</bold>
+                </font>
                </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="5" column="3">
-              <widget class="QComboBox" name="cbxGps">
-               <item>
-                <property name="text">
-                 <string>GPS</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>北斗</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="6" column="0">
-              <widget class="QLabel" name="label_10">
-               <property name="text">
-                <string>轨迹上发间隔</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="3">
-              <widget class="QLineEdit" name="edtGpsTime"/>
-             </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>定位方式</string>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="3">
-              <widget class="QLineEdit" name="edtDevTime"/>
-             </item>
-             <item row="7" column="0">
-              <widget class="QLabel" name="label_11">
-               <property name="text">
-                <string>设备上报间隔</string>
-               </property>
-              </widget>
-             </item>
-             <item row="8" column="0">
-              <widget class="QPushButton" name="btnReset">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>复位设备</string>
+               <property name="readOnly">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -579,48 +553,6 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_8">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Div1</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_2">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>SensorNum</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QLineEdit" name="edtFullHigh">
-               <property name="font">
-                <font>
-                 <family>黑体</family>
-                 <pointsize>12</pointsize>
-                 <weight>50</weight>
-                 <italic>false</italic>
-                 <bold>false</bold>
-                </font>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="1">
               <widget class="QComboBox" name="cbxDivHigh">
                <item>
@@ -645,6 +577,19 @@
                </item>
               </widget>
              </item>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="edtFullHigh">
+               <property name="font">
+                <font>
+                 <family>黑体</family>
+                 <pointsize>12</pointsize>
+                 <weight>50</weight>
+                 <italic>false</italic>
+                 <bold>false</bold>
+                </font>
+               </property>
+              </widget>
+             </item>
              <item row="1" column="1">
               <widget class="QLineEdit" name="edtSensorNum">
                <property name="font">
@@ -658,18 +603,34 @@
                </property>
               </widget>
              </item>
-             <item row="5" column="1">
-              <spacer name="verticalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_2">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
+               <property name="text">
+                <string>SensorNum</string>
                </property>
-              </spacer>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_8">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Div1</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -677,7 +638,33 @@
          </layout>
         </item>
         <item>
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QPushButton" name="btnReset">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>复位设备</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <spacer name="horizontalSpacer_2">
             <property name="orientation">
@@ -1010,7 +997,7 @@
      <x>0</x>
      <y>0</y>
      <width>977</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuChange">

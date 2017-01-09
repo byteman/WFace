@@ -10,6 +10,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include "networkmgr.h"
+#include "customparams.h"
 namespace Ui {
 class MainWindow;
 }
@@ -102,6 +103,7 @@ private:
     bool closed;
     bool isUart;
     QList<int> m_read_cmds;
+    CustomParamsManager cpm;
     // QObject interface
 public:
 

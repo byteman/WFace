@@ -1,0 +1,21 @@
+{
+	"params":
+	[
+		{
+			"parent":"grpParas2",
+			"caption":"version",
+			"class":"QLineEdit",
+			"type":"U32",
+			"attr":"R",
+			"addr":168
+		},
+		{
+			"parent":"grpParas2",
+			"caption":"version",
+			"class":"QLineEdit",
+			"type":"U32",
+			"attr":"R",
+			"addr":168
+		}
+	]
+}

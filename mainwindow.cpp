@@ -11,6 +11,7 @@
 #include <QFile>
 #include "netmsg.h"
 #include "crc.h"
+
 static QString unit="g";
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QMainWindow(parent),
@@ -59,6 +60,11 @@ qRegisterMetaType<Para>("Para");
     setWindowState(Qt::WindowMaximized);
     for(int i = 0; i < ui->tableWidget->columnCount(); i++)
         ui->tableWidget->setColumnWidth(i,200);
+
+    QList<QGroupBox*> list;
+    list.push_back(ui->grpParas1);
+    list.push_back(ui->grpParas2);
+    cpm.load("params.json",list);
     //GPSMark("40.047669,116.313082");
     //ui->webView->load();
 }
