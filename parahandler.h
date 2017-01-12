@@ -31,6 +31,11 @@ public:
     quint32 max_weight;
     quint32 limit_weight;
     qint32  zero;
+    quint8 gps_beidou;
+    quint8 gps_report;
+    quint8 dev_report;
+    quint8 delay_time;
+    quint8 calib_datetime[6];
     Para()
     {
         memset(plate,0,11);

@@ -47,13 +47,22 @@ bool ParaHandler::paraSave(Para _para)
 
        memcpy(values+3,_para.plate,10);
        memcpy(values+8,_para.simCard,12);
-       if(14 == _rtu->write_registers(21,14,values))
+       if(14 != _rtu->write_registers(21,14,values))
+       {
+            return false;
+       }
+       values[0] = _para.gps_report;
+       values[1] = _para.dev_report;   
+
+       if(2 != _rtu->write_registers(164,2,values))
+       {
+            return false;
+       }
+       values[0] = _para.delay_time;
+       if(1 == _rtu->write_registers(169,1,values))
        {
             return true;
        }
-
-
-
     }
     return false;
 }
@@ -61,52 +70,30 @@ bool ParaHandler::paraSave(Para _para)
 bool ParaHandler::paraRead(Para &_para)
 {
     quint16 values[72];
-//    if(17 == _rtu->read_registers(3,17,values))
-//    {
 
-        //m_para.dot = values[0];
-//        _para.dot = values[0];
-//        _para.div_high = values[5];
-//        _para.div_low = values[6];
-//        _para.span_high = values[7]+(values[8]<<16);
-//        _para.span_low = values[9]+(values[10]<<16);
-//        _para.unit = values[11];
-//        _para.pwr_zero_span = values[12];
-//        _para.hand_zero_span = values[13];
-//        _para.zero_track_span = values[14];
-//        _para.stable_span = values[15];
-//        _para.filter_level = values[16];
-//        //memcpy(&m_para,&values[0],sizeof(values));
-//        if(6 == _rtu->read_registers(26,6,values))
-//        {
-//            _para.sensor_full_span = values[0]+(values[1]<<16);
-//            _para.sensor_mv = values[2]+(values[3]<<16);
-//            _para.slave_addr = values[4];
-//            _para.version = values[5];
-//            if(1 == _rtu->read_registers(96,1,&_para.adRate))
-//            {
-//                emit paraReadResult(_para);
-//                return true;
-//            }
-
-//        }
-
-
-    //}
-
-    if(36 == _rtu->read_registers(1,36,values))
+    if(36 != _rtu->read_registers(1,36,values))
     {
-        _para.serverPort = values[20];
-        _para.serverIp =values[21] + (values[22] << 16);
-        memcpy(_para.plate,values+23,10);
-        memcpy(_para.simCard,values+28,12);
-        _para.sensorNum = values[7];
-        _para.div_high = values[8];
-        _para.max_weight = values[0] + (values[1] << 16);
-        emit paraReadResult(_para);
-        return true;
+        return false;
     }
-    return false;
+    _para.serverPort = values[20];
+    _para.serverIp =values[21] + (values[22] << 16);
+    memcpy(_para.plate,values+23,10);
+    memcpy(_para.simCard,values+28,12);
+    _para.sensorNum = values[7];
+    _para.div_high = values[8];
+    _para.max_weight = values[0] + (values[1] << 16);
+    if(11 != _rtu->read_registers(159,11,values)){
+        return false;
+    }
+    _para.version =  values[0]  + (values[1] << 16);
+    _para.gps_beidou = values[4];
+    _para.gps_report = values[5];
+    _para.dev_report = values[6];
+    memcpy(_para.calib_datetime,values+7,6);
+    _para.delay_time = values[10];
+    emit paraReadResult(_para);
+    return true;
+
 }
 
 bool ParaHandler::myrun()

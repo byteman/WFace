@@ -353,6 +353,18 @@ void MainWindow::onParaReadResult(Para _para)
 
     QString simCard((char*)_para.simCard);
     ui->edtSimCard->setText(simCard);
+    int ver = _para.version;
+    QString vers = QString("ver%1.%2.%3").arg((ver>>16)&0xFF).arg((ver>>8)&0xFF).arg((ver)&0xFF);
+    ui->edtVersion->setText(vers);
+
+
+    ui->edtGpsTime->setText(QString("%1").arg(_para.gps_report));
+    ui->edtDevTime->setText(QString("%1").arg(_para.dev_report));
+
+    ui->edtDelay->setText(QString("%1").arg(_para.delay_time));
+    QString calibTime = QString("%1-%2-%3 %4:%5:%6").arg(_para.calib_datetime[0]+2000).arg(_para.calib_datetime[1]).arg(_para.calib_datetime[2]).arg(_para.calib_datetime[3]).arg(_para.calib_datetime[4]).arg(_para.calib_datetime[5]);
+
+    ui->edtCalibTime->setText(calibTime);
 }
 
 
@@ -613,6 +625,10 @@ void MainWindow::on_btnSave_clicked()
     p.max_weight = ui->edtFullHigh->text().toInt();
 
     p.sensorNum = ui->edtSensorNum->text().toInt();
+
+    p.delay_time = ui->edtDelay->text().toInt();
+    p.gps_report = ui->edtGpsTime->text().toInt();
+    p.dev_report = ui->edtDevTime->text().toInt();
 
     if(adc102.paraSave(p))
     {
