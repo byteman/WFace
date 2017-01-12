@@ -354,6 +354,7 @@ void MainWindow::onParaReadResult(Para _para)
     QString simCard((char*)_para.simCard);
     ui->edtSimCard->setText(simCard);
     int ver = _para.version;
+    //ui->edtVersion->setText(QString("%1").arg(_para.version));
     QString vers = QString("ver%1.%2.%3").arg((ver>>16)&0xFF).arg((ver>>8)&0xFF).arg((ver)&0xFF);
     ui->edtVersion->setText(vers);
 
