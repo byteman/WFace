@@ -64,7 +64,7 @@ qRegisterMetaType<Para>("Para");
     QList<QGroupBox*> list;
     list.push_back(ui->grpParas1);
     list.push_back(ui->grpParas2);
-    cpm.load("params.json",list);
+    //cpm.load("params.json",list);
     //GPSMark("40.047669,116.313082");
     //ui->webView->load();
 }
