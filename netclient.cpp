@@ -178,6 +178,7 @@ void NetClient::parse()
 }
 bool NetClient::send_update_packet(QByteArray data)
 {
+    m_timeout_retry++;
     return sendpacket(CMD_UPDATE, OPER_HOST_WRITE_DEV, data);
 }
 
@@ -198,7 +199,7 @@ bool NetClient::sendpacket(quint8 cmd, quint8 oper, QByteArray data,bool queue)
     crc = Reentrent_CRC16((quint8*)_send.data(),_send.size());
     _send.append((const char*)&crc,2);
 
-    m_timeout_retry++;
+
     if(_socket!=NULL)
     {
 //        if(queue)
@@ -399,11 +400,11 @@ void NetClient::onLineTimerHandler()
 
     if(m_online_timeout++ > 3)
     {
-        sendUpdateEvent(UEVT_DISCONNECT);
+        //sendUpdateEvent(UEVT_DISCONNECT);
         qDebug() << "heart beart timeout,close";
         if(_socket)
         {
-            _socket->close();
+            //_socket->close();
         }
     }
 }

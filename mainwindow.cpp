@@ -13,6 +13,7 @@
 #include "crc.h"
 
 static QString unit="g";
+
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QMainWindow(parent),
     _app(app),
@@ -51,7 +52,7 @@ qRegisterMetaType<Para>("Para");
     signalMapper  = new QSignalMapper(this);
     signalMapper2 = new QSignalMapper(this);
 
-    network.start(8383);
+    network.start(8889);
     connect(&network,SIGNAL(SignalOneMsg(NetClient*,Msg_Head,void*)),SLOT(onOneMsg(NetClient*,Msg_Head,void*)));
     connect(&network,SIGNAL(SignalUpdateEvent(NetClient*,int, UpdateEvtPara)), SLOT(onUpdateEvent(NetClient*,int, UpdateEvtPara)));
     connect(&network,SIGNAL(SignalNewClient(NetClient*)), SLOT(onNewClient(NetClient*)));
