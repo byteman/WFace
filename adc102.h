@@ -9,6 +9,7 @@
 #include <QList>
 #include "updatehandler.h"
 #include "timerworker.h"
+#include "RtuReader.h"
 class ADC102 : public QObject
 {
     Q_OBJECT
@@ -24,7 +25,9 @@ signals:
     void paraReadResult(Para _para);
     void calibProcessResult(int index, int result);
     void calibPointResult(int index, int weight, int ad);
+    void OperationResult(RegOperCmd value);
 public slots:
+    void onOperationResult(RegOperCmd value);
     bool discardTare();
     bool WriteCtrlCmd(int reg, quint8 value);
     bool setZero();
@@ -65,6 +68,7 @@ private:
     int m_slaveAddr;
     Para m_para;
     QThread m_thread;
+    RtuReader m_reader;
 };
 
 #endif // ADC102_H

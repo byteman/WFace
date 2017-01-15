@@ -293,6 +293,7 @@ void MainWindow::on_btnSearch_clicked()
             QMessageBox::information(this,tr("error"),tr("uart open failed"));
             return ;
         }
+        reader.open(port,ui->cbxBaud->currentText().toInt(),'N',8,1);
         //ui->btnSearch->setEnabled(false);
         ui->btnSearch->setText(tr("StopSearch"));
         ui->listWidget->setEnabled(false);
@@ -505,47 +506,6 @@ void MainWindow::on_btnGN_clicked()
     {
         QMessageBox::information(this,tr("error"),tr("change groos net failed"));
     }
-}
-
-void MainWindow::on_btnUpdate_clicked()
-{
-//    QString file = ui->edtFile->text();
-//    QFile f(file);
-//    if(!f.exists())
-//    {
-//        QMessageBox::information(this,tr("error"),tr("file do not exist"));
-//        return;
-//    }
-//    if(!adc102.reset())
-//    {
-//        //自动复位失败，则提示手动复位...,程序还是一直发送空格...
-//        QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
-//    }
-//    if(!adc102.startUpdate(file))
-//    {
-//         QMessageBox::information(this,tr("error"),tr("file update failed"));
-//    }
-//    else
-//    {
-//        //QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
-//    }
-}
-
-void MainWindow::on_btnSelFile_clicked()
-{
-//   QFileDialog *fileDialog = new QFileDialog(this);
-//   fileDialog->setWindowTitle(tr("Open Image"));
-//   fileDialog->setDirectory(".");
-//   //fileDialog->setFilter(tr("Image Files(*.jpg *.png)"));
-//   if(fileDialog->exec() == QDialog::Accepted) {
-//           QString path = fileDialog->selectedFiles()[0];
-//           //ui->edtFile->setText(path);
-//           //QMessageBox::information(NULL, tr("Path"), tr("You selected ") + path);
-//   } else {
-//           QMessageBox::information(NULL, tr("Path"), tr("You didn't select any files."));
-//   }
-//   delete fileDialog;
-
 }
 
 void MainWindow::on_btnReset_clicked()

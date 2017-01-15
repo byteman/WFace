@@ -25,12 +25,21 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handlers.push_back(handler_weight);
     m_handlers.push_back(handler_para);
     m_handlers.push_back(handler_calib);
-    m_thread.start();
-    gWorker.moveToThread(&m_thread);
-
+    //m_thread.start();
+    //gWorker.moveToThread(&m_thread);
+    m_reader.start();
+    connect(&m_reader,SIGNAL(OperationResult(RegOperCmd)),this,SLOT(onOperationResult(RegOperCmd)));
     //m_handlers.push_back(handler_update);
 }
+void ADC102::onOperationResult(RegOperCmd value)
+{
+    switch(value.reg_addr)
+    {
+        case REG_SLAVE_ADDR:
 
+            break;
+    }
+}
 bool ADC102::setSlaveAddr(int addr)
 {
     bool ret = true;
@@ -95,27 +104,20 @@ bool ADC102::paraSave(Para _para)
 
 bool ADC102::startScan(QString port, int baud, char parity, char databit, char stopbit,bool findOne)
 {
-    gWorker.Stop();
-    if(!modbus.open(port.toStdString().c_str(),baud,parity,databit,stopbit))
-    {
 
+    if(false == m_reader.open(port,baud,parity,databit,stopbit))
+    {
         return false;
     }
-    //modbus.setByteTimeout(100000);
-    modbus.set_response_timeout(100000);
-    ScanHandler* handler = (ScanHandler*)m_handlers[0];
-    handler->startScan(findOne);
-    //m_handlers.push_back();
-    m_handler = handler;
-    m_interval = 100;
-    gWorker.Start(m_interval,m_handler);
+    m_reader.set_response_timeout(100000);
 
-    return true;
+
+
+
 }
 bool ADC102::stopScan()
 {
-    ScanHandler* handler = (ScanHandler*)m_handlers[0];
-    return handler->stop();
+    return true;
 }
 bool ADC102::startReadWeight()
 {

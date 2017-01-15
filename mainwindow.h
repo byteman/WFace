@@ -5,6 +5,7 @@
 #include "adc102.h"
 #include <QListWidgetItem>
 #include <bitset>
+#include "RtuReader.h"
 namespace Ui {
 class MainWindow;
 }
@@ -44,9 +45,6 @@ private slots:
 
     void on_btnGN_clicked();
 
-    void on_btnUpdate_clicked();
-
-    void on_btnSelFile_clicked();
 
     void on_btnReset_clicked();
 
@@ -66,12 +64,13 @@ private:
     ADC102 adc102;
     QApplication &_app;
 
-
+    RtuReader reader;
     // QObject interface
     void traversalControl(const QObjectList &q);
     void clearCalib();
 protected:
     void timerEvent(QTimerEvent *);
+
 };
 
 #endif // MAINWINDOW_H

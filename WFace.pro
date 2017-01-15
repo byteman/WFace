@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     parahandler.cpp \
     calibhandler.cpp \
     updatehandler.cpp \
-    timerworker.cpp
+    timerworker.cpp \
+    RtuReader.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -38,7 +39,8 @@ HEADERS  += mainwindow.h \
     parahandler.h \
     calibhandler.h \
     updatehandler.h \
-    timerworker.h
+    timerworker.h \
+    RtuReader.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 

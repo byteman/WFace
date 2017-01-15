@@ -4,7 +4,11 @@
 #include "mymodbus.h"
 
 struct RegCmd{
-
+    RegCmd()
+    {
+        isRead = false;
+    }
+    bool    isRead;
     int     reg_addr;
     int     reg_num;
     quint16 reg_value[32];

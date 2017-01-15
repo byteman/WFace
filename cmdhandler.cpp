@@ -17,11 +17,20 @@ void CmdHandler::writeCmds()
     while(cmdlist.size() > 0)
     {
         cmd = cmdlist.first();
-        if(cmd.reg_num != _rtu->write_registers(cmd.reg_addr,cmd.reg_num,cmd.reg_value))
+        if(cmd.isRead)
         {
-            qDebug() << "write failed";
-        }
+            if(cmd.reg_num == _rtu->read_input_registers(cmd.reg_addr,cmd.reg_num,cmd.reg_value))
+            {
 
+            }
+        }
+        else
+        {
+            if(cmd.reg_num != _rtu->write_registers(cmd.reg_addr,cmd.reg_num,cmd.reg_value))
+            {
+                qDebug() << "write failed";
+            }
+        }
         cmdlist.pop_front();
     }
 
