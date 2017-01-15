@@ -376,14 +376,12 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     else if(index == 3)
     {
         clearCalib();
-        if(!adc102.startReadWeight())
-        {
-            qDebug() << "read Params failed ";
-        }
+
         if(!adc102.readCalibPoints())
         {
             qDebug() << "read calib failed ";
         }
+
     }
 }
 

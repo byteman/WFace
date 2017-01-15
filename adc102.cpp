@@ -48,26 +48,39 @@ bool ADC102::hasConnect()
 {
     return m_connect;
 }
-
+bool ADC102::WriteCtrlCmd(int reg, quint8 value)
+{
+    if(m_handler==NULL)
+    {
+        return false;
+    }
+    RegCmd cmd;
+    cmd.reg_addr = reg;
+    cmd.reg_num = 1;
+    cmd.reg_value[0] = value;
+    return m_handler->addCmd(cmd);
+}
 bool ADC102::discardTare()
 {
-    return modbus.write_register(2,2)==1?true:false;
+    return WriteCtrlCmd(2,2);
 
 }
 
 bool ADC102::setZero()
 {
-    return modbus.write_register(2,1)==1?true:false;
+
+    return WriteCtrlCmd(2,1);
+
 }
 
 bool ADC102::zoom10X()
 {
-    return modbus.write_register(2,4)==1?true:false;
+   return WriteCtrlCmd(2,4);
 }
 
 bool ADC102::changeGN()
 {
-    return modbus.write_register(2,5)==1?true:false;
+    return WriteCtrlCmd(2,5);
 }
 
 bool ADC102::paraSave(Para _para)

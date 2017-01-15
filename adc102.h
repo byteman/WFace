@@ -26,6 +26,7 @@ signals:
     void calibPointResult(int index, int weight, int ad);
 public slots:
     bool discardTare();
+    bool WriteCtrlCmd(int reg, quint8 value);
     bool setZero();
     bool zoom10X();
     bool changeGN();
