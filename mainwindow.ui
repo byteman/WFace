@@ -363,13 +363,6 @@
              <property name="verticalSpacing">
               <number>16</number>
              </property>
-             <item row="8" column="0">
-              <widget class="QLabel" name="label_13">
-               <property name="text">
-                <string>标定时间</string>
-               </property>
-              </widget>
-             </item>
              <item row="3" column="3">
               <widget class="QLineEdit" name="edtServerPort">
                <property name="font">
@@ -380,6 +373,13 @@
                  <italic>false</italic>
                  <bold>false</bold>
                 </font>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>标定时间</string>
                </property>
               </widget>
              </item>
@@ -426,14 +426,14 @@
              <item row="6" column="0">
               <widget class="QLabel" name="label_10">
                <property name="text">
-                <string>轨迹上发间隔</string>
+                <string>轨迹上发间隔(秒)</string>
                </property>
               </widget>
              </item>
              <item row="7" column="0">
               <widget class="QLabel" name="label_11">
                <property name="text">
-                <string>设备上报间隔</string>
+                <string>设备上报间隔(秒)</string>
                </property>
               </widget>
              </item>
@@ -466,7 +466,7 @@
              <item row="3" column="0">
               <widget class="QLabel" name="label_6">
                <property name="text">
-                <string>SererPort</string>
+                <string>服务器端口</string>
                </property>
               </widget>
              </item>
@@ -536,7 +536,7 @@
              <item row="9" column="0">
               <widget class="QLabel" name="label_14">
                <property name="text">
-                <string>延迟时间</string>
+                <string>延迟时间(秒)</string>
                </property>
               </widget>
              </item>
@@ -546,6 +546,16 @@
                 <string/>
                </property>
               </widget>
+             </item>
+             <item row="10" column="0">
+              <widget class="QLabel" name="label_17">
+               <property name="text">
+                <string>ACC断电时间(秒)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="3">
+              <widget class="QLineEdit" name="edtACC"/>
              </item>
             </layout>
            </widget>
@@ -581,7 +591,7 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="2" column="2">
               <widget class="QComboBox" name="cbxDivHigh">
                <item>
                 <property name="text">
@@ -605,7 +615,7 @@
                </item>
               </widget>
              </item>
-             <item row="4" column="1">
+             <item row="4" column="2">
               <widget class="QLineEdit" name="edtFullHigh">
                <property name="font">
                 <font>
@@ -618,7 +628,7 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
+             <item row="1" column="2">
               <widget class="QLineEdit" name="edtSensorNum">
                <property name="font">
                 <font>
@@ -653,14 +663,14 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Div1</string>
+                <string>分度值</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
-             <item row="5" column="1">
+             <item row="6" column="2">
               <spacer name="verticalSpacer_3">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -672,6 +682,19 @@
                 </size>
                </property>
               </spacer>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_15">
+               <property name="text">
+                <string>限载重量</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="QLineEdit" name="edtXZ"/>
              </item>
             </layout>
            </widget>

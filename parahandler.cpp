@@ -26,8 +26,10 @@ bool ParaHandler::paraSave(Para _para)
 
        values[0] = _para.max_weight&0xFFFF;
        values[1] = (_para.max_weight>>16)&0xFFFF;
-       values[2] = _para.max_weight&0xFFFF;
-       values[3] = (_para.max_weight>>16)&0xFFFF;
+       values[2] = _para.limit_weight&0xFFFF;
+       values[3] = (_para.limit_weight>>16)&0xFFFF;
+
+
 
        if(4 != _rtu->write_registers(1,4,values))
        {
@@ -59,7 +61,12 @@ bool ParaHandler::paraSave(Para _para)
             return false;
        }
        values[0] = _para.delay_time;
-       if(1 == _rtu->write_registers(169,1,values))
+       if(1 != _rtu->write_registers(169,1,values))
+       {
+            return false;
+       }
+       values[0] = _para.acc_delay;
+       if(1 == _rtu->write_registers(179,1,values))
        {
             return true;
        }
@@ -82,7 +89,8 @@ bool ParaHandler::paraRead(Para &_para)
     _para.sensorNum = values[7];
     _para.div_high = values[8];
     _para.max_weight = values[0] + (values[1] << 16);
-    if(11 != _rtu->read_registers(159,11,values)){
+    _para.limit_weight = values[2] + (values[3] << 16);
+    if(21 != _rtu->read_registers(159,21,values)){
         return false;
     }
     _para.version =  values[0]  + (values[1] << 16);
@@ -91,6 +99,7 @@ bool ParaHandler::paraRead(Para &_para)
     _para.dev_report = values[6];
     memcpy(_para.calib_datetime,values+7,6);
     _para.delay_time = values[10];
+    _para.acc_delay = values[20];
     emit paraReadResult(_para);
     return true;
 

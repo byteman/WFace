@@ -35,6 +35,7 @@ public:
     quint8 gps_report;
     quint8 dev_report;
     quint8 delay_time;
+    quint8 acc_delay;
     quint8 calib_datetime[6];
     Para()
     {

@@ -344,7 +344,8 @@ void MainWindow::onParaReadResult(Para _para)
     ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
 
     ui->edtSensorNum->setText(QString("%1").arg(_para.sensorNum));
-
+    ui->edtACC->setText(QString("%1").arg(_para.acc_delay));
+    ui->edtXZ->setText(QString("%1").arg(_para.limit_weight));
     QTextCodec *codec = QTextCodec::codecForName("GB18030");
 
 
@@ -631,6 +632,8 @@ void MainWindow::on_btnSave_clicked()
     p.delay_time = ui->edtDelay->text().toInt();
     p.gps_report = ui->edtGpsTime->text().toInt();
     p.dev_report = ui->edtDevTime->text().toInt();
+    p.acc_delay = ui->edtACC->text().toInt();
+    p.limit_weight = ui->edtXZ->text().toInt();
 
     if(adc102.paraSave(p))
     {
