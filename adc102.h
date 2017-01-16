@@ -48,6 +48,7 @@ public slots:
     bool fixScalerK(int weight);
     bool stopReadWeight();
     bool stop();
+    bool stopCalib();
     void onCalibProcessResult(int index, int result);
     void onCalibPointResult(Sensor* ss,int num,int weight);
     void onParaReadResult(Para _para);

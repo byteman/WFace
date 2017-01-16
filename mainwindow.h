@@ -90,6 +90,8 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_btnQuitCalib_clicked();
+
 private:
     void initCalibPoints(int count);
     Ui::MainWindow *ui;

@@ -222,6 +222,12 @@ bool ADC102::stop()
     return true;
 }
 
+bool ADC102::stopCalib()
+{
+    CalibHandler* handler = (CalibHandler*)m_handlers[3];
+    return handler->stopCalib();
+}
+
 void ADC102::onCalibPointResult(Sensor* ss,int num,int weight)
 {
     emit calibPointResult(ss,num,weight);

@@ -207,7 +207,11 @@ bool CalibHandler::calibSet(bool hand,int index, qint32 weight, qint32 ad)
 
     return true;
 }
-
+bool CalibHandler::stopCalib()
+{
+    quint16 values= 0x8001;
+    return addCmd(36,1,&values);
+}
 bool CalibHandler::calibSetAll(std::vector<int> weights,bool hand)
 {
     quint16 values[32];

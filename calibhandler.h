@@ -36,6 +36,7 @@ public:
     bool readSensorNum();
     bool readRtParas(int num);
     bool fixScalerK(int weight);
+    bool stopCalib();
 signals:
     void calibReadResult(Sensor* sensors,int num,int weight);
     void calibProcessResult(int  index, int result);

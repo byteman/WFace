@@ -247,7 +247,7 @@ void MainWindow::onOneMsg(NetClient * _socket, Msg_Head head, void *arg)
         removeCmd(CMD_GPS);
         if(gps == 0 || gps == 1)
         {
-            ui->cbxGps->setCurrentIndex(gps);
+            //ui->cbxGps->setCurrentIndex(gps);
         }
     }
     else if(head.cmd == CMD_GPS_REPORT_TIME)
@@ -354,7 +354,7 @@ void MainWindow::onParaReadResult(Para _para)
     ui->edtPlate->setText(plate);
 
     QString simCard((char*)_para.simCard);
-    ui->edtSimCard->setText(simCard);
+    //ui->edtSimCard->setText(simCard);
     int ver = _para.version;
     //ui->edtVersion->setText(QString("%1").arg(_para.version));
     QString vers = QString("ver%1.%2.%3").arg((ver>>16)&0xFF).arg((ver>>8)&0xFF).arg((ver)&0xFF);
@@ -1028,12 +1028,12 @@ void MainWindow::on_edtGpsTime_returnPressed()
 void MainWindow::on_cbxGps_currentIndexChanged(int index)
 {
 
-    quint8 val = ui->cbxGps->currentIndex();
+//    quint8 val = ui->cbxGps->currentIndex();
 
-    QByteArray data;
-    data.append(val);
+//    QByteArray data;
+//    data.append(val);
 
-    network.writePara(CMD_GPS,data);
+//    network.writePara(CMD_GPS,data);
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -1052,5 +1052,13 @@ void MainWindow::on_pushButton_clicked()
         network.readPara(CMD_VER);
         m_timer.start(5000);
 
+    }
+}
+
+void MainWindow::on_btnQuitCalib_clicked()
+{
+    if(adc102.stopCalib())
+    {
+        QMessageBox::information(this,"提示","结束标定完成!");
     }
 }
