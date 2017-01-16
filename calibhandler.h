@@ -35,8 +35,6 @@ public:
     bool modifyKs(std::vector<qint32> ks);
     bool readSensorNum();
     bool readRtParas(int num);
-    void run();
-
     bool fixScalerK(int weight);
 signals:
     void calibReadResult(Sensor* sensors,int num,int weight);

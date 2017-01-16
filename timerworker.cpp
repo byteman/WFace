@@ -30,6 +30,7 @@ void TimerWorker::Start(int interval, CmdHandler *handler)
 {
       //m_mutex.lock();
     m_handler = handler;
+    m_interval = interval;
     QTimer::singleShot(interval,this,SLOT(doWork()));
 //m_mutex.unlock();
 }

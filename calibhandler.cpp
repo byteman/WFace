@@ -74,15 +74,6 @@ bool CalibHandler::readRtParas(int num)
     return true;
 }
 
-void CalibHandler::run()
-{
-    _run = true;
-    while(_run)
-    {
-        //myrun();
-        //Poco::Thread::sleep(1000);
-    }
-}
 bool CalibHandler::readSensorNum()
 {
     if(m_sensor_num == 0)
@@ -128,6 +119,13 @@ bool CalibHandler::myrun()
             }
             //read realtime params
 
+        }
+        if(writeCmds())
+        {
+            for(int i = 0; i < m_sensor_num; i++)
+            {
+                m_read_calib_points[i] = true;
+            }
         }
 
 
@@ -183,32 +181,31 @@ bool CalibHandler::calibSet(bool hand,int index, qint32 weight, qint32 ad)
     if(hand)
     {
         quint16 type = 0;
-        if(1 != _rtu->write_registers(REG_CALC_TYPE,1,&type))
-        {
-            return false;
-        }
-        if(2 == _rtu->write_registers(REG_INPUT_WTS+index*2,2,values))
-        {
-            m_set_calib_points[index] = true;
-            return true;
-        }
+        addCmd(REG_CALC_TYPE,1,&type);
+        addCmd(REG_INPUT_WTS+index*2,2,values);
+
     }
     else
     {
         values[0] = (1<<index);
         quint16 type = 1;
-        if(1 != _rtu->write_registers(REG_CALC_TYPE,1,&type))
-        {
-            return false;
-        }
-        if(1 == _rtu->write_registers(36,1,values))
-        {
-            m_set_calib_points[index] = true;
-            return true;
-        }
+//        if(1 != _rtu->write_registers(REG_CALC_TYPE,1,&type))
+//        {
+//            return false;
+//        }
+//        if(1 == _rtu->write_registers(36,1,values))
+//        {
+//            m_set_calib_points[index] = true;
+//            return true;
+//        }
+
+
+        addCmd(REG_CALC_TYPE,1,&type);
+        addCmd(36,1,values);
+
     }
 
-    return false;
+    return true;
 }
 
 bool CalibHandler::calibSetAll(std::vector<int> weights,bool hand)
@@ -222,41 +219,55 @@ bool CalibHandler::calibSetAll(std::vector<int> weights,bool hand)
             values[i*2]   = weights[i]&0xffff;
             values[i*2+1] = (weights[i]>>16)&0xffff;
         }
-        if(num*2 == _rtu->write_registers(REG_INPUT_WTS,num*2,values))
+        addCmd(REG_INPUT_WTS,num*2,values);
+        for(int i =0;i < num; i++)
         {
-            for(int i =0;i < num; i++)
-            {
-                m_set_calib_points[i] = true;
-            }
-            return true;
+            m_set_calib_points[i] = true;
         }
+//        if(num*2 == _rtu->write_registers(REG_INPUT_WTS,num*2,values))
+//        {
+//            for(int i =0;i < num; i++)
+//            {
+//                m_set_calib_points[i] = true;
+//            }
+//            return true;
+//        }
     }
     else
     {
 
         values[0]   = weights[0]&0xffff;
         values[1]   = (weights[0]>>16)&0xffff;
-        if(2 != _rtu->write_registers(134,2,values))
-        {
-           return false;
-        }
+        addCmd(134,2,values);
+
+
+//        if(2 != _rtu->write_registers(134,2,values))
+//        {
+//           return false;
+//        }
         values[0] = 0x8000;
-        if(1 == _rtu->write_registers(36,1,values))
+        addCmd(36,1,values);
+        int num = weights.size();
+        for(int i =0;i < num; i++)
         {
-            int num = weights.size();
-            for(int i =0;i < num; i++)
-            {
-                m_set_calib_points[i] = true;
-            }
-           return true;
+            m_set_calib_points[i] = true;
         }
-        else
-        {
-            qDebug() << "calib all failed";
-        }
+//        if(1 == _rtu->write_registers(36,1,values))
+//        {
+//            int num = weights.size();
+//            for(int i =0;i < num; i++)
+//            {
+//                m_set_calib_points[i] = true;
+//            }
+//           return true;
+//        }
+//        else
+//        {
+//            qDebug() << "calib all failed";
+//        }
     }
 
-    return false;
+    return true;
 }
 
 bool CalibHandler::calibZeroSet(int index)
@@ -266,14 +277,8 @@ bool CalibHandler::calibZeroSet(int index)
     values[0] = 0;
     values[0] |=  (1 << index);
 
+    return addCmd(REG_CALC_ZERO,1,values);
 
-
-    if(1 == _rtu->write_registers(REG_CALC_ZERO,1,values))
-    {
-        //m_set_calib_points[index] = true;
-        return true;
-    }
-    return false;
 }
 
 bool CalibHandler::calibAllZero(int num)
@@ -284,11 +289,8 @@ bool CalibHandler::calibAllZero(int num)
     {
         values[0] |=  (1 << i);
     }
-    if(1 == _rtu->write_registers(REG_CALC_ZERO,1,values))
-    {
-        //m_set_calib_points[index] = true;
-        return true;
-    }
+
+    return addCmd(REG_CALC_ZERO,1,values);
 }
 
 bool CalibHandler::modifyKs(std::vector<qint32> ks)
@@ -300,28 +302,27 @@ bool CalibHandler::modifyKs(std::vector<qint32> ks)
         values[i*2]   = ks[i]&0xffff;
         values[i*2+1] = (ks[i]>>16)&0xffff;
     }
-    if(num*2 == _rtu->write_registers(REG_SENSOR_K,num*2,values))
-    {
-        //m_set_calib_points[index] = true;
-        return true;
-    }
-    return false;
+    return addCmd(REG_SENSOR_K,num*2,values);
+
 }
 bool CalibHandler::fixScalerK(int weight)
 {
 
     quint16 values[2];
     values[0] = 2;
-    if(1 != _rtu->write_registers(35,1,values))
-    {
-       return false;
-    }
+    addCmd(35,1,values);
+
+//    if(1 != _rtu->write_registers(35,1,values))
+//    {
+//       return false;
+//    }
 
     values[0]   = weight&0xffff;
     values[1]   = (weight>>16)&0xffff;
-    if(2 != _rtu->write_registers(158,2,values))
-    {
-       return false;
-    }
-    return true;
+//    if(2 != _rtu->write_registers(158,2,values))
+//    {
+//       return false;
+//    }
+    return addCmd(158,2,values);
+
 }

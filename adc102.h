@@ -20,6 +20,7 @@ public:
     bool setSlaveAddr(int addr);
     bool hasConnect();
     bool restart(int time);
+    bool WriteCtrlCmd(int reg, quint8 value);
 signals:
     void updateResult(int result, int pos, int total);
     void scanResult(int type, int addr);

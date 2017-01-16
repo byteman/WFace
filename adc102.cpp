@@ -34,7 +34,18 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     //m_handlers.push_back(handler_update);
     //this->moveToThread(&m_thread);
 }
-
+bool ADC102::WriteCtrlCmd(int reg, quint8 value)
+{
+    if(m_handler==NULL)
+    {
+        return false;
+    }
+    RegCmd cmd;
+    cmd.reg_addr = reg;
+    cmd.reg_num = 1;
+    cmd.reg_value[0] = value;
+    return m_handler->addCmd(cmd);
+}
 bool ADC102::setSlaveAddr(int addr)
 {
     bool ret = true;
