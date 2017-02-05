@@ -27,7 +27,7 @@ class ParaHandler : public CmdHandler
 {
      Q_OBJECT
 public:
-    ParaHandler(RTU_Modbus*  rtu);
+    ParaHandler(RtuReader*  rtu);
     bool start();
     bool stop();
 signals:
@@ -36,7 +36,7 @@ public slots:
     bool paraSave(Para _para);
     bool paraRead(Para &_para);
 public:
-    void run();
+    virtual bool doWork();
 
 private:
     Para m_para;

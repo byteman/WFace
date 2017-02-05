@@ -8,7 +8,7 @@ RtuReader::RtuReader(QObject *parent) : QObject(parent),
 
 }
 
-bool RtuReader::setAddr(int addr)
+bool RtuReader::setDeviceAddr(int addr)
 {
     bool ret = true;
     if(addr == -1){
@@ -24,7 +24,27 @@ bool RtuReader::setAddr(int addr)
 
 bool RtuReader::set_response_timeout(int us)
 {
-   return m_rtu.set_response_timeout(us);
+    return m_rtu.set_response_timeout(us);
+}
+
+int RtuReader::write_register(int reg_addr, int value)
+{
+    return m_rtu.write_register(reg_addr,value);
+}
+
+int RtuReader::write_registers(int reg_addr, int nb, quint16 *value)
+{
+    return m_rtu.write_registers(reg_addr,nb,value);
+}
+
+int RtuReader::read_registers(int reg_addr, int nb, quint16 *value)
+{
+    return m_rtu.read_registers(reg_addr,nb,value);
+}
+
+int RtuReader::read_input_registers(int reg_addr, int nb, quint16 *value)
+{
+    return m_rtu.read_input_registers(reg_addr,nb,value);
 }
 
 bool RtuReader::start(int interval)

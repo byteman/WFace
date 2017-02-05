@@ -3,13 +3,13 @@
 
 #include <qdebug.h>
 
-WeightHandler::WeightHandler(RTU_Modbus *rtu):
+WeightHandler::WeightHandler(RtuReader *rtu):
     CmdHandler(rtu)
 {
 
 }
 
-bool WeightHandler::run()
+void WeightHandler::run()
 {
     if(_rtu)
     {
@@ -20,7 +20,7 @@ bool WeightHandler::run()
         }
     }
     writeCmds();
-    return true;
+    return ;
 }
 
 bool WeightHandler::stop()

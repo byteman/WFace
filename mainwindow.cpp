@@ -9,6 +9,7 @@
 #include "pcomm.h"
 #include <QFileDialog>
 #include <QFile>
+#include <cstdio>
 static QString unit="g";
 static bool scan = false;
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
@@ -17,7 +18,13 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-qRegisterMetaType<Para>("Para");
+    qRegisterMetaType<Para>("Para");
+
+    this->startTimer(500);
+    initUI();
+}
+void MainWindow::initUI()
+{
     QFile file(":/mystyle.txt");
     file.open(QFile::ReadOnly);
 
@@ -32,26 +39,13 @@ qRegisterMetaType<Para>("Para");
         ui->cbxPort->addItem(port.portName());
     }
     ui->cbxBaud->setCurrentIndex(1);
-    //ui->progressBar->hide();
     ui->scanPb->hide();
-    //int version = 21101;
-    //ui->edtVersion->setText(QString("V%1.%2.%3").arg(version/10000).arg((version%10000)/100).arg(version%100));
-    connect(&adc102,SIGNAL(scanResult(int , int )),this,SLOT(onScanResult(int,int)));
-    connect(&adc102,SIGNAL(weightResult(int , quint16,quint16, qint32,qint32 )),this,SLOT(onWeightResult(int,quint16,quint16, qint32,qint32)));
-    connect(&adc102,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
-    //connect(ui->btnTare,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
-    //connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
-    //connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
-    connect(&adc102,SIGNAL(calibProcessResult(int,int)),SLOT(onCalibProcessResult(int,int)));
-    connect(&adc102,SIGNAL(calibPointResult(int,int,int)),SLOT(onReadCalibPointResult(int,int,int)));
-    connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
+
     initCalibPoints();
-
-    this->startTimer(500);
-    //connect(ui->btnGN,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
-    //this->setStyleSheet(res);
+    scaner = new ScanHandler(&reader);
+    handlers.push_back(scaner);
+    connect(scaner,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
 }
-
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -67,7 +61,6 @@ void MainWindow::calibrate_click(int id)
     qDebug() << id << "---clicked";
     int weight = ui->tblCalib->item(id,1)->text().toInt();
 
-    adc102.startCalib(id,weight);
 }
 
 void MainWindow::onParaReadResult(Para _para)
@@ -135,43 +128,7 @@ void MainWindow::onScanResult(int type,int addr)
     }
 }
 
-void MainWindow::onUpdateResult(int result, int pos, int total)
-{
-    switch(result)
-    {
-    case -1:
-        QMessageBox::information(this,tr("error"),tr("start update failed"));
-        //ui->progressBar->hide();
-        break;
-    case 1:
 
-        ui->statusBar->showMessage(tr("wait device reset,please reset..."));
-        break;
-    case 2:
-        ui->statusBar->showMessage(tr("wait return key.."));
-        break;
-    case 3:
-        ui->statusBar->showMessage(tr("enter update mode,start send files.."));
-        break;
-    case 4:
-        ui->statusBar->showMessage(tr("ready send file.."));
-        //ui->progressBar->show();
-        //if(total > 0)
-        //    ui->progressBar->setValue(pos*100/total);
-        break;
-    case 5:
-        ui->statusBar->showMessage(tr("send file complete.."),2000);
-        QMessageBox::information(this,tr("info"),tr("update complete"));
-        //ui->progressBar->setValue(0);
-        //ui->progressBar->hide();
-        break;
-    default:
-        //ui->statusBar->showMessage(tr("update unkown error"));
-        //ui->progressBar->hide();
-        break;
-    }
-}
-#include <cstdio>
 void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare)
 {
     double wf = (double)weight;
@@ -196,10 +153,7 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
             break;
     }
     QString ws(buf);
-//    if(ws.length() < dot)
-//    int pos = (ws.length() >= dot)?(ws.length()-dot):0;
-//    if(dot > 0)
-//        ws.insert(pos,".");
+
     ui->lbl_display_wet->setText(ws);
     QString strState = "";
     //state = 0xFF;
@@ -241,8 +195,6 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
         ui->lblstate->setText(strState);
     }
 
-    //ui->lblgross->setText(QString(tr("gross %1 " )).arg(gross) + unit);
-    //ui->lbltare->setText(QString(tr("tare %1 " )).arg(tare) + unit);
 }
 //标定过程....
 void MainWindow::onCalibProcessResult(int index, int result)
@@ -278,7 +230,7 @@ void MainWindow::onReadCalibPointResult(int index, int weight, int ad)
 
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
-    adc102.setSlaveAddr(item->text().toInt());
+    //adc102.setSlaveAddr(item->text().toInt());
     ui->tabWidget->setCurrentIndex(1);
 }
 
@@ -287,14 +239,13 @@ void MainWindow::on_btnSearch_clicked()
     if(!scan)
     {
         QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
-
-        if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1,!ui->cbxFindAll->isChecked()))
+        if(!reader.open(port,ui->cbxBaud->currentText().toInt(),'N',8,1))
         {
             QMessageBox::information(this,tr("error"),tr("uart open failed"));
             return ;
         }
-        reader.open(port,ui->cbxBaud->currentText().toInt(),'N',8,1);
-        //ui->btnSearch->setEnabled(false);
+        scaner->init(3,1,33,!ui->cbxFindAll->isChecked());
+        scaner->start();
         ui->btnSearch->setText(tr("StopSearch"));
         ui->listWidget->setEnabled(false);
         ui->listWidget->clear();
@@ -303,7 +254,7 @@ void MainWindow::on_btnSearch_clicked()
     }
     else
     {
-        adc102.stopScan();
+        scaner->stop();
     }
 
 
@@ -349,7 +300,7 @@ void MainWindow::clearCalib()
 }
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    if(!adc102.hasConnect())
+    //if(!adc102.hasConnect())
     {
         if(index != 0)
         {
@@ -367,18 +318,18 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     else if(index == 1)
     {
 
-        adc102.startReadWeight();
+       // adc102.startReadWeight();
     }
     else if(index == 2)
     {
         traversalControl(ui->grpParas->children());
-        adc102.startReadPara();
+        //adc102.startReadPara();
     }
     else if(index == 3)
     {
         clearCalib();
 
-        if(!adc102.readCalibPoints())
+        //if(!adc102.readCalibPoints())
         {
             qDebug() << "read calib failed ";
         }
@@ -404,7 +355,8 @@ void MainWindow::on_btnSave_clicked()
     p.unit = ui->cbxUnit->currentIndex();
     p.zero_track_span = ui->edtZeroSpan->text().toInt();
     p.adRate = ui->cbxAdRate->currentIndex();
-    if(adc102.paraSave(p))
+    //if(adc102.paraSave(p))
+    if(1)
     {
         QMessageBox::information(this,tr("info"),tr("save successful"));
     }
@@ -416,7 +368,7 @@ void MainWindow::on_btnSave_clicked()
 
 void MainWindow::on_btnTare_clicked()
 {
-    if(!adc102.discardTare())
+    //if(!adc102.discardTare())
     {
         QMessageBox::information(this,tr("error"),tr("discard tare failed"));
     }
@@ -489,7 +441,8 @@ void MainWindow::on_btnAddr_clicked()
    quint16 oldAddr = sel->text().toInt();
    quint16 newAddr = ui->edtAddr->text().toInt();
 
-   if(adc102.modifyAddr(oldAddr,newAddr))
+  // if(adc102.modifyAddr(oldAddr,newAddr))
+   if(1)
    {
         QMessageBox::information(this,tr("info"),tr("modify address successful"));
    }
@@ -502,7 +455,7 @@ void MainWindow::on_btnAddr_clicked()
 
 void MainWindow::on_btnGN_clicked()
 {
-    if(!adc102.changeGN())
+   // if(!adc102.changeGN())
     {
         QMessageBox::information(this,tr("error"),tr("change groos net failed"));
     }
@@ -510,13 +463,13 @@ void MainWindow::on_btnGN_clicked()
 
 void MainWindow::on_btnReset_clicked()
 {
-    adc102.reset();
+    //adc102.reset();
 }
 
 void MainWindow::on_btnZero_clicked()
 {
 
-    if(!adc102.setZero())
+   // if(!adc102.setZero())
     {
         QMessageBox::information(this,tr("error"),tr("set zero failed"));
     }
@@ -525,7 +478,7 @@ void MainWindow::on_btnZero_clicked()
 void MainWindow::on_btnZoom10_clicked()
 {
 
-    if(!adc102.zoom10X())
+   // if(!adc102.zoom10X())
     {
         QMessageBox::information(this,tr("error"),tr("zomm10x failed"));
     }
@@ -555,7 +508,9 @@ void MainWindow::on_btnSensorWrite_clicked()
     values[3] = (sensor_mv>>16)&0xFFFF;
     //values[4] = _para.slave_addr;
 
-    if(adc102.write_registers(26,4,values)){
+    //if(adc102.write_registers(26,4,values))
+    if(1)
+    {
         QMessageBox::information(this,"提示","保存成功");
     }else
     {
@@ -567,7 +522,7 @@ void MainWindow::on_btnSensorWrite_clicked()
 void MainWindow::timerEvent(QTimerEvent *)
 {
     int rx = 0,tx = 0;
-    adc102.getRXTX(rx,tx);
+    //adc102.getRXTX(rx,tx);
     QString msg = QString("TX:%1|RX:%2 ").arg(tx).arg(rx);
 
     ui->statusBar->showMessage(msg);

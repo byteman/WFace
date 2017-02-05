@@ -5,7 +5,7 @@
 #include <qdebug.h>
 
 
-CalibHandler::CalibHandler(RTU_Modbus *rtu):
+CalibHandler::CalibHandler(RtuReader *rtu):
     CmdHandler(rtu)
 {
     for(int i = 0 ;i < 6; i++)
@@ -16,7 +16,7 @@ CalibHandler::CalibHandler(RTU_Modbus *rtu):
 }
 
 
-void CalibHandler::run()
+bool CalibHandler::doWork()
 {
     if(_rtu)
     {
@@ -54,7 +54,7 @@ void CalibHandler::run()
         }
 
     }
-
+    return true;
 }
 
 bool CalibHandler::readPara(int index)

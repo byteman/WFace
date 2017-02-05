@@ -1,7 +1,8 @@
 #ifndef CMDHANDLER_H
 #define CMDHANDLER_H
-#include <QObject>
+#include <QThread>
 #include "mymodbus.h"
+#include "RtuReader.h"
 
 struct RegCmd{
     RegCmd()
@@ -14,20 +15,22 @@ struct RegCmd{
     quint16 reg_value[32];
 };
 
-class CmdHandler:public QObject
+class CmdHandler:public QThread
 {
     Q_OBJECT
 public:
-    CmdHandler(RTU_Modbus* rtu,QObject* parent=NULL): QObject(parent),_rtu(rtu)
+    CmdHandler(RtuReader* rtu,QObject* parent=NULL): QThread(parent),_rtu(rtu)
     {
 
     }
     void writeCmds();
     bool addCmd(RegCmd cmd);
+    virtual bool startRun();
     virtual bool stop();
-    virtual bool run();
+    virtual void run();
+    virtual bool doWork();
 protected:
-    RTU_Modbus* _rtu;
+    RtuReader* _rtu;
     QList<RegCmd> cmdlist;
 };
 

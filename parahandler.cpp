@@ -1,8 +1,8 @@
 #include "parahandler.h"
 
-ParaHandler::ParaHandler(RTU_Modbus *rtu):
+ParaHandler::ParaHandler(RtuReader *rtu):
     CmdHandler(rtu),
-    m_ok(true)
+    m_ok(false)
 {
 
 }
@@ -99,14 +99,14 @@ bool ParaHandler::paraRead(Para &_para)
     return false;
 }
 
-void ParaHandler::run()
+bool ParaHandler::doWork()
 {
     if(_rtu && !m_ok)
     {
        if(paraRead(m_para))
        {
            m_ok = true;
-
        }
     }
+    return !m_ok;
 }

@@ -33,8 +33,17 @@ class RtuReader : public QObject
 public:
     explicit RtuReader(QObject *parent = 0);
     bool start(int interval=500);
-    bool setAddr(int addr);
+    bool setDeviceAddr(int addr);
     bool set_response_timeout(int us);
+
+    int  write_register(int reg_addr, int value);
+    int  write_registers(int reg_addr, int nb,quint16* value);
+
+    int  read_registers(int reg_addr, int nb,quint16* value);
+    int  read_input_registers(int reg_addr, int nb,quint16* value);
+    QString port() const;
+    void get_rx_tx(int& rx, int &tx);
+
     bool open(QString port, int baud, char parity, char databit, char stopbit);
     bool addCmd(RegOperCmd cmd);
 signals:

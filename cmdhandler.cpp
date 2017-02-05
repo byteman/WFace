@@ -2,12 +2,21 @@
 #include <QDebug>
 
 
-bool CmdHandler::stop()
+
+void CmdHandler::run()
 {
-    return true;
+
+    while ( !QThread::currentThread()->isInterruptionRequested() ) {
+        if(doWork()) // 判断是否工作已经做完.做完就退出线程.
+        {
+            return;
+        }
+    }
+
+
 }
 
-bool CmdHandler::run()
+bool CmdHandler::doWork()
 {
     return true;
 }
@@ -42,5 +51,16 @@ bool CmdHandler::addCmd(RegCmd cmd)
     if(cmdlist.size() > 5)
         return false;
     cmdlist.push_back(cmd);
+    return true;
+}
+
+bool CmdHandler::startRun()
+{
+    this->start();
+    return true;
+}
+bool CmdHandler::stop()
+{
+    this->requestInterruption();
     return true;
 }
