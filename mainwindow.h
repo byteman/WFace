@@ -6,8 +6,11 @@
 #include <bitset>
 #include "RtuReader.h"
 #include "scanhandler.h"
+#include "weighthandler.h"
+#include "calibhandler.h"
+#include "parahandler.h"
 #include "adc102.h"
-#include <QList>
+#include <QMap>
 namespace Ui {
 class MainWindow;
 }
@@ -21,6 +24,7 @@ public:
     ~MainWindow();
 
 private slots:
+    void onReadCalibParam(quint32 sensorMv, quint32 sensorFullSpan);
     void on_actionChagne_triggered();
     void calibrate_click(int id);
     void onParaReadResult(Para _para);
@@ -29,9 +33,10 @@ private slots:
     void onCalibProcessResult(int index, int result);
     void onReadCalibPointResult(int index, int weight, int ad);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
-
+    void onRegOperResult(RegCmd cmd);
+    void onWeightParaRead(quint16 div_high,quint16 div_low, quint32 full_high, quint32 full_low);
     void on_btnSearch_clicked();
-
+    void onParaWriteResult(bool ok);
     void on_tabWidget_currentChanged(int index);
 
     void on_btnSave_clicked();
@@ -53,8 +58,6 @@ private slots:
 
     void on_btnZoom10_clicked();
 
-    void on_listWidget_itemActivated(QListWidgetItem *item);
-
     void on_listWidget_itemClicked(QListWidgetItem *item);
 
     void on_btnSensorWrite_clicked();
@@ -65,12 +68,16 @@ private:
 
     QApplication &_app;
     ScanHandler *scaner;
+    WeightHandler *weight;
+    CalibHandler *calib;
+    ParaHandler* para;
     RtuReader reader;
-    QList<CmdHandler*> handlers;
+    QMap<QString,CmdHandler*> handlers;
     // QObject interface
     void traversalControl(const QObjectList &q);
     void clearCalib();
     void initUI();
+    void changeHandler(QString name,bool start=true);
 protected:
     void timerEvent(QTimerEvent *);
 

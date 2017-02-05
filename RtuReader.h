@@ -7,25 +7,6 @@
 #include <QMutex>
 #include "mymodbus.h"
 
-typedef enum{
-    REG_SLAVE_ADDR=31,
-}RegTA51;
-typedef enum {
-    REG_ERROR_OK=0,
-    REG_ERROR_TIMEOUT
-}RegError;
-struct RegOperCmd{
-    RegOperCmd()
-    {
-        isRead = false;
-        error  = REG_ERROR_OK;
-    }
-    bool    isRead;
-    int     reg_addr;
-    int     reg_num;
-    int     error; //错误码 0成功 1超时.
-    quint16 reg_value[32];
-};
 
 class RtuReader : public QObject
 {
@@ -33,6 +14,7 @@ class RtuReader : public QObject
 public:
     explicit RtuReader(QObject *parent = 0);
     bool start(int interval=500);
+    bool hasConnected(){return m_connect;}
     bool setDeviceAddr(int addr);
     bool set_response_timeout(int us);
 
@@ -45,9 +27,7 @@ public:
     void get_rx_tx(int& rx, int &tx);
 
     bool open(QString port, int baud, char parity, char databit, char stopbit);
-    bool addCmd(RegOperCmd cmd);
-signals:
-    void OperationResult(RegOperCmd value);
+
 public slots:
     void doWork();
 private:
@@ -57,7 +37,7 @@ private:
     bool        m_stop;
     bool        m_connect;
     QMutex      m_mutex;
-    QList<RegOperCmd> m_cmdlist;
+
     int m_slaveAddr;
 };
 

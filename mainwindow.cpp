@@ -19,6 +19,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
 {
     ui->setupUi(this);
     qRegisterMetaType<Para>("Para");
+    qRegisterMetaType<RegCmd>("RegCmd");
 
     this->startTimer(500);
     initUI();
@@ -42,13 +43,52 @@ void MainWindow::initUI()
     ui->scanPb->hide();
 
     initCalibPoints();
+    reader.start(100);
     scaner = new ScanHandler(&reader);
-    handlers.push_back(scaner);
+    weight = new WeightHandler(&reader);
+    calib = new CalibHandler(&reader);
+    para = new ParaHandler(&reader);
+
+    handlers["scan"] = scaner;
+    handlers["weight"] = weight;
+    handlers["calib"] = calib;
+    handlers["para"] = para;
+
     connect(scaner,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
+    connect(weight,SIGNAL(weightResult(int,quint16,quint16,qint32,qint32)),this,SLOT(onWeightResult(int,quint16,quint16,qint32,qint32)));
+    connect(weight,SIGNAL(weightParaReadResult(quint16,quint16,quint32,quint32)),this,SLOT(onWeightParaRead(quint16,quint16,quint32,quint32)));
+
+    connect(calib,SIGNAL(calibReadResult(int,qint32,qint32)),this,SLOT(onReadCalibPointResult(int,int,int)));
+    connect(calib,SIGNAL(calibParaResult(quint32,quint32)),this,SLOT(onReadCalibParam(quint32,quint32)));
+    connect(calib,SIGNAL(OperationResult(RegCmd)),this,SLOT(onRegOperResult(RegCmd)));
+
+    connect(para,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
+    connect(para,SIGNAL(paraWriteResult(bool)),this,SLOT(onParaWriteResult(bool)));
+}
+
+void MainWindow::changeHandler(QString name,bool start)
+{
+    QMapIterator<QString,CmdHandler*> i(handlers);
+    while (i.hasNext()) {
+        i.next();
+        i.value()->stop();
+        //cout << i.key() << ": " << i.value() << endl;
+    }
+    if(start)
+    {
+        if(handlers.contains(name))
+            handlers[name]->startRun();
+    }
 }
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::onReadCalibParam(quint32 sensorMv, quint32 sensorFullSpan)
+{
+    ui->edtSensorFullSpan->setText(QString("%1").arg(sensorFullSpan));
+    ui->edtSensorMv->setText(QString("%1").arg(sensorMv));
 }
 
 void MainWindow::on_actionChagne_triggered()
@@ -60,7 +100,7 @@ void MainWindow::calibrate_click(int id)
 {
     qDebug() << id << "---clicked";
     int weight = ui->tblCalib->item(id,1)->text().toInt();
-
+    calib->calibSet(id,weight,0);
 }
 
 void MainWindow::onParaReadResult(Para _para)
@@ -91,8 +131,7 @@ void MainWindow::onParaReadResult(Para _para)
     ui->edtZeroSpan->setText(QString("%1").arg(_para.zero_track_span));
     ui->edtStableSpan->setText(QString("%1").arg(_para.stable_span));
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
-    ui->edtSensorFullSpan->setText(QString("%1").arg(_para.sensor_full_span));
-    ui->edtSensorMv->setText(QString("%1").arg(_para.sensor_mv));
+
     //ui->edtSlaveAddr->setText(QString("%1").arg(_para.slave_addr));
     ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
     ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
@@ -105,7 +144,7 @@ void MainWindow::onParaReadResult(Para _para)
 
 void MainWindow::onScanResult(int type,int addr)
 {
-    if(type == 0)
+    if(type == SCAN_FIND)
     {
         QString title = QString("%1").arg(addr);
         QListWidgetItem* item = new QListWidgetItem(QIcon(":/monitor.png"),title);
@@ -113,7 +152,7 @@ void MainWindow::onScanResult(int type,int addr)
 
         scan = true;
     }
-    else if(type == 1)
+    else if(type == SCAN_COMPLETE)
     {
         ui->btnSearch->setEnabled(true);
         ui->btnSearch->setText(tr("BusScan"));
@@ -121,7 +160,7 @@ void MainWindow::onScanResult(int type,int addr)
         scan = false;
         ui->scanPb->hide();
     }
-    else if(type == 2)
+    else if(type == SCAN_PROGRASS)
     {
         ui->scanPb->show();
         ui->scanPb->setValue(addr);
@@ -230,8 +269,45 @@ void MainWindow::onReadCalibPointResult(int index, int weight, int ad)
 
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
-    //adc102.setSlaveAddr(item->text().toInt());
+    reader.setDeviceAddr(item->text().toInt());
     ui->tabWidget->setCurrentIndex(1);
+}
+
+void MainWindow::onRegOperResult(RegCmd cmd)
+{
+    if(cmd.reg_addr == REG_CALIB)
+    {
+        if(cmd.error == REG_ERROR_OK)
+        {
+            //QMessageBox::information(this,tr("info"),"标定成功");
+            return ;
+        }
+        else
+        {
+            QMessageBox::information(this,tr("error"),"标定失败");
+            return ;
+        }
+    }
+    else if(cmd.reg_addr == REG_FULL_SPAN && !cmd.isRead)
+    {
+        if(cmd.error != REG_ERROR_OK)
+        {
+            QMessageBox::information(this,"提示","保存失败");
+        }
+        else
+        {
+            QMessageBox::information(this,tr("info"),"保存成功");
+        }
+    }
+}
+
+void MainWindow::onWeightParaRead(quint16 div_high, quint16 div_low, quint32 full_high, quint32 full_low)
+{
+    qDebug() << "onWeightParaRead";
+    ui->lbl_display_wet_4->setText(QString("Mid: %1").arg(full_low));
+    ui->lbl_display_wet_2->setText(QString("Max: %1").arg(full_high));
+    ui->lbl_display_wet_5->setText(QString("d2: %1").arg(div_low));
+    ui->lbl_display_wet_3->setText(QString("d1: %1").arg(div_high));
 }
 
 void MainWindow::on_btnSearch_clicked()
@@ -244,7 +320,7 @@ void MainWindow::on_btnSearch_clicked()
             QMessageBox::information(this,tr("error"),tr("uart open failed"));
             return ;
         }
-        scaner->init(3,1,33,!ui->cbxFindAll->isChecked());
+        scaner->init(3,1,1,33,!ui->cbxFindAll->isChecked());
         scaner->start();
         ui->btnSearch->setText(tr("StopSearch"));
         ui->listWidget->setEnabled(false);
@@ -258,6 +334,18 @@ void MainWindow::on_btnSearch_clicked()
     }
 
 
+}
+
+void MainWindow::onParaWriteResult(bool ok)
+{
+    if(!ok)
+    {
+        QMessageBox::information(this,"提示","保存失败");
+    }
+    else
+    {
+        QMessageBox::information(this,tr("info"),"保存成功");
+    }
 }
 void MainWindow::traversalControl(const QObjectList& q)
 {
@@ -300,7 +388,7 @@ void MainWindow::clearCalib()
 }
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    //if(!adc102.hasConnect())
+    if(!reader.hasConnected())
     {
         if(index != 0)
         {
@@ -313,26 +401,21 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
     if(index == 0)
     {
-
+        changeHandler("scan",false);
     }
     else if(index == 1)
     {
-
-       // adc102.startReadWeight();
+        changeHandler("weight");
     }
     else if(index == 2)
     {
         traversalControl(ui->grpParas->children());
-        //adc102.startReadPara();
+        changeHandler("para");
     }
     else if(index == 3)
     {
         clearCalib();
-
-        //if(!adc102.readCalibPoints())
-        {
-            qDebug() << "read calib failed ";
-        }
+        changeHandler("calib");
 
     }
 }
@@ -346,29 +429,26 @@ void MainWindow::on_btnSave_clicked()
     p.dot = ui->cbxDot->currentIndex();
     p.hand_zero_span = ui->edtHandZeroSpan->text().toInt();
     p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt();
-    p.sensor_full_span = ui->edtSensorFullSpan->text().toInt();
-    p.sensor_mv = ui->edtSensorMv->text().toInt();
-    //p.slave_addr = ui->edtSlaveAddr->text().toInt();
     p.span_high = ui->edtFullHigh->text().toInt();
     p.span_low = ui->edtFullLow->text().toInt();
     p.stable_span = ui->edtStableSpan->text().toInt();
     p.unit = ui->cbxUnit->currentIndex();
     p.zero_track_span = ui->edtZeroSpan->text().toInt();
     p.adRate = ui->cbxAdRate->currentIndex();
-    //if(adc102.paraSave(p))
-    if(1)
-    {
-        QMessageBox::information(this,tr("info"),tr("save successful"));
-    }
-    else
-    {
-        QMessageBox::information(this,tr("info"),tr("save failed"));
-    }
+    para->paraSave(p);
+//    {
+//        QMessageBox::information(this,tr("info"),tr("save successful"));
+//    }
+//    else
+//    {
+//        QMessageBox::information(this,tr("info"),tr("save failed"));
+//    }
 }
 
 void MainWindow::on_btnTare_clicked()
 {
-    //if(!adc102.discardTare())
+
+    if(!weight->discardTare())
     {
         QMessageBox::information(this,tr("error"),tr("discard tare failed"));
     }
@@ -440,11 +520,17 @@ void MainWindow::on_btnAddr_clicked()
    }
    quint16 oldAddr = sel->text().toInt();
    quint16 newAddr = ui->edtAddr->text().toInt();
-
-  // if(adc102.modifyAddr(oldAddr,newAddr))
-   if(1)
+   if(newAddr > 32 || newAddr < 1)
    {
-        QMessageBox::information(this,tr("info"),tr("modify address successful"));
+       QMessageBox::information(this,tr("info"),"新地址范围 1-32 之间");
+       return;
+   }
+   reader.setDeviceAddr(oldAddr);
+   reader.write_register(REG_ADDR,newAddr);
+   reader.setDeviceAddr(newAddr);
+   if(1==reader.read_registers(REG_ADDR,1,&oldAddr))
+   {
+       QMessageBox::information(this,tr("info"),tr("modify address successful"));
    }
    else
    {
@@ -455,7 +541,7 @@ void MainWindow::on_btnAddr_clicked()
 
 void MainWindow::on_btnGN_clicked()
 {
-   // if(!adc102.changeGN())
+    if(!weight->changeGN())
     {
         QMessageBox::information(this,tr("error"),tr("change groos net failed"));
     }
@@ -469,7 +555,7 @@ void MainWindow::on_btnReset_clicked()
 void MainWindow::on_btnZero_clicked()
 {
 
-   // if(!adc102.setZero())
+    if(!weight->setZero())
     {
         QMessageBox::information(this,tr("error"),tr("set zero failed"));
     }
@@ -478,16 +564,12 @@ void MainWindow::on_btnZero_clicked()
 void MainWindow::on_btnZoom10_clicked()
 {
 
-   // if(!adc102.zoom10X())
+    if(!weight->zoom10X())
     {
         QMessageBox::information(this,tr("error"),tr("zomm10x failed"));
     }
 }
 
-void MainWindow::on_listWidget_itemActivated(QListWidgetItem *item)
-{
-
-}
 
 void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 {
@@ -498,24 +580,12 @@ void MainWindow::on_btnSensorWrite_clicked()
 {
     quint32 sensor_full_span; // 传感器总量程（所有传感器量程和）
     quint32 sensor_mv;
-    quint16 values[4];
+
     sensor_full_span = ui->edtSensorFullSpan->text().toInt();
     sensor_mv = ui->edtSensorMv->text().toInt();
 
-    values[0] = (sensor_full_span&0xFFFF);
-    values[1] = (sensor_full_span>>16)&0xFFFF;
-    values[2] = (sensor_mv&0xFFFF);
-    values[3] = (sensor_mv>>16)&0xFFFF;
-    //values[4] = _para.slave_addr;
+    calib->savePara(sensor_full_span,sensor_mv);
 
-    //if(adc102.write_registers(26,4,values))
-    if(1)
-    {
-        QMessageBox::information(this,"提示","保存成功");
-    }else
-    {
-        QMessageBox::information(this,"提示","保存失败");
-    }
 }
 
 
@@ -523,6 +593,7 @@ void MainWindow::timerEvent(QTimerEvent *)
 {
     int rx = 0,tx = 0;
     //adc102.getRXTX(rx,tx);
+    reader.get_rx_tx(rx,tx);
     QString msg = QString("TX:%1|RX:%2 ").arg(tx).arg(rx);
 
     ui->statusBar->showMessage(msg);

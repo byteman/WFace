@@ -1,7 +1,7 @@
 #include "calibhandler.h"
 
 #include "modbus.h"
-
+#include "adc102.h"
 #include <qdebug.h>
 
 
@@ -15,11 +15,31 @@ CalibHandler::CalibHandler(RtuReader *rtu):
     }
 }
 
+bool CalibHandler::paraRead(void)
+{
+    quint16 values[17];
 
+    if(4 == _rtu->read_registers(REG_FULL_SPAN,4,values))
+    {
+        quint32 sensor_full_span = values[0]+(values[1]<<16);
+        quint32 sensor_mv = values[2]+(values[3]<<16);
+        emit calibParaResult(sensor_mv, sensor_full_span);
+        return true;
+    }
+
+
+    return false;
+}
 bool CalibHandler::doWork()
 {
+
     if(_rtu)
     {
+        //qDebug() << "calib work";
+        if(!bInit)
+        {
+            bInit = paraRead();
+        }
         for(int i = 0; i < 6; i++)
         {
             if(m_set_calib_points[i])
@@ -52,9 +72,18 @@ bool CalibHandler::doWork()
 
             }
         }
-
+        this->msleep(100);
+        return false;
     }
+
     return true;
+
+
+}
+
+bool CalibHandler::init()
+{
+    return readPara();
 }
 
 bool CalibHandler::readPara(int index)
@@ -73,16 +102,6 @@ bool CalibHandler::readPara(int index)
     return true;
 }
 
-bool CalibHandler::stop()
-{
-    for(int i = 0 ;i < 6; i++)
-    {
-        m_set_calib_points[i] = false;
-        m_read_calib_points[i] = false;
-    }
-    return true;
-}
-
 bool CalibHandler::calibSet(int index, qint32 weight, qint32 ad)
 {
     quint16 values[4];
@@ -90,11 +109,16 @@ bool CalibHandler::calibSet(int index, qint32 weight, qint32 ad)
     values[1] = 1;
     values[2] = weight&0xFFFF;
     values[3] = (weight>>16)&0xFFFF;
+    m_set_calib_points[index] = true;
+    return postWriteRegs(REG_CALIB, 4, values);
+}
 
-    if(4 == _rtu->write_registers(20,4,values))
-    {
-        m_set_calib_points[index] = true;
-        return true;
-    }
-    return false;
+bool CalibHandler::savePara( quint32 full,quint32 mv)
+{
+    quint16 values[4];
+    values[0] = (full&0xFFFF);
+    values[1] = (full>>16)&0xFFFF;
+    values[2] = (mv&0xFFFF);
+    values[3] = (mv>>16)&0xFFFF;
+    return postWriteRegs(REG_FULL_SPAN, 4, values);
 }

@@ -28,19 +28,21 @@ class ParaHandler : public CmdHandler
      Q_OBJECT
 public:
     ParaHandler(RtuReader*  rtu);
-    bool start();
-    bool stop();
+
 signals:
     void paraReadResult(Para _para);
+    void paraWriteResult(bool ok);
 public slots:
+
     bool paraSave(Para _para);
     bool paraRead(Para &_para);
 public:
     virtual bool doWork();
 
 private:
+    bool _paraSave(Para &_para);
+    bool m_write;
     Para m_para;
-    bool m_ok;
 };
 
 #endif // PARAHANDLER_H

@@ -5,28 +5,30 @@
 ScanHandler::ScanHandler(RtuReader *rtu):
     CmdHandler(rtu),
     m_addr(1),
-    m_findone(true),
-    m_stop(true)
+    m_findOnce(true)
 {
 
 }
 
-bool ScanHandler::init(int reg_addr,int reg_size,int max_addr,bool findOne)
+bool ScanHandler::init(int reg_addr,int reg_size,int min_addr,int max_addr,bool findOne)
 {
     m_addr = 1;
-    m_findone = findOne;
-    m_stop = false;
+    m_findOnce = findOne;
     m_reg_addr = reg_addr;
     m_reg_size = reg_size;
-    m_max_addr = max_addr;
+    m_end_addr = max_addr;
+    m_start_addr = min_addr;
+    _rtu->set_response_timeout(100000);
     return true;
 }
 
 
 bool ScanHandler::doWork()
 {
-    if(m_addr < m_max_addr )
+
+    if(m_addr < m_end_addr )
     {
+        emit scanResult(SCAN_PROGRASS,m_addr);
         if(_rtu)
         {
             quint16 state;
@@ -34,31 +36,34 @@ bool ScanHandler::doWork()
             _rtu->setDeviceAddr(m_addr);
             int len = _rtu->read_registers(m_reg_addr,m_reg_size,&state);
             qDebug() << "addr=" << m_addr << " len=" << len;
-            if(len == 1)
+            if(len == m_reg_size)
             {
-                emit scanResult(0,m_addr);
-                if(m_findone)
+                emit scanResult(SCAN_FIND,m_addr);
+                if(m_findOnce)
                 {
-                    m_addr = 1;
-                    emit scanResult(1,m_addr);
+                    m_addr = m_start_addr;
+                    emit scanResult(SCAN_COMPLETE,m_addr);
                     return true;
                 }
             }
         }
-        emit scanResult(2,m_addr);
-        m_addr++;
 
+        m_addr++;
+        //还没有扫描完毕
         return false;
     }
-    m_addr = 1;
-    emit scanResult(1,m_addr);
+    m_addr = m_start_addr;
+    //扫描完毕.
+    emit scanResult(SCAN_COMPLETE,m_addr);
     return true;
 }
 
 bool ScanHandler::stop()
 {
-    m_addr = m_max_addr;
-    emit scanResult(1,m_addr);
+    m_addr = m_end_addr;
+    //直接发送扫描完毕.等待线程结束.
     this->wait();
+    emit scanResult(SCAN_COMPLETE,m_addr);
+    _rtu->set_response_timeout(1000000);
     return true;
 }

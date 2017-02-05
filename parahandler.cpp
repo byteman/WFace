@@ -2,24 +2,12 @@
 
 ParaHandler::ParaHandler(RtuReader *rtu):
     CmdHandler(rtu),
-    m_ok(false)
+    m_write(false)
 {
 
 }
 
-bool ParaHandler::start()
-{
-    m_ok = false;
-    return m_ok;
-}
-
-bool ParaHandler::stop()
-{
-    m_ok = true;
-    return m_ok;
-}
-
-bool ParaHandler::paraSave(Para _para)
+bool ParaHandler::_paraSave(Para &_para)
 {
     if(_rtu)
     {
@@ -42,12 +30,13 @@ bool ParaHandler::paraSave(Para _para)
        {
            if(_rtu->write_registers(8,2,values+1) != 2)return false;
            if(_rtu->write_registers(10,2,values+3) != 2)return false;
+
            if(_rtu->write_registers(12,2,values+5) != 2)return false;
            if(_rtu->write_registers(14,6,values+7) != 6)return false;
 
 
 
-               int err = _rtu->write_registers(96,1,&_para.adRate);
+               _rtu->write_registers(96,1,&_para.adRate);
                _rtu->read_registers(96,1,values);
                if(_para.adRate == values[0])
                {
@@ -59,6 +48,12 @@ bool ParaHandler::paraSave(Para _para)
 
     }
     return false;
+}
+bool ParaHandler::paraSave(Para _para)
+{
+    m_write = true;
+    m_para = _para;
+    return m_write;
 }
 
 bool ParaHandler::paraRead(Para &_para)
@@ -101,12 +96,23 @@ bool ParaHandler::paraRead(Para &_para)
 
 bool ParaHandler::doWork()
 {
-    if(_rtu && !m_ok)
+    if(_rtu)
     {
-       if(paraRead(m_para))
+       if(!bInit)
        {
-           m_ok = true;
+          bInit =  paraRead(m_para);
        }
+       if(m_write)
+       {
+           m_write = !_paraSave(m_para);
+           emit paraWriteResult(!m_write);
+       }
+
     }
-    return !m_ok;
+    else
+    {
+        return true;
+    }
+    msleep(1000);
+    return false;
 }
