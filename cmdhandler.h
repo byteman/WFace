@@ -1,17 +1,19 @@
 #ifndef CMDHANDLER_H
 #define CMDHANDLER_H
 #include <QObject>
+#include <QThread>
 #include "mymodbus.h"
-class CmdHandler:public QObject
+class CmdHandler:public QThread
 {
     Q_OBJECT
 public:
-    CmdHandler(RTU_Modbus* rtu,QObject* parent=NULL): QObject(parent),_rtu(rtu)
+    CmdHandler(RTU_Modbus* rtu,QObject* parent=NULL): QThread(parent),_rtu(rtu)
     {
 
     }
+    virtual bool start();
     virtual bool stop();
-    virtual bool run();
+    virtual void run();
 protected:
     RTU_Modbus* _rtu;
 };

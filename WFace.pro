@@ -20,7 +20,6 @@ SOURCES += main.cpp\
         3rdparty/libmodbus/src/modbus-rtu.c \
         3rdparty/libmodbus/src/modbus-tcp.c \
     mymodbus.cpp \
-    adc102.cpp \
     cmdhandler.cpp \
     scanhandler.cpp \
     weighthandler.cpp \
@@ -33,7 +32,6 @@ HEADERS  += mainwindow.h \
     3rdparty/qextserialport/qextserialenumerator.h \
     3rdparty/libmodbus/src/modbus.h \
     mymodbus.h \
-    adc102.h \
     cmdhandler.h \
     scanhandler.h \
     weighthandler.h \

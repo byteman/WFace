@@ -212,19 +212,7 @@ void ADC102::onUpdateResult(int result, int pos, int total)
 
 void ADC102::timerHandler()
 {
-    //qDebug() <<    "adc102 timer";
-    if(m_handler != NULL)
-    {
-        if(m_handler->run())
-        {
-            QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
-        }
-        else
-        {
-            m_handler = NULL;
-        }
 
-    }
 
 }
 

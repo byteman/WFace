@@ -7,9 +7,10 @@ ParaHandler::ParaHandler(RTU_Modbus *rtu):
 
 }
 
-void ParaHandler::start()
+bool ParaHandler::start()
 {
     m_ok = false;
+    return m_ok;
 }
 
 bool ParaHandler::stop()
@@ -103,7 +104,7 @@ bool ParaHandler::paraRead(Para &_para)
     return false;
 }
 
-bool ParaHandler::run()
+void ParaHandler::run()
 {
     if(_rtu && !m_ok)
     {
@@ -113,6 +114,4 @@ bool ParaHandler::run()
 
        }
     }
-
-    return !m_ok;
 }

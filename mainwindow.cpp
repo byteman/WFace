@@ -9,6 +9,7 @@
 #include "pcomm.h"
 #include <QFileDialog>
 #include <QFile>
+#include <cstdio>
 static QString unit="g";
 static bool scan = false;
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
@@ -33,22 +34,9 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     ui->cbxBaud->setCurrentIndex(1);
     ui->progressBar->hide();
     ui->scanPb->hide();
-    //int version = 21101;
-    //ui->edtVersion->setText(QString("V%1.%2.%3").arg(version/10000).arg((version%10000)/100).arg(version%100));
-    connect(&adc102,SIGNAL(scanResult(int , int )),this,SLOT(onScanResult(int,int)));
-    connect(&adc102,SIGNAL(weightResult(int , quint16,quint16, qint32,qint32 )),this,SLOT(onWeightResult(int,quint16,quint16, qint32,qint32)));
-    connect(&adc102,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
-    //connect(ui->btnTare,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
-    //connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
-    //connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
-    connect(&adc102,SIGNAL(calibProcessResult(int,int)),SLOT(onCalibProcessResult(int,int)));
-    connect(&adc102,SIGNAL(calibPointResult(int,int,int)),SLOT(onReadCalibPointResult(int,int,int)));
-    connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
+
     initCalibPoints();
 
-
-    //connect(ui->btnGN,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
-    //this->setStyleSheet(res);
 }
 
 MainWindow::~MainWindow()
@@ -168,7 +156,7 @@ void MainWindow::onUpdateResult(int result, int pos, int total)
         break;
     }
 }
-#include <cstdio>
+
 void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare)
 {
     double wf = (double)weight;

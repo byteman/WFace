@@ -8,7 +8,7 @@ class WeightHandler : public CmdHandler
      Q_OBJECT
 public:
     WeightHandler(RTU_Modbus*  rtu);
-    bool run();
+    void run();
     bool stop();
 signals:
     void weightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);

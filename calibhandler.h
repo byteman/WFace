@@ -8,7 +8,7 @@ class CalibHandler : public CmdHandler
      Q_OBJECT
 public:
     CalibHandler(RTU_Modbus*  rtu);
-    bool run();
+    void run();
     bool readPara(int index=-1);
     bool stop();
     bool calibSet(int  index, qint32 weight,qint32 ad);

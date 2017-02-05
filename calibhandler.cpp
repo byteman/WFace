@@ -16,7 +16,7 @@ CalibHandler::CalibHandler(RTU_Modbus *rtu):
 }
 
 
-bool CalibHandler::run()
+void CalibHandler::run()
 {
     if(_rtu)
     {
@@ -54,7 +54,7 @@ bool CalibHandler::run()
         }
 
     }
-    return true;
+
 }
 
 bool CalibHandler::readPara(int index)

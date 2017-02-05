@@ -17,7 +17,7 @@ bool ScanHandler::startScan(bool findOne)
 }
 
 
-bool ScanHandler::run()
+void ScanHandler::run()
 {
     if(m_addr < 33)
     {
@@ -35,18 +35,18 @@ bool ScanHandler::run()
                 {
                     m_addr = 1;
                     emit scanResult(1,m_addr);
-                    return false;
+                    return;
                 }
             }
         }
         emit scanResult(2,m_addr);
         m_addr++;
 
-        return true;
+        return;
     }
     m_addr = 1;
      emit scanResult(1,m_addr);
-    return false;
+
 }
 
 bool ScanHandler::stop()

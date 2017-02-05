@@ -2,12 +2,17 @@
 
 
 
+bool CmdHandler::start()
+{
+    return true;
+}
+
 bool CmdHandler::stop()
 {
     return true;
 }
 
-bool CmdHandler::run()
+void CmdHandler::run()
 {
-return true;
+
 }
