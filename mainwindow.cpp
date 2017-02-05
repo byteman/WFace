@@ -93,7 +93,7 @@ void MainWindow::onReadCalibParam(quint32 sensorMv, quint32 sensorFullSpan)
 
 void MainWindow::on_actionChagne_triggered()
 {
-    QMessageBox::about(this,"title","click write parameter");
+     reader.write_register(2,99);
 }
 
 void MainWindow::calibrate_click(int id)
