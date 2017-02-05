@@ -31,7 +31,7 @@ bool UpdateHandler::dorun()
         if(m_state == 1)
         {
             //发送空格，等待回应.
-            sio_write(m_port,"                   ",20);
+            sio_write(m_port,"                   ",25);
             sendMessage(1,0,0);
             qDebug() << "send space";
         }
@@ -61,26 +61,32 @@ bool UpdateHandler::dorun()
 
             if(m_state == 1)
             {
-                if(rxStr.contains("return key.\r\n"))
-                {
-                    qDebug() << "get return key";
-                    sio_write(m_port,"\r",1);
-                    m_state = 2;
-                }
+//                if(rxStr.contains("return key.\r\n"))
+//                {
+//                    qDebug() << "get return key";
+//                    sio_write(m_port,"\r",1);
+//                    m_state = 2;
+//                }
+                sio_write(m_port,"\r",1);
+                m_state = 2;
             }
 #if 1
             else if(m_state == 2)
             {
                 if(rxStr.contains("MS:"))
                 {
-                    qDebug() << "send update";
+                    qDebug() << "send update 1";
+                    sleep(3);
+                    qDebug() << "send update 2";
                     sio_write(m_port,"update\r\n",8);
                     m_state = 3;
                 }
             }
             else if(m_state == 3)
             {
+                qDebug() << "ready send update";
                 if(rxStr.contains("C"))
+                //sleep(7);
                 {
                     qDebug() << tr("ready send file") << m_file;
 

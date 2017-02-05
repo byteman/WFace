@@ -8,6 +8,8 @@
 #include "parahandler.h"
 #include <QList>
 #include "updatehandler.h"
+#include "timerworker.h"
+#include "RtuReader.h"
 class ADC102 : public QObject
 {
     Q_OBJECT
@@ -23,8 +25,11 @@ signals:
     void paraReadResult(Para _para);
     void calibProcessResult(int index, int result);
     void calibPointResult(int index, int weight, int ad);
+    void OperationResult(RegOperCmd value);
 public slots:
+    void onOperationResult(RegOperCmd value);
     bool discardTare();
+    bool WriteCtrlCmd(int reg, quint8 value);
     bool setZero();
     bool zoom10X();
     bool changeGN();
@@ -48,16 +53,22 @@ public slots:
     bool modifyAddr(quint16 oldAddr, quint16 newAddr);
     bool reset();
     bool startUpdate(QString file);
+    void getRXTX(int& rx, int& tx);
+    bool  read_registers(int reg_addr, int nb,quint16* value);
+    bool  write_registers(int reg_addr, int nb,quint16* value);
 private:
     UpdateHandler* handler_update;
     RTU_Modbus modbus;
     QTimer timer;
+    TimerWorker gWorker;
     CmdHandler* m_handler;
     bool m_connect;
     QList<CmdHandler*> m_handlers;
     int m_interval;
     int m_slaveAddr;
     Para m_para;
+    QThread m_thread;
+    RtuReader m_reader;
 };
 
 #endif // ADC102_H

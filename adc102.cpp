@@ -25,12 +25,27 @@ ADC102::ADC102(QObject *parent) : QObject(parent),
     m_handlers.push_back(handler_weight);
     m_handlers.push_back(handler_para);
     m_handlers.push_back(handler_calib);
+    //m_thread.start();
+    //gWorker.moveToThread(&m_thread);
+    m_reader.start();
+    connect(&m_reader,SIGNAL(OperationResult(RegOperCmd)),this,SLOT(onOperationResult(RegOperCmd)));
     //m_handlers.push_back(handler_update);
 }
+void ADC102::onOperationResult(RegOperCmd value)
+{
+    switch(value.reg_addr)
+    {
+        case REG_SLAVE_ADDR:
 
+            break;
+    }
+}
 bool ADC102::setSlaveAddr(int addr)
 {
     bool ret = true;
+    if(addr == -1){
+        return false;
+    }
     m_slaveAddr = addr;
 
     modbus.setDeviceAddr(addr);
@@ -42,26 +57,39 @@ bool ADC102::hasConnect()
 {
     return m_connect;
 }
-
+bool ADC102::WriteCtrlCmd(int reg, quint8 value)
+{
+    if(m_handler==NULL)
+    {
+        return false;
+    }
+    RegCmd cmd;
+    cmd.reg_addr = reg;
+    cmd.reg_num = 1;
+    cmd.reg_value[0] = value;
+    return m_handler->addCmd(cmd);
+}
 bool ADC102::discardTare()
 {
-    return modbus.write_register(2,2)==1?true:false;
+    return WriteCtrlCmd(2,2);
 
 }
 
 bool ADC102::setZero()
 {
-    return modbus.write_register(2,1)==1?true:false;
+
+    return WriteCtrlCmd(2,1);
+
 }
 
 bool ADC102::zoom10X()
 {
-    return modbus.write_register(2,4)==1?true:false;
+   return WriteCtrlCmd(2,4);
 }
 
 bool ADC102::changeGN()
 {
-    return modbus.write_register(2,5)==1?true:false;
+    return WriteCtrlCmd(2,5);
 }
 
 bool ADC102::paraSave(Para _para)
@@ -76,29 +104,20 @@ bool ADC102::paraSave(Para _para)
 
 bool ADC102::startScan(QString port, int baud, char parity, char databit, char stopbit,bool findOne)
 {
-    if(m_handler!=NULL)
-    {
-        m_handler->stop();
-    }
-    if(!modbus.open(port.toStdString().c_str(),baud,parity,databit,stopbit))
-    {
 
+    if(false == m_reader.open(port,baud,parity,databit,stopbit))
+    {
         return false;
     }
-    modbus.setByteTimeout(100000);
-    modbus.set_response_timeout(100000);
-    ScanHandler* handler = (ScanHandler*)m_handlers[0];
-    handler->startScan(findOne);
-    //m_handlers.push_back();
-    m_handler = handler;
-    m_interval = 100;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
-    return true;
+    m_reader.set_response_timeout(100000);
+
+
+
+
 }
 bool ADC102::stopScan()
 {
-    ScanHandler* handler = (ScanHandler*)m_handlers[0];
-    return handler->stop();
+    return true;
 }
 bool ADC102::startReadWeight()
 {
@@ -118,7 +137,8 @@ bool ADC102::startReadWeight()
     }
     m_handler = m_handlers[1];
     m_interval = 100;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
     return true;
 }
 
@@ -135,7 +155,8 @@ bool ADC102::startReadPara()
         handler->start();
     }
     m_interval = 1000;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
     return true;
 }
 
@@ -152,8 +173,17 @@ bool ADC102::stopReadPara()
 bool ADC102::startCalib(int index, int weight)
 {
 
-    CalibHandler* handler = (CalibHandler*)m_handlers[3];
-    return handler->calibSet(index,weight,0);
+    ParaHandler* handler1 = (ParaHandler*)m_handlers[2];
+    if(handler1!=NULL)
+    {
+
+        if(!handler1->paraRead(m_para))
+        {
+            return false;
+        }
+    }
+    CalibHandler* handler2 = (CalibHandler*)m_handlers[3];
+    return handler2->calibSet(index,weight,0);
 
 }
 
@@ -168,7 +198,8 @@ bool ADC102::readCalibPoints(int index)
     m_handler = m_handlers[3];
     handler->readPara(index);
     m_interval = 500;
-    QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    //QTimer::singleShot(m_interval,this,SLOT(timerHandler()));
+    gWorker.Start(m_interval,m_handler);
     return true;
 }
 
@@ -198,6 +229,10 @@ void ADC102::onCalibProcessResult(int index, int result)
 void ADC102::onScanResult(int type, int addr)
 {
     emit scanResult(type,addr);
+    if(type == 1)
+    {
+        modbus.set_response_timeout(1000000);
+    }
 }
 
 void ADC102::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare)
@@ -256,5 +291,20 @@ bool ADC102::startUpdate(QString file)
     }
 
     return true;
+}
+
+void ADC102::getRXTX(int &rx, int &tx)
+{
+    modbus.get_rx_tx(rx,tx);
+}
+
+bool ADC102::read_registers(int reg_addr, int nb, quint16 *value)
+{
+    return (modbus.read_registers(reg_addr,nb,value) == nb);
+}
+
+bool ADC102::write_registers(int reg_addr, int nb, quint16 *value)
+{
+    return (modbus.write_registers(reg_addr,nb,value) == nb);
 }
 

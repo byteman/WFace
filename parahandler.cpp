@@ -46,20 +46,14 @@ bool ParaHandler::paraSave(Para _para)
            if(_rtu->write_registers(14,6,values+7) != 6)return false;
 
 
-           values[0] = (_para.sensor_full_span&0xFFFF);
-           values[1] = (_para.sensor_full_span>>16)&0xFFFF;
-           values[2] = (_para.sensor_mv&0xFFFF);
-           values[3] = (_para.sensor_mv>>16)&0xFFFF;
-           //values[4] = _para.slave_addr;
-           if(4 == _rtu->write_registers(26,4,values))
-           {
+
                int err = _rtu->write_registers(96,1,&_para.adRate);
                _rtu->read_registers(96,1,values);
                if(_para.adRate == values[0])
                {
                     return true;
                }
-           }
+
 
        }
 
@@ -86,12 +80,13 @@ bool ParaHandler::paraRead(Para &_para)
         _para.stable_span = values[15];
         _para.filter_level = values[16];
         //memcpy(&m_para,&values[0],sizeof(values));
-        if(6 == _rtu->read_registers(26,6,values))
+        if(10 == _rtu->read_registers(26,10,values))
         {
             _para.sensor_full_span = values[0]+(values[1]<<16);
             _para.sensor_mv = values[2]+(values[3]<<16);
             _para.slave_addr = values[4];
             _para.version = values[5];
+            _para.serial = values[8]+(values[9]<<16);
             if(1 == _rtu->read_registers(96,1,&_para.adRate))
             {
                 emit paraReadResult(_para);

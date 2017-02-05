@@ -3,13 +3,12 @@
 #include "QFile"
 #include <QMessageBox>
 #include <qdebug.h>
-#include "3rdparty/qextserialport/qextserialenumerator.h"
 #include <QSignalMapper>
 #include <QTranslator>
+#include <QSerialPortInfo>
 #include "pcomm.h"
 #include <QFileDialog>
 #include <QFile>
-#include <cstdio>
 static QString unit="g";
 static bool scan = false;
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
@@ -18,6 +17,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+qRegisterMetaType<Para>("Para");
     QFile file(":/mystyle.txt");
     file.open(QFile::ReadOnly);
 
@@ -25,18 +25,31 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QByteArray res = file.readAll();
 
 
-    QextSerialEnumerator serialEnum;
-    QList<QextPortInfo> ports = serialEnum.getPorts();
-    QextPortInfo port;
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+
+    QSerialPortInfo port;
     foreach(port,ports){
-        ui->cbxPort->addItem(port.portName);
+        ui->cbxPort->addItem(port.portName());
     }
     ui->cbxBaud->setCurrentIndex(1);
-    ui->progressBar->hide();
+    //ui->progressBar->hide();
     ui->scanPb->hide();
-
+    //int version = 21101;
+    //ui->edtVersion->setText(QString("V%1.%2.%3").arg(version/10000).arg((version%10000)/100).arg(version%100));
+    connect(&adc102,SIGNAL(scanResult(int , int )),this,SLOT(onScanResult(int,int)));
+    connect(&adc102,SIGNAL(weightResult(int , quint16,quint16, qint32,qint32 )),this,SLOT(onWeightResult(int,quint16,quint16, qint32,qint32)));
+    connect(&adc102,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
+    //connect(ui->btnTare,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
+    //connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
+    //connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
+    connect(&adc102,SIGNAL(calibProcessResult(int,int)),SLOT(onCalibProcessResult(int,int)));
+    connect(&adc102,SIGNAL(calibPointResult(int,int,int)),SLOT(onReadCalibPointResult(int,int,int)));
+    connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
     initCalibPoints();
 
+    this->startTimer(500);
+    //connect(ui->btnGN,SIGNAL(clicked(bool)),&adc102,SLOT(discardTare()));
+    //this->setStyleSheet(res);
 }
 
 MainWindow::~MainWindow()
@@ -61,14 +74,15 @@ void MainWindow::onParaReadResult(Para _para)
 {
     ui->cbxDot->setCurrentIndex(_para.dot);
     ui->edtFullLow->setText(QString("%1").arg(_para.span_low));
-    ui->lbl_display_wet_2->setText(QString("Max1: %1").arg(_para.span_low));
+    ui->lbl_display_wet_4->setText(QString("Mid: %1").arg(_para.span_low));
     ui->edtFullHigh->setText(QString("%1").arg(_para.span_high));
-    ui->lbl_display_wet_3->setText(QString("Max2: %1").arg(_para.span_high));
+    ui->lbl_display_wet_2->setText(QString("Max: %1").arg(_para.span_high));
     ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
-    ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_high));
+    ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_low));
     ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
-    ui->lbl_display_wet_4->setText(QString("d1: %1").arg(_para.div_low));
+    ui->lbl_display_wet_3->setText(QString("d1: %1").arg(_para.div_high));
     ui->cbxUnit->setCurrentIndex(_para.unit);
+    ui->edtSerial->setText(QString("%1").arg(_para.serial));
     if(_para.unit == 0) {
         ui->lblunit->setText("kg");
         unit = "kg";
@@ -90,6 +104,7 @@ void MainWindow::onParaReadResult(Para _para)
     ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
     ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
     ui->cbxAdRate->setCurrentIndex(_para.adRate);
+
     ui->edtVersion->setText(QString("V%1.%2.%3").arg(_para.version/10000).arg((_para.version%10000)/100).arg(_para.version%100));
 }
 
@@ -126,7 +141,7 @@ void MainWindow::onUpdateResult(int result, int pos, int total)
     {
     case -1:
         QMessageBox::information(this,tr("error"),tr("start update failed"));
-        ui->progressBar->hide();
+        //ui->progressBar->hide();
         break;
     case 1:
 
@@ -140,23 +155,23 @@ void MainWindow::onUpdateResult(int result, int pos, int total)
         break;
     case 4:
         ui->statusBar->showMessage(tr("ready send file.."));
-        ui->progressBar->show();
-        if(total > 0)
-            ui->progressBar->setValue(pos*100/total);
+        //ui->progressBar->show();
+        //if(total > 0)
+        //    ui->progressBar->setValue(pos*100/total);
         break;
     case 5:
         ui->statusBar->showMessage(tr("send file complete.."),2000);
         QMessageBox::information(this,tr("info"),tr("update complete"));
-        ui->progressBar->setValue(0);
-        ui->progressBar->hide();
+        //ui->progressBar->setValue(0);
+        //ui->progressBar->hide();
         break;
     default:
-        ui->statusBar->showMessage(tr("update unkown error"));
-        ui->progressBar->hide();
+        //ui->statusBar->showMessage(tr("update unkown error"));
+        //ui->progressBar->hide();
         break;
     }
 }
-
+#include <cstdio>
 void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare)
 {
     double wf = (double)weight;
@@ -272,11 +287,13 @@ void MainWindow::on_btnSearch_clicked()
     if(!scan)
     {
         QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
+
         if(!adc102.startScan(port,ui->cbxBaud->currentText().toInt(),'N',8,1,!ui->cbxFindAll->isChecked()))
         {
             QMessageBox::information(this,tr("error"),tr("uart open failed"));
             return ;
         }
+        reader.open(port,ui->cbxBaud->currentText().toInt(),'N',8,1);
         //ui->btnSearch->setEnabled(false);
         ui->btnSearch->setText(tr("StopSearch"));
         ui->listWidget->setEnabled(false);
@@ -291,7 +308,45 @@ void MainWindow::on_btnSearch_clicked()
 
 
 }
+void MainWindow::traversalControl(const QObjectList& q)
+{
+    foreach(QObject* obj,q)
+    {
+           QString class_name=obj->metaObject()->className();
 
+           if(class_name=="QLineEdit")
+           {
+               QLineEdit* le=(QLineEdit*)obj;
+
+               le->setText("");
+           }
+           else if(class_name=="QComboBox")
+           {
+               QComboBox* cbx=(QComboBox*)obj;
+
+               cbx->setCurrentText("");
+           }
+    }
+
+}
+void MainWindow::clearCalib()
+{
+    int rows = ui->tblCalib->rowCount();
+    int cols = ui->tblCalib->columnCount();
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < cols; j++)
+        {
+            QTableWidgetItem* item = ui->tblCalib->item(i,j);
+            if(item!=NULL)
+                item->setText("");
+        }
+    }
+    ui->edtSensorFullSpan->setText("");
+    ui->edtSensorMv->setText("");
+
+
+}
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
     if(!adc102.hasConnect())
@@ -316,11 +371,18 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     }
     else if(index == 2)
     {
+        traversalControl(ui->grpParas->children());
         adc102.startReadPara();
     }
     else if(index == 3)
     {
-        adc102.readCalibPoints();
+        clearCalib();
+
+        if(!adc102.readCalibPoints())
+        {
+            qDebug() << "read calib failed ";
+        }
+
     }
 }
 
@@ -446,47 +508,6 @@ void MainWindow::on_btnGN_clicked()
     }
 }
 
-void MainWindow::on_btnUpdate_clicked()
-{
-    QString file = ui->edtFile->text();
-    QFile f(file);
-    if(!f.exists())
-    {
-        QMessageBox::information(this,tr("error"),tr("file do not exist"));
-        return;
-    }
-    if(!adc102.reset())
-    {
-        //自动复位失败，则提示手动复位...,程序还是一直发送空格...
-        QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
-    }
-    if(!adc102.startUpdate(file))
-    {
-         QMessageBox::information(this,tr("error"),tr("file update failed"));
-    }
-    else
-    {
-        //QMessageBox::information(this,tr("info"),tr("wait device reset,please reset..."));
-    }
-}
-
-void MainWindow::on_btnSelFile_clicked()
-{
-   QFileDialog *fileDialog = new QFileDialog(this);
-   fileDialog->setWindowTitle(tr("Open Image"));
-   fileDialog->setDirectory(".");
-   //fileDialog->setFilter(tr("Image Files(*.jpg *.png)"));
-   if(fileDialog->exec() == QDialog::Accepted) {
-           QString path = fileDialog->selectedFiles()[0];
-           ui->edtFile->setText(path);
-           //QMessageBox::information(NULL, tr("Path"), tr("You selected ") + path);
-   } else {
-           QMessageBox::information(NULL, tr("Path"), tr("You didn't select any files."));
-   }
-   delete fileDialog;
-
-}
-
 void MainWindow::on_btnReset_clicked()
 {
     adc102.reset();
@@ -508,4 +529,46 @@ void MainWindow::on_btnZoom10_clicked()
     {
         QMessageBox::information(this,tr("error"),tr("zomm10x failed"));
     }
+}
+
+void MainWindow::on_listWidget_itemActivated(QListWidgetItem *item)
+{
+
+}
+
+void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
+{
+    ui->edtAddr->setText(item->text());
+}
+
+void MainWindow::on_btnSensorWrite_clicked()
+{
+    quint32 sensor_full_span; // 传感器总量程（所有传感器量程和）
+    quint32 sensor_mv;
+    quint16 values[4];
+    sensor_full_span = ui->edtSensorFullSpan->text().toInt();
+    sensor_mv = ui->edtSensorMv->text().toInt();
+
+    values[0] = (sensor_full_span&0xFFFF);
+    values[1] = (sensor_full_span>>16)&0xFFFF;
+    values[2] = (sensor_mv&0xFFFF);
+    values[3] = (sensor_mv>>16)&0xFFFF;
+    //values[4] = _para.slave_addr;
+
+    if(adc102.write_registers(26,4,values)){
+        QMessageBox::information(this,"提示","保存成功");
+    }else
+    {
+        QMessageBox::information(this,"提示","保存失败");
+    }
+}
+
+
+void MainWindow::timerEvent(QTimerEvent *)
+{
+    int rx = 0,tx = 0;
+    adc102.getRXTX(rx,tx);
+    QString msg = QString("TX:%1|RX:%2 ").arg(tx).arg(rx);
+
+    ui->statusBar->showMessage(msg);
 }

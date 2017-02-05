@@ -13,6 +13,7 @@ signals:
 private:
     int m_addr;
     bool m_findone;
+    bool m_stop;
     // CmdHandler interface
 public:
     void run();

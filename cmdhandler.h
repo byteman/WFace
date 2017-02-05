@@ -1,21 +1,34 @@
 #ifndef CMDHANDLER_H
 #define CMDHANDLER_H
 #include <QObject>
-#include <QThread>
 #include "mymodbus.h"
-class CmdHandler:public QThread
+
+struct RegCmd{
+    RegCmd()
+    {
+        isRead = false;
+    }
+    bool    isRead;
+    int     reg_addr;
+    int     reg_num;
+    quint16 reg_value[32];
+};
+
+class CmdHandler:public QObject
 {
     Q_OBJECT
 public:
-    CmdHandler(RTU_Modbus* rtu,QObject* parent=NULL): QThread(parent),_rtu(rtu)
+    CmdHandler(RTU_Modbus* rtu,QObject* parent=NULL): QObject(parent),_rtu(rtu)
     {
 
     }
-    virtual bool start();
+    void writeCmds();
+    bool addCmd(RegCmd cmd);
     virtual bool stop();
-    virtual void run();
+    virtual bool run();
 protected:
     RTU_Modbus* _rtu;
+    QList<RegCmd> cmdlist;
 };
 
 #endif // CMDHANDLER_H

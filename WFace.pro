@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-
+QT +=  serialport
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = WFace
@@ -14,7 +14,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    3rdparty/qextserialport/qextserialport.cpp	\
         3rdparty/libmodbus/src/modbus.c \
         3rdparty/libmodbus/src/modbus-data.c \
         3rdparty/libmodbus/src/modbus-rtu.c \
@@ -25,11 +24,11 @@ SOURCES += main.cpp\
     weighthandler.cpp \
     parahandler.cpp \
     calibhandler.cpp \
-    updatehandler.cpp
+    updatehandler.cpp \
+    timerworker.cpp \
+    RtuReader.cpp
 
 HEADERS  += mainwindow.h \
-    3rdparty/qextserialport/qextserialport.h \
-    3rdparty/qextserialport/qextserialenumerator.h \
     3rdparty/libmodbus/src/modbus.h \
     mymodbus.h \
     cmdhandler.h \
@@ -37,16 +36,16 @@ HEADERS  += mainwindow.h \
     weighthandler.h \
     parahandler.h \
     calibhandler.h \
-    updatehandler.h
+    updatehandler.h \
+    timerworker.h \
+    RtuReader.h
 
-INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src 3rdparty/qextserialport
+INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
+INCLUDEPATH += 3rdparty/poco/include
 win32:INCLUDEPATH += 3rdparty/poco/include\ 3rdparty/pcomm
-unix:SOURCES += 3rdparty/qextserialport/posix_qextserialport.cpp	\
-                3rdparty/qextserialport/qextserialenumerator_unix.cpp
-unix:DEFINES += _TTY_POSIX_
-win32:SOURCES += 3rdparty/qextserialport/win_qextserialport.cpp \
-                        3rdparty/qextserialport/qextserialenumerator_win.cpp
+
+
 win32:DEFINES += _TTY_WIN_  WINVER=0x0501
 win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
 win32:LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32

@@ -9,8 +9,7 @@ WeightHandler::WeightHandler(RTU_Modbus *rtu):
 
 }
 
-
-void WeightHandler::run()
+bool WeightHandler::run()
 {
     if(_rtu)
     {
@@ -20,10 +19,13 @@ void WeightHandler::run()
             emit weightResult(values[0]+(values[1]<<16),values[2],values[3],values[4]+(values[5]<<16),values[6] +( values[7]<<16 ) );
         }
     }
-
+    writeCmds();
+    return true;
 }
 
 bool WeightHandler::stop()
 {
     return true;
 }
+
+
