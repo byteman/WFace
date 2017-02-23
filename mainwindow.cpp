@@ -224,7 +224,7 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
     {
        strState += " | " +tr("zoom10x ");
     }
-    if(state&64)
+    if(state&128)
     {
        strState += " | " +tr("menumode ");
     }
@@ -279,7 +279,7 @@ void MainWindow::onRegOperResult(RegCmd cmd)
     {
         if(cmd.error == REG_ERROR_OK)
         {
-            //QMessageBox::information(this,tr("info"),"标定成功");
+            QMessageBox::information(this,tr("info"),"标定成功");
             return ;
         }
         else

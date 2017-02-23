@@ -1,0 +1,10 @@
+{
+	"params":[
+		{
+			"caption":"myname",
+			"type":"text",
+			"value":""
+		}
+	
+	]
+}
