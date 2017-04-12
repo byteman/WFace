@@ -315,7 +315,7 @@ bool ADC102::modifyKs(std::vector<qint32> ks)
 bool ADC102::reset()
 {
 
-    return modbus.write_register(2,99)==1?true:false;
+    return modbus.write_register(180,1)==1?true:false;
     //modbus.write_register(2,99);
     //return true;
 }
