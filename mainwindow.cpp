@@ -36,6 +36,7 @@ qRegisterMetaType<Para>("Para");
     }
     ui->cbxBaud->setCurrentIndex(4);
     ui->progressBar->hide();
+
     //int version = 21101;
     //ui->edtVersion->setText(QString("V%1.%2.%3").arg(version/10000).arg((version%10000)/100).arg(version%100));
     connect(&adc102,SIGNAL(scanResult(int , int )),this,SLOT(onScanResult(int,int)));
@@ -45,7 +46,7 @@ qRegisterMetaType<Para>("Para");
     //connect(ui->btnZero,SIGNAL(clicked(bool)),&adc102,SLOT(setZero()));
     //connect(ui->btnZoom10,SIGNAL(clicked(bool)),&adc102,SLOT(zoom10X()));
     connect(&adc102,SIGNAL(calibProcessResult(int,int)),SLOT(onCalibProcessResult(int,int)));
-    connect(&adc102,SIGNAL(calibPointResult(Sensor*,int,int)),SLOT(onReadCalibPointResult(Sensor*,int,int)));
+    connect(&adc102,SIGNAL(calibPointResult(Sensor*,int,int,float)),SLOT(onReadCalibPointResult(Sensor*,int,int,float)));
     connect(&adc102,SIGNAL(updateResult(int,int,int)),SLOT(onUpdateResult(int,int,int)));
 
     connect(&m_timer,SIGNAL(timeout()),SLOT(onTimerHandle()));
@@ -446,7 +447,7 @@ void MainWindow::onCalibProcessResult(int index, int result)
     ui->tblCalib->item(index,2)->setText(QString("%1").arg(k));
 }
 
-void MainWindow::onReadCalibPointResult(Sensor* sensors, int num,int weight)
+void MainWindow::onReadCalibPointResult(Sensor* sensors, int num,int weight,float k)
 {
     if(ui->tblCalib->rowCount() != num)
     {
@@ -471,6 +472,7 @@ void MainWindow::onReadCalibPointResult(Sensor* sensors, int num,int weight)
 
     }
     ui->lblstate->setText(QString("%1").arg(weight));
+    ui->lblK->setText(QString("%1").arg(k));
 
 
 }
@@ -702,7 +704,8 @@ void MainWindow::initCalibPoints(int count)
 //        QTableWidgetItem* item = new QTableWidgetItem("");
 //        item->setTextAlignment(Qt::AlignHCenter);
 //        ui->tblCalib->setItem(i,6,item);
-        row_headers.push_back(QString("%1").arg(i+1));
+        if((i%2) == 0)row_headers.push_back(QString("%1").arg(i+2));
+        else row_headers.push_back(QString("%1").arg(i));
 
         ui->tblCalib->setColumnWidth(i,120);
         //ui->tblCalib->setH(3, new QTableWidgetItem("参数4"));
@@ -941,6 +944,7 @@ void MainWindow::on_btnModifyK_clicked()
 
 void MainWindow::on_btnCalibK_clicked()
 {
+#if 0
     bool ok = false;
     int weight = ui->edtFama->text().toInt(&ok);
     if(!ok)
@@ -954,6 +958,28 @@ void MainWindow::on_btnCalibK_clicked()
         return;
     }
     QMessageBox::information(this,"提示","标定成功!");
+#else
+    bool ok = false;
+    int target = ui->edtFama->text().toInt(&ok);
+    if(!ok)
+    {
+        QMessageBox::information(this,"错误","目标重量错误");
+        return;
+    }
+    int init = ui->edtInit->text().toInt(&ok);
+    if(!ok)
+    {
+        QMessageBox::information(this,"错误","初始重量错误");
+        return;
+    }
+    float k = (float)((float)target/(float)init);
+    if(!adc102.modifyTotalK(k))
+    {
+        QMessageBox::information(this,"错误","修改失败，请重试!");
+        return;
+    }
+    QMessageBox::information(this,"提示","修改成功!");
+#endif
 }
 
 void MainWindow::on_radioAudo_clicked()

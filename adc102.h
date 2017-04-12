@@ -27,7 +27,7 @@ signals:
     void weightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
     void paraReadResult(Para _para);
     void calibProcessResult(int index, int result);
-    void calibPointResult(Sensor* ss,int num,int weight);
+    void calibPointResult(Sensor* ss,int num,int weight,float);
 public slots:
     bool discardTare();
     bool setZero();
@@ -38,7 +38,7 @@ public slots:
     bool startReadWeight();
     bool startReadPara();
     bool stopReadPara();
-
+    bool modifyTotalK(float k);
     bool startCalib(bool hand, int index, int weight);
     bool startZeroCalib(int index);
     bool readCalibPoints(int index = -1);
@@ -50,7 +50,7 @@ public slots:
     bool stop();
     bool stopCalib();
     void onCalibProcessResult(int index, int result);
-    void onCalibPointResult(Sensor* ss,int num,int weight);
+    void onCalibPointResult(Sensor* ss,int num,int weight,float k);
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);

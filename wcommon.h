@@ -12,6 +12,7 @@
 #define REG_SENSOR_MV    110
 #define REG_INPUT_WTS    134
 #define REG_CALC_K       158
+#define REG_K       12
 typedef union _WFloatType
 {
     float value;

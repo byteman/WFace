@@ -37,8 +37,9 @@ public:
     bool readRtParas(int num);
     bool fixScalerK(int weight);
     bool stopCalib();
+    bool modifyK(float k);
 signals:
-    void calibReadResult(Sensor* sensors,int num,int weight);
+    void calibReadResult(Sensor* sensors,int num,int weight,float k);
     void calibProcessResult(int  index, int result);
 private:
     bool m_set_calib_points[6];

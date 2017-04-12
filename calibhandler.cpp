@@ -23,6 +23,7 @@ bool CalibHandler::readRtParas(int num)
     if(num == 0)
         return false;
     int weight = 0;
+    float k = 0;
     //read weights
     if(_rtu->read_registers(REG_SENSOR_WT,num*2,values) == num*2)
     {
@@ -70,7 +71,17 @@ bool CalibHandler::readRtParas(int num)
     {
         return false;
     }
-    emit calibReadResult(sensors,num,weight);
+    if(_rtu->read_registers(REG_K, 2,values) == 2)
+    {
+
+       quint32 ik = values[0] + (values[1] << 16);
+        k = (float)((float)ik / 1000000.0f);
+
+    }else
+    {
+        return false;
+    }
+    emit calibReadResult(sensors,num,weight,k);
     return true;
 }
 
@@ -211,6 +222,16 @@ bool CalibHandler::stopCalib()
 {
     quint16 values= 0x8001;
     return addCmd(36,1,&values);
+}
+
+bool CalibHandler::modifyK(float k)
+{
+    quint16 values[2];
+    quint32 ik = (k*1000000);
+    values[0] =ik&0xffff;
+    values[1] = (ik>>16)&0xffff;
+    return addCmd(REG_K,2,values);
+
 }
 bool CalibHandler::calibSetAll(std::vector<int> weights,bool hand)
 {

@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -495,7 +495,7 @@
              <item row="7" column="0">
               <widget class="QLabel" name="label_14">
                <property name="text">
-                <string>延迟时间(秒)</string>
+                <string>取值延迟(秒)</string>
                </property>
               </widget>
              </item>
@@ -750,7 +750,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>砝码重量</string>
+              <string>目标重量 ：</string>
              </property>
             </widget>
            </item>
@@ -761,6 +761,35 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>初始重量 ：</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="edtInit">
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>16777215</height>
+              </size>
              </property>
             </widget>
            </item>
@@ -773,7 +802,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>总秤量修正</string>
+              <string>计算</string>
              </property>
             </widget>
            </item>
@@ -799,6 +828,32 @@
              </property>
              <property name="text">
               <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="maximumSize">
+              <size>
+               <width>80</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>总K系数：</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="lblK">
+             <property name="font">
+              <font>
+               <family>Arial</family>
+               <pointsize>24</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
              </property>
             </widget>
            </item>
@@ -895,7 +950,7 @@
       </widget>
       <widget class="QWidget" name="tab_7">
        <attribute name="title">
-        <string>Upgrade</string>
+        <string>本地升级</string>
        </attribute>
        <widget class="QPushButton" name="btnSelFile">
         <property name="geometry">
