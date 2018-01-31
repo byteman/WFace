@@ -35,6 +35,7 @@ bool CornHandler::paraRead(void)
 bool CornHandler::doWork()
 {
 
+    qDebug() << "doWork";
     if(_rtu)
     {
         //qDebug() << "calib work";
@@ -43,7 +44,7 @@ bool CornHandler::doWork()
             bInit = paraRead();
         }
         quint16 values[8];
-        if(4 == _rtu->read_registers(0,4,values))
+        if(4 == _rtu->read_registers(REG_4B_CHANNEL_AD,4,values))
         {
             //定时读取各路通道AD值.
             QList<qint32> chanAD;
