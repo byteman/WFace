@@ -39,8 +39,8 @@ private slots:
     void on_btnSearch_clicked();
     void onParaWriteResult(bool ok);
     void on_tabWidget_currentChanged(int index);
-    void chanADReadResult(QList<qint32> chanAD);
-    void chanKReadResult(QList<float> chanK);
+    void chanADReadResult(QList<float> chanAD);
+    void chanKReadResult(int sensor, QList<float> chanK);
     void on_btnSave_clicked();
 
     void on_btnTare_clicked();
@@ -67,6 +67,17 @@ private slots:
     void on_btnStartCalib_clicked();
 
     void on_pushButton_2_clicked();
+
+    void on_pushButton_5_clicked();
+    void on_btnReadK_clicked();
+
+    void on_btnReadSrs_clicked();
+
+    void on_btnSrsWrite_clicked();
+
+    void on_btnWriteK_clicked();
+
+    void on_btnStopCalib_clicked();
 
 private:
     void initCalibPoints();

@@ -25,6 +25,7 @@ bool WeightHandler::paraRead()
 }
 bool WeightHandler::doWork()
 {
+    qDebug() << "Weight doWork";
     if(_rtu)
     {
         quint16 values[8];

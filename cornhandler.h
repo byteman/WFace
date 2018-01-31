@@ -11,14 +11,22 @@ public:
     CornHandler(RtuReader*  rtu);
     virtual bool doWork();
     bool init();
-    bool start();
-    bool stop();
+    bool startCalib();
+    bool stopCalib();
     bool calib(int index);
-    bool paraRead();
+
+    bool ReadParam();
+    bool setK(int index,float k);
+    bool setKs(QList<float> ks);
+    bool setSensorNum(quint16 num);
+
 signals:
-    void chanADReadResult(QList<qint32> chanAD);
-    void chanKReadResult(QList<float> chanK);
+
+    void chanADReadResult(QList<float> chanAD);
+    void chanKReadResult(int num,QList<float> chanK);
 private:
+    bool paraRead();
+    int  m_sensor;
 
 
 };

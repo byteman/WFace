@@ -13,29 +13,65 @@ CornHandler::CornHandler(RtuReader *rtu):
 //读取角差系数
 bool CornHandler::paraRead(void)
 {
+
     quint16 values[17];
 
-    postReadRegs(REG_4B_CORN_K,4);
-    if(4 == _rtu->read_registers(REG_4B_CORN_K,4,values))
+    if(1 == _rtu->read_registers(REG_2B_SENSOR_NUM,1,values))
     {
-        QList<float> chanK;
-        for(int i = 0; i < 4; i++)
+        m_sensor = values[0];
+        if(8 == _rtu->read_registers(REG_4B_CORN_K,8,values))
         {
-            float k = (values[0]+(values[1]<<16))/1000;
-            chanK.push_back(k);
-        }
+            QList<float> chanK;
+            for(int i = 0; i < 4; i++)
+            {
+                //values[7]+(values[8]<<16);
+                float tmp = (values[i*2+0]+(values[i*2+1]<<16));
+                float k = (float)tmp/1000.0f;
+                chanK.push_back(k);
+            }
 
-        emit chanKReadResult(chanK);
-        return true;
+            emit chanKReadResult(m_sensor,chanK);
+            return true;
+        }
     }
+
 
 
     return false;
 }
+
+bool CornHandler::setK(int index,float k)
+{
+    qint32 ik = k*1000;
+    quint16 values[2];
+    values[0] = ik&0xffff;
+    values[1] = (ik>>16)&0xffff;
+    return postWriteRegs(REG_4B_CORN_K+index*2,2,values);
+}
+
+bool CornHandler::setKs(QList<float> ks)
+{
+
+    quint16 values[8];
+    if(ks.size() != 4) return false;
+    for(int i = 0; i < ks.size(); i++)
+    {
+        qint32 ik = ks[i]*1000;
+        values[i*2+0] = ik&0xffff;
+        values[i*2+1] = (ik>>16)&0xffff;
+    }
+
+    return postWriteRegs(REG_4B_CORN_K,8,values);
+}
+
+bool CornHandler::setSensorNum(quint16 num)
+{
+    return postWriteRegs(REG_2B_SENSOR_NUM ,1 ,&num);
+}
 bool CornHandler::doWork()
 {
 
-    qDebug() << "doWork";
+    qDebug() << "CornHandler doWork";
     if(_rtu)
     {
         //qDebug() << "calib work";
@@ -44,10 +80,10 @@ bool CornHandler::doWork()
             bInit = paraRead();
         }
         quint16 values[8];
-        if(4 == _rtu->read_registers(REG_4B_CHANNEL_AD,4,values))
+        if(8 == _rtu->read_registers(REG_4B_CHANNEL_AD,8,values))
         {
             //定时读取各路通道AD值.
-            QList<qint32> chanAD;
+            QList<float> chanAD;
             chanAD.push_back(values[0]+(values[1]<<16));
             chanAD.push_back(values[2]+(values[3]<<16));
             chanAD.push_back(values[4]+(values[5]<<16));
@@ -56,7 +92,7 @@ bool CornHandler::doWork()
             emit chanADReadResult(chanAD);
 
         }
-        this->msleep(500);
+        this->msleep(200);
         return false;
     }
 
@@ -70,7 +106,7 @@ bool CornHandler::init()
     return true;
 }
 
-bool CornHandler::start()
+bool CornHandler::startCalib()
 {
     quint16 value = 0;
 
@@ -84,7 +120,13 @@ bool CornHandler::calib(int index)
 
     return postWriteRegs(REG_2B_AUTO_CORN, 1, &value);
 }
-bool CornHandler::stop()
+
+bool CornHandler::ReadParam()
+{
+    bInit = false;
+    return bInit;
+}
+bool CornHandler::stopCalib()
 {
     quint16 value = 5;
 

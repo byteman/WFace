@@ -44,7 +44,9 @@ void CmdHandler::processCmds()
         {
             if(cmd.reg_num != _rtu->write_registers(cmd.reg_addr,cmd.reg_num,cmd.reg_value))
             {
-                qDebug() << "write failed";
+                QString err= QString("write reg[%1] num=[%2] failed").arg(cmd.reg_addr).arg(cmd.reg_num);
+
+                qDebug() << err;
                 cmd.error = REG_ERROR_TIMEOUT;
             }
         }
@@ -95,5 +97,5 @@ bool CmdHandler::startRun()
 bool CmdHandler::stop()
 {
     this->requestInterruption();
-    return this->wait(100);
+    return this->wait(3000);
 }

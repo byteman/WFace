@@ -20,6 +20,8 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     ui->setupUi(this);
     qRegisterMetaType<Para>("Para");
     qRegisterMetaType<RegCmd>("RegCmd");
+    //qRegisterMetaType<QList<int>>("ads");
+    qRegisterMetaType<QList<float>>("ks");
 
     this->startTimer(500);
     initUI();
@@ -55,7 +57,7 @@ void MainWindow::initUI()
     handlers["weight"] = weight;
     handlers["calib"] = calib;
     handlers["para"] = para;
-    handlers["corn"] = para;
+    handlers["corn"] = corn;
     connect(scaner,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
     connect(weight,SIGNAL(weightResult(int,quint16,quint16,qint32,qint32)),this,SLOT(onWeightResult(int,quint16,quint16,qint32,qint32)));
     connect(weight,SIGNAL(weightParaReadResult(quint16,quint16,quint32,quint32)),this,SLOT(onWeightParaRead(quint16,quint16,quint32,quint32)));
@@ -67,12 +69,13 @@ void MainWindow::initUI()
     connect(para,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
     connect(para,SIGNAL(paraWriteResult(bool)),this,SLOT(onParaWriteResult(bool)));
 
-    connect(corn,SIGNAL(chanADReadResult(QList<qint32>)),this,SLOT(chanADReadResult(QList<qint32>)));
-    connect(corn,SIGNAL(chanKReadResult(QList<float>)),this,SLOT(chanKReadResult(QList<float>)));
+    connect(corn,SIGNAL(chanADReadResult(QList<float>)),this,SLOT(chanADReadResult(QList<float>)));
+    connect(corn,SIGNAL(chanKReadResult(int,QList<float>)),this,SLOT(chanKReadResult(int,QList<float>)));
+    connect(corn,SIGNAL(OperationResult(RegCmd)),this,SLOT(onRegOperResult(RegCmd)));
 
 }
 //AD读取结果
-void MainWindow::chanADReadResult(QList<qint32> chanAD)
+void MainWindow::chanADReadResult(QList<float> chanAD)
 {
     for(int i = 0; i < chanAD.size();i++)
     {
@@ -81,12 +84,13 @@ void MainWindow::chanADReadResult(QList<qint32> chanAD)
 
 }
 //K系数读取结果.
-void MainWindow::chanKReadResult(QList<float> chanK)
+void MainWindow::chanKReadResult(int sensor, QList<float> chanK)
 {
     for(int i = 0; i < chanK.size();i++)
     {
         ui->tblCornFix->item(i,1)->setText(QString("%1").arg(chanK[i]));
     }
+    ui->edtSensorNum->setText(QString("%1").arg(sensor));
 }
 void MainWindow::changeHandler(QString name,bool start)
 {
@@ -127,7 +131,7 @@ void MainWindow::calibrate_click(int id)
 void MainWindow::corn_calibrate_click(int id)
 {
     qDebug() << id << "---clicked";
-    //corn->calib(id);
+    corn->calib(id+1);
 //    int weight = ui->tblCornFix->item(id,1)->text().toInt();
 //    calib->calibSet(id,weight,0);
 }
@@ -221,7 +225,7 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
     }
     QString ws(buf);
 
-    ui->lbl_display_wet->setText(ws);
+
     QString strState = "";
     //state = 0xFF;
     if(state&1)
@@ -239,10 +243,12 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
     if(state&8)
     {
        strState += " | " +tr("upflow ");
+       ws = "------";
     }
     if(state&16)
     {
        strState += " | " +tr("underflow ");
+       ws = "------";
     }
     if(state&32)
     {
@@ -262,6 +268,7 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
         ui->lblstate->setText(strState);
     }
 
+    ui->lbl_display_wet->setText(ws);
 }
 //标定过程....
 void MainWindow::onCalibProcessResult(int index, int result)
@@ -303,6 +310,7 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 
 void MainWindow::onRegOperResult(RegCmd cmd)
 {
+    qDebug() << "onRegOperResult " << "reg=" << cmd.reg_addr << " num=" << cmd.reg_num << " " << cmd.isRead;
     if(cmd.reg_addr == REG_CALIB)
     {
         if(cmd.error == REG_ERROR_OK)
@@ -316,17 +324,51 @@ void MainWindow::onRegOperResult(RegCmd cmd)
             return ;
         }
     }
-    else if(cmd.reg_addr == REG_FULL_SPAN && !cmd.isRead)
+    else if(!cmd.isRead)
     {
-        if(cmd.error != REG_ERROR_OK)
+        if( (cmd.reg_addr == REG_FULL_SPAN)||
+            (cmd.reg_addr == REG_2B_SENSOR_NUM) ||
+                (cmd.reg_addr == REG_4B_CORN_K))
         {
-            QMessageBox::information(this,"提示","保存失败");
+            if(cmd.error != REG_ERROR_OK)
+            {
+                QMessageBox::information(this,"提示","保存失败");
+            }
+            else
+            {
+                QMessageBox::information(this,tr("info"),"保存成功");
+            }
         }
-        else
+        else if(cmd.reg_addr == REG_2B_AUTO_CORN)
         {
-            QMessageBox::information(this,tr("info"),"保存成功");
+            if(cmd.error != REG_ERROR_OK)
+            {
+                QMessageBox::information(this,"提示","操作失败");
+            }
+            else if(cmd.reg_value[0] == 0)
+            {
+                QMessageBox::information(this,"提示","启动成功");
+            }else if(cmd.reg_value[0] == 1)
+            {
+                QMessageBox::information(this,"提示","标定成功");
+            }else if(cmd.reg_value[0] == 2)
+            {
+                QMessageBox::information(this,"提示","标定成功");
+            }else if(cmd.reg_value[0] == 3)
+            {
+                QMessageBox::information(this,"提示","标定成功");
+            }else if(cmd.reg_value[0] == 4)
+            {
+                QMessageBox::information(this,"提示","标定成功");
+            }else if(cmd.reg_value[0] == 5)
+            {
+                QMessageBox::information(this,"提示","标定结束");
+            }
         }
+
     }
+
+
 }
 
 void MainWindow::onWeightParaRead(quint16 div_high, quint16 div_low, quint32 full_high, quint32 full_low)
@@ -409,7 +451,7 @@ void MainWindow::clearCornCalib()
                 item->setText("");
         }
     }
-    ui->txtSensorNum->setText("");
+    ui->edtSensorNum->setText("");
 
 }
 void MainWindow::clearCalib()
@@ -460,7 +502,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         changeHandler("calib");
 
     }
-    else if(index == 3)
+    else if(index == 4)
     {
         clearCornCalib();
         changeHandler("corn");
@@ -518,6 +560,7 @@ void MainWindow::initCornFixChan()
     {
         QPushButton* button = new QPushButton(tr("calib"),ui->tblCornFix);
         button->setGeometry(0,0,80,50);
+        button->setEnabled(false);
         connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
         signalMapper->setMapping(button, i);
         ui->tblCornFix->setCellWidget(i,2,button);
@@ -533,6 +576,8 @@ void MainWindow::initCornFixChan()
     ui->tblCornFix->setVerticalHeaderLabels(row_headers);
     connect(signalMapper, SIGNAL(mapped(int)),
                 this, SLOT(corn_calibrate_click(int)));
+    ui->btnStopCalib->setEnabled(false);
+
 }
 void MainWindow::initCalibPoints()
 {
@@ -680,10 +725,67 @@ void MainWindow::timerEvent(QTimerEvent *)
 
 void MainWindow::on_btnStartCalib_clicked()
 {
-    corn->start();
+    corn->startCalib();
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    corn->stop();
+    corn->stopCalib();
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+
+}
+
+void MainWindow::on_btnReadK_clicked()
+{
+    corn->ReadParam();
+}
+
+void MainWindow::on_btnReadSrs_clicked()
+{
+    corn->ReadParam();
+}
+
+void MainWindow::on_btnSrsWrite_clicked()
+{
+    bool ok = false;
+    int num = ui->edtSensorNum->text().toInt(&ok);
+
+    corn->setSensorNum(num);
+}
+
+void MainWindow::on_btnWriteK_clicked()
+{
+    QList<float> ks;
+    int rows = ui->tblCornFix->rowCount();
+
+    int num = 0;
+    for(int i = 0; i < rows; i++)
+    {
+
+        QTableWidgetItem* item = ui->tblCornFix->item(i,1);
+        if(item!=NULL)
+        {
+            bool ok = false;
+            QString sk = item->text();
+            float k = sk.toFloat(&ok);
+            if(!ok)
+            {
+                QString err= QString("[%1]格式错误").arg(item->text());
+                QMessageBox::information(this,"错误",err);
+                return;
+            }
+            ks.push_back(k);
+            num++;
+        }
+    }
+
+    corn->setKs(ks);
+}
+
+void MainWindow::on_btnStopCalib_clicked()
+{
+    ui->btnStartCalib->setEnabled(true);
 }
