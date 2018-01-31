@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     weighthandler.cpp \
     parahandler.cpp \
     calibhandler.cpp \
-    RtuReader.cpp
+    RtuReader.cpp \
+    cornhandler.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -34,7 +35,8 @@ HEADERS  += mainwindow.h \
     weighthandler.h \
     parahandler.h \
     calibhandler.h \
-    RtuReader.h
+    RtuReader.h \
+    cornhandler.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 

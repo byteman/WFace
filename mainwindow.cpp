@@ -43,17 +43,19 @@ void MainWindow::initUI()
     ui->scanPb->hide();
 
     initCalibPoints();
+    initCornFixChan();
     reader.start(100);
     scaner = new ScanHandler(&reader);
     weight = new WeightHandler(&reader);
     calib = new CalibHandler(&reader);
     para = new ParaHandler(&reader);
+    corn = new CornHandler(&reader);
 
     handlers["scan"] = scaner;
     handlers["weight"] = weight;
     handlers["calib"] = calib;
     handlers["para"] = para;
-
+    handlers["corn"] = para;
     connect(scaner,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
     connect(weight,SIGNAL(weightResult(int,quint16,quint16,qint32,qint32)),this,SLOT(onWeightResult(int,quint16,quint16,qint32,qint32)));
     connect(weight,SIGNAL(weightParaReadResult(quint16,quint16,quint32,quint32)),this,SLOT(onWeightParaRead(quint16,quint16,quint32,quint32)));
@@ -64,8 +66,28 @@ void MainWindow::initUI()
 
     connect(para,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
     connect(para,SIGNAL(paraWriteResult(bool)),this,SLOT(onParaWriteResult(bool)));
-}
 
+    connect(corn,SIGNAL(chanADReadResult(QList<qint32>)),this,SLOT(chanADReadResult(QList<qint32>)));
+    connect(corn,SIGNAL(chanKReadResult(QList<float>)),this,SLOT(chanKReadResult(QList<float>)));
+
+}
+//AD读取结果
+void MainWindow::chanADReadResult(QList<qint32> chanAD)
+{
+    for(int i = 0; i < chanAD.size();i++)
+    {
+        ui->tblCornFix->item(i,0)->setText(QString("%1").arg(chanAD[i]));
+    }
+
+}
+//K系数读取结果.
+void MainWindow::chanKReadResult(QList<float> chanK)
+{
+    for(int i = 0; i < chanK.size();i++)
+    {
+        ui->tblCornFix->item(i,1)->setText(QString("%1").arg(chanK[i]));
+    }
+}
 void MainWindow::changeHandler(QString name,bool start)
 {
     QMapIterator<QString,CmdHandler*> i(handlers);
@@ -102,7 +124,13 @@ void MainWindow::calibrate_click(int id)
     int weight = ui->tblCalib->item(id,1)->text().toInt();
     calib->calibSet(id,weight,0);
 }
-
+void MainWindow::corn_calibrate_click(int id)
+{
+    qDebug() << id << "---clicked";
+    //corn->calib(id);
+//    int weight = ui->tblCornFix->item(id,1)->text().toInt();
+//    calib->calibSet(id,weight,0);
+}
 void MainWindow::onParaReadResult(Para _para)
 {
     ui->cbxDot->setCurrentIndex(_para.dot);
@@ -368,6 +396,22 @@ void MainWindow::traversalControl(const QObjectList& q)
     }
 
 }
+void MainWindow::clearCornCalib()
+{
+    int rows = ui->tblCornFix->rowCount();
+    int cols = ui->tblCornFix->columnCount();
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < cols; j++)
+        {
+            QTableWidgetItem* item = ui->tblCalib->item(i,j);
+            if(item!=NULL)
+                item->setText("");
+        }
+    }
+    ui->txtSensorNum->setText("");
+
+}
 void MainWindow::clearCalib()
 {
     int rows = ui->tblCalib->rowCount();
@@ -383,8 +427,6 @@ void MainWindow::clearCalib()
     }
     ui->edtSensorFullSpan->setText("");
     ui->edtSensorMv->setText("");
-
-
 }
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
@@ -417,6 +459,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         clearCalib();
         changeHandler("calib");
 
+    }
+    else if(index == 3)
+    {
+        clearCornCalib();
+        changeHandler("corn");
     }
 }
 
@@ -453,7 +500,40 @@ void MainWindow::on_btnTare_clicked()
         QMessageBox::information(this,tr("error"),tr("discard tare failed"));
     }
 }
+void MainWindow::initCornFixChan()
+{
+    ui->tblCornFix->setRowCount(4);
+    ui->tblCornFix->setColumnCount(3);
+    QStringList col_headers;
+//    col_headers.push_back(tr("channel"));
+    col_headers.push_back(tr("ad"));
+    col_headers.push_back(tr("k"));
+    col_headers.push_back(tr("Operation"));
+    ui->tblCornFix->setHorizontalHeaderLabels(col_headers);
 
+    QStringList row_headers;
+
+    QSignalMapper *signalMapper = new QSignalMapper(this);
+    for(int i = 0; i <=  3; i++)
+    {
+        QPushButton* button = new QPushButton(tr("calib"),ui->tblCornFix);
+        button->setGeometry(0,0,80,50);
+        connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
+        signalMapper->setMapping(button, i);
+        ui->tblCornFix->setCellWidget(i,2,button);
+        for(int j = 0 ; j < 2; j++)
+        {
+            QTableWidgetItem* item = new QTableWidgetItem("");
+            item->setTextAlignment(Qt::AlignHCenter);
+            ui->tblCornFix->setItem(i,j,item);
+        }
+        row_headers.push_back(QString("%1").arg(i));
+
+    }
+    ui->tblCornFix->setVerticalHeaderLabels(row_headers);
+    connect(signalMapper, SIGNAL(mapped(int)),
+                this, SLOT(corn_calibrate_click(int)));
+}
 void MainWindow::initCalibPoints()
 {
 
@@ -467,7 +547,6 @@ void MainWindow::initCalibPoints()
     ui->tblCalib->setHorizontalHeaderLabels(col_headers);
 
     QStringList row_headers;
-    //row_headers<<"0" <<"1" << "2" << "3" << "4" << "5";
 
     QSignalMapper *signalMapper = new QSignalMapper(this);
     for(int i = 0; i <=  5; i++)
@@ -597,4 +676,14 @@ void MainWindow::timerEvent(QTimerEvent *)
     QString msg = QString("TX:%1|RX:%2 ").arg(tx).arg(rx);
 
     ui->statusBar->showMessage(msg);
+}
+
+void MainWindow::on_btnStartCalib_clicked()
+{
+    corn->start();
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    corn->stop();
 }

@@ -9,6 +9,7 @@
 #include "weighthandler.h"
 #include "calibhandler.h"
 #include "parahandler.h"
+#include "cornhandler.h"
 #include "adc102.h"
 #include <QMap>
 namespace Ui {
@@ -38,7 +39,8 @@ private slots:
     void on_btnSearch_clicked();
     void onParaWriteResult(bool ok);
     void on_tabWidget_currentChanged(int index);
-
+    void chanADReadResult(QList<qint32> chanAD);
+    void chanKReadResult(QList<float> chanK);
     void on_btnSave_clicked();
 
     void on_btnTare_clicked();
@@ -62,6 +64,10 @@ private slots:
 
     void on_btnSensorWrite_clicked();
 
+    void on_btnStartCalib_clicked();
+
+    void on_pushButton_2_clicked();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
@@ -71,6 +77,7 @@ private:
     WeightHandler *weight;
     CalibHandler *calib;
     ParaHandler* para;
+    CornHandler* corn;
     RtuReader reader;
     QMap<QString,CmdHandler*> handlers;
     // QObject interface
@@ -78,9 +85,13 @@ private:
     void clearCalib();
     void initUI();
     void changeHandler(QString name,bool start=true);
+    void initCornFixChan();
+    void clearCornCalib();
 protected:
     void timerEvent(QTimerEvent *);
 
+protected slots:
+    void corn_calibrate_click(int id);
 };
 
 #endif // MAINWINDOW_H
