@@ -65,10 +65,6 @@ private slots:
     void on_btnSensorWrite_clicked();
 
     void on_btnStartCalib_clicked();
-
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_5_clicked();
     void on_btnReadK_clicked();
 
     void on_btnReadSrs_clicked();
@@ -100,6 +96,7 @@ private:
     void clearCornCalib();
     void DisableAllCalibButton();
     void EnableAllCalibButton(bool disable);
+    void EnableCalibButton(int index, bool disable);
 protected:
     void timerEvent(QTimerEvent *);
 

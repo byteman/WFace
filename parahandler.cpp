@@ -113,6 +113,5 @@ bool ParaHandler::doWork()
     {
         return true;
     }
-    msleep(1000);
     return false;
 }

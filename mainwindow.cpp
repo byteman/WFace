@@ -350,22 +350,35 @@ void MainWindow::onRegOperResult(RegCmd cmd)
                 //启动成功,请继续点击标定按键
                 EnableAllCalibButton(false);
                 ui->btnStopCalib->setEnabled(false);
-                QMessageBox::information(this,tr("corn_calib_title"),tr("first_calib_msg"));
+                EnableCalibButton(0,true);
+                QMessageBox::information(this,tr("corn_calib_title"),tr("启动标定成功"));
             }else if(cmd.reg_value[0] == 1)
             {
-                QMessageBox::information(this,tr("corn_calib_title"),tr("second_calib_msg"));
+                EnableAllCalibButton(false);
+                EnableCalibButton(1,true);
+                QMessageBox::information(this,tr("corn_calib_title"),tr("first_calib_msg"));
             }else if(cmd.reg_value[0] == 2)
             {
-                QMessageBox::information(this,tr("corn_calib_title"),tr("third_calib_msg"));
+                EnableAllCalibButton(false);
+                EnableCalibButton(2,true);
+                QMessageBox::information(this,tr("corn_calib_title"),tr("second_calib_msg"));
             }else if(cmd.reg_value[0] == 3)
             {
-                QMessageBox::information(this,tr("corn_calib_title"),tr("fourth_calib_msg"));
+                EnableAllCalibButton(false);
+                EnableCalibButton(3,true);
+                QMessageBox::information(this,tr("corn_calib_title"),tr("third_calib_msg"));
             }else if(cmd.reg_value[0] == 4)
             {
-                QMessageBox::information(this,tr("corn_calib_title"),tr("fivth_calib_msg"));
+                EnableAllCalibButton(false);
+                ui->btnStopCalib->setEnabled(true);
+                QMessageBox::information(this,tr("corn_calib_title"),tr("fourth_calib_msg"));
             }else if(cmd.reg_value[0] == 5)
             {
-                QMessageBox::information(this,tr("corn_calib_title"),tr("sixth_calib_msg"));
+                EnableAllCalibButton(false);
+                ui->btnStopCalib->setEnabled(false);
+                ui->btnStartCalib->setEnabled(true);
+                corn->ReadParam();
+                QMessageBox::information(this,tr("corn_calib_title"),tr("stop_calib_msg"));
             }
         }
 
@@ -547,13 +560,17 @@ void MainWindow::on_btnTare_clicked()
 }
 void MainWindow::initCornFixChan()
 {
+    //ui->tblCornFix->verticalHeader()->setOffset(1);
+    //ui->tblCornFix->verticalHeader()->setHidden(true);
     ui->tblCornFix->setRowCount(4);
     ui->tblCornFix->setColumnCount(3);
     QStringList col_headers;
-//    col_headers.push_back(tr("channel"));
+    //col_headers.push_back(tr("channel"));
     col_headers.push_back(tr("ad"));
     col_headers.push_back(tr("k"));
     col_headers.push_back(tr("Operation"));
+
+
     ui->tblCornFix->setHorizontalHeaderLabels(col_headers);
 
     QStringList row_headers;
@@ -561,11 +578,13 @@ void MainWindow::initCornFixChan()
     QSignalMapper *signalMapper = new QSignalMapper(this);
     for(int i = 0; i <=  3; i++)
     {
+
         QPushButton* button = new QPushButton(tr("calib"),ui->tblCornFix);
         button->setGeometry(0,0,80,50);
         button->setEnabled(false);
         connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
         signalMapper->setMapping(button, i);
+
         ui->tblCornFix->setCellWidget(i,2,button);
         for(int j = 0 ; j < 2; j++)
         {
@@ -573,9 +592,10 @@ void MainWindow::initCornFixChan()
             item->setTextAlignment(Qt::AlignHCenter);
             ui->tblCornFix->setItem(i,j,item);
         }
-        row_headers.push_back(QString("%1").arg(i));
+        row_headers.push_back(QString("通道%1").arg(i+1));
 
     }
+
     ui->tblCornFix->setVerticalHeaderLabels(row_headers);
     connect(signalMapper, SIGNAL(mapped(int)),
                 this, SLOT(corn_calibrate_click(int)));
@@ -584,7 +604,7 @@ void MainWindow::initCornFixChan()
 }
 void MainWindow::initCalibPoints()
 {
-
+    //ui->tblCalib->verticalHeader()->setHidden(true);
     ui->tblCalib->setRowCount(6);
     ui->tblCalib->setColumnCount(3);
     QStringList col_headers;
@@ -610,7 +630,7 @@ void MainWindow::initCalibPoints()
             item->setTextAlignment(Qt::AlignHCenter);
             ui->tblCalib->setItem(i,j,item);
         }
-        row_headers.push_back(QString("%1").arg(i));
+        row_headers.push_back(QString("%1").arg(i+1));
 
     }
     ui->tblCalib->setVerticalHeaderLabels(row_headers);
@@ -739,6 +759,14 @@ void MainWindow::EnableAllCalibButton(bool disable)
 
     }
 }
+void MainWindow::EnableCalibButton(int index,bool disable)
+{
+    QPushButton* btn = (QPushButton*)ui->tblCornFix->cellWidget(index,2);
+    if(btn!=NULL)
+    {
+        btn->setEnabled(disable);
+    }
+}
 void MainWindow::on_btnStartCalib_clicked()
 {
 
@@ -747,18 +775,7 @@ void MainWindow::on_btnStartCalib_clicked()
 }
 void MainWindow::on_btnStopCalib_clicked()
 {
-    ui->btnStartCalib->setEnabled(true);
-    EnableAllCalibButton(false);
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-    corn->stopCalib();
-}
-
-void MainWindow::on_pushButton_5_clicked()
-{
-
+   corn->stopCalib();
 }
 
 void MainWindow::on_btnReadK_clicked()
@@ -777,6 +794,31 @@ void MainWindow::on_btnSrsWrite_clicked()
     int num = ui->edtSensorNum->text().toInt(&ok);
 
     corn->setSensorNum(num);
+    QList<float> ks;
+    int rows = ui->tblCornFix->rowCount();
+
+    num = 0;
+    for(int i = 0; i < rows; i++)
+    {
+
+        QTableWidgetItem* item = ui->tblCornFix->item(i,1);
+        if(item!=NULL)
+        {
+            bool ok = false;
+            QString sk = item->text();
+            float k = sk.toFloat(&ok);
+            if(!ok)
+            {
+                QString err= QString("[%1]格式错误").arg(item->text());
+                QMessageBox::information(this,"错误",err);
+                return;
+            }
+            ks.push_back(k);
+            num++;
+        }
+    }
+
+    corn->setKs(ks);
 }
 
 void MainWindow::on_btnWriteK_clicked()

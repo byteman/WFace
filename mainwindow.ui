@@ -1345,9 +1345,138 @@
        <attribute name="title">
         <string>CornFix</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_8">
+       <layout class="QVBoxLayout" name="verticalLayout_8" stretch="1,3">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QGroupBox" name="groupBox_9">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>80</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>Operation</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <item row="0" column="0">
+              <widget class="QPushButton" name="btnStartCalib">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>startCalib</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QPushButton" name="btnStopCalib">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>endCalib</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QPushButton" name="btnReadSrs">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Read</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QPushButton" name="btnSrsWrite">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Save</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string>Param</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <item row="6" column="0">
+              <widget class="QLabel" name="txtSensorNum">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>传感器个数</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="2">
+              <widget class="QLineEdit" name="edtSensorNum"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
         <item>
          <widget class="QGroupBox" name="groupBox_8">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>300</height>
+           </size>
+          </property>
           <property name="title">
            <string>通道</string>
           </property>
@@ -1369,101 +1498,6 @@
            </item>
           </layout>
          </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <item>
-           <widget class="QGroupBox" name="groupBox_9">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>80</height>
-             </size>
-            </property>
-            <property name="title">
-             <string>Operation</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_4">
-             <item row="0" column="1">
-              <widget class="QPushButton" name="btnStopCalib">
-               <property name="text">
-                <string>endCalib</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QPushButton" name="btnStartCalib">
-               <property name="text">
-                <string>startCalib</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QPushButton" name="btnReadK">
-               <property name="text">
-                <string>ReadK</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QPushButton" name="btnWriteK">
-               <property name="text">
-                <string>WriteK</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox_4">
-            <property name="title">
-             <string>Param</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_3">
-             <item row="3" column="0">
-              <widget class="QPushButton" name="btnReadSrs">
-               <property name="text">
-                <string>Read</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="txtSensorNum">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>传感器个数</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="edtSensorNum"/>
-             </item>
-             <item row="3" column="1">
-              <widget class="QPushButton" name="btnSrsWrite">
-               <property name="text">
-                <string>Save</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
         </item>
        </layout>
       </widget>
