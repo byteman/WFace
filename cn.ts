@@ -139,57 +139,53 @@
         <translation>角差修正</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1352"/>
+        <location filename="mainwindow.ui" line="1481"/>
+        <location filename="mainwindow.cpp" line="614"/>
         <source>通道</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1390"/>
-        <location filename="mainwindow.cpp" line="569"/>
+        <location filename="mainwindow.ui" line="1366"/>
+        <location filename="mainwindow.cpp" line="590"/>
         <source>Operation</source>
         <translation>操作</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1396"/>
+        <location filename="mainwindow.ui" line="1391"/>
         <source>endCalib</source>
         <translation>结束标定</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1403"/>
+        <location filename="mainwindow.ui" line="1378"/>
         <source>startCalib</source>
         <translation>启动标定</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="1410"/>
-        <source>ReadK</source>
-        <translation>读取角差系数</translation>
+        <source>Read</source>
+        <oldsource>ReadK</oldsource>
+        <translation type="unfinished">读取角差系数</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1417"/>
         <source>WriteK</source>
-        <translation>保存角差系数</translation>
+        <translation type="vanished">保存角差系数</translation>
     </message>
     <message>
         <source>SensorNum</source>
         <translation type="vanished">传感器个数</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1427"/>
+        <location filename="mainwindow.ui" line="1439"/>
         <source>Param</source>
         <translation>参数</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1433"/>
-        <source>Read</source>
-        <translation>读取参数</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="1446"/>
+        <location filename="mainwindow.ui" line="1451"/>
         <source>传感器个数</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1510"/>
+        <location filename="mainwindow.ui" line="1544"/>
         <source>复位设备</source>
         <translation type="unfinished"></translation>
     </message>
@@ -419,7 +415,7 @@
     </message>
     <message>
         <location filename="mainwindow.ui" line="1204"/>
-        <location filename="mainwindow.ui" line="1459"/>
+        <location filename="mainwindow.ui" line="1423"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
@@ -455,17 +451,17 @@
         <translation type="vanished">复位</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1485"/>
+        <location filename="mainwindow.ui" line="1519"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1493"/>
+        <location filename="mainwindow.ui" line="1527"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1497"/>
+        <location filename="mainwindow.ui" line="1531"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
@@ -474,17 +470,17 @@
         <translation type="vanished">写入参数</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1515"/>
+        <location filename="mainwindow.ui" line="1549"/>
         <source>Read Parameter</source>
         <translation>读取参数</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1520"/>
+        <location filename="mainwindow.ui" line="1554"/>
         <source>english</source>
         <translation>英语</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1525"/>
+        <location filename="mainwindow.ui" line="1559"/>
         <source>chinese</source>
         <translation>简体中文</translation>
     </message>
@@ -539,13 +535,14 @@
     <message>
         <location filename="mainwindow.cpp" line="282"/>
         <location filename="mainwindow.cpp" line="286"/>
-        <location filename="mainwindow.cpp" line="318"/>
-        <location filename="mainwindow.cpp" line="339"/>
-        <location filename="mainwindow.cpp" line="431"/>
-        <location filename="mainwindow.cpp" line="494"/>
-        <location filename="mainwindow.cpp" line="663"/>
-        <location filename="mainwindow.cpp" line="670"/>
-        <location filename="mainwindow.cpp" line="678"/>
+        <location filename="mainwindow.cpp" line="347"/>
+        <location filename="mainwindow.cpp" line="368"/>
+        <location filename="mainwindow.cpp" line="449"/>
+        <location filename="mainwindow.cpp" line="453"/>
+        <location filename="mainwindow.cpp" line="516"/>
+        <location filename="mainwindow.cpp" line="684"/>
+        <location filename="mainwindow.cpp" line="692"/>
+        <location filename="mainwindow.cpp" line="700"/>
         <source>info</source>
         <translation>信息提示</translation>
     </message>
@@ -560,13 +557,16 @@
         <translation>标定失败</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="323"/>
-        <location filename="mainwindow.cpp" line="404"/>
-        <location filename="mainwindow.cpp" line="556"/>
-        <location filename="mainwindow.cpp" line="683"/>
-        <location filename="mainwindow.cpp" line="691"/>
+        <location filename="mainwindow.cpp" line="352"/>
+        <location filename="mainwindow.cpp" line="364"/>
+        <location filename="mainwindow.cpp" line="426"/>
+        <location filename="mainwindow.cpp" line="578"/>
         <location filename="mainwindow.cpp" line="705"/>
-        <location filename="mainwindow.cpp" line="714"/>
+        <location filename="mainwindow.cpp" line="713"/>
+        <location filename="mainwindow.cpp" line="727"/>
+        <location filename="mainwindow.cpp" line="736"/>
+        <location filename="mainwindow.cpp" line="833"/>
+        <location filename="mainwindow.cpp" line="862"/>
         <source>error</source>
         <translation>错误提示</translation>
     </message>
@@ -603,17 +603,17 @@
         <translation type="vanished">未知错误</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="404"/>
+        <location filename="mainwindow.cpp" line="426"/>
         <source>uart open failed</source>
         <translation>串口打开失败</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="409"/>
+        <location filename="mainwindow.cpp" line="431"/>
         <source>StopSearch</source>
         <translation>停止扫描</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="494"/>
+        <location filename="mainwindow.cpp" line="516"/>
         <source>please scan device first</source>
         <translation>请先扫描设备</translation>
     </message>
@@ -626,102 +626,139 @@
         <translation type="vanished">保存失败</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="556"/>
+        <location filename="mainwindow.cpp" line="578"/>
         <source>discard tare failed</source>
         <translation>去皮失败</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="567"/>
-        <location filename="mainwindow.cpp" line="609"/>
+        <location filename="mainwindow.cpp" line="588"/>
+        <location filename="mainwindow.cpp" line="630"/>
         <source>ad</source>
         <translation>内码值</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="610"/>
+        <location filename="mainwindow.cpp" line="631"/>
         <source>weight</source>
         <translation>砝码重量</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="611"/>
+        <location filename="mainwindow.cpp" line="632"/>
         <source>calibrate</source>
         <translation>标定操作</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="580"/>
-        <location filename="mainwindow.cpp" line="620"/>
+        <location filename="mainwindow.cpp" line="601"/>
+        <location filename="mainwindow.cpp" line="641"/>
         <source>calib</source>
         <translation>标定</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="346"/>
-        <location filename="mainwindow.cpp" line="354"/>
-        <location filename="mainwindow.cpp" line="359"/>
+        <location filename="mainwindow.cpp" line="320"/>
+        <location filename="mainwindow.cpp" line="326"/>
+        <source>corn_calib_msg</source>
+        <translation>该位置角差标定完成</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="320"/>
+        <source>click_next</source>
+        <translation>点击下一个位置角差标定</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="326"/>
+        <source>click_stop</source>
+        <translation>请点击标定完成按键</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="347"/>
+        <source>calib_ok</source>
+        <translation>标定成功</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="352"/>
+        <source>calib_fail</source>
+        <translation>标定失败，请重试</translation>
+    </message>
+    <message>
         <location filename="mainwindow.cpp" line="364"/>
-        <location filename="mainwindow.cpp" line="369"/>
-        <location filename="mainwindow.cpp" line="374"/>
-        <location filename="mainwindow.cpp" line="379"/>
+        <location filename="mainwindow.cpp" line="449"/>
+        <source>save_fail</source>
+        <translation>保存失败，请重试</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="368"/>
+        <location filename="mainwindow.cpp" line="453"/>
+        <source>save_ok</source>
+        <translation>保存成功</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="320"/>
+        <location filename="mainwindow.cpp" line="326"/>
+        <location filename="mainwindow.cpp" line="337"/>
+        <location filename="mainwindow.cpp" line="376"/>
         <source>corn_calib_title</source>
         <translation>角差标定</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="346"/>
+        <location filename="mainwindow.cpp" line="376"/>
         <source>corn_calib_fail_msg</source>
         <translation>角差标定失败，请重试</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="354"/>
-        <source>start_calib_msg</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="359"/>
         <source>first_calib_msg</source>
-        <translation>第一个角差标定完成，继续点击第二个角差标定</translation>
+        <translation type="vanished">第一个角差标定完成</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="364"/>
         <source>second_calib_msg</source>
-        <translation>第二个角差标定完成，继续点击第三个角差标定</translation>
+        <translation type="vanished">第二个角差标定完成</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="369"/>
         <source>third_calib_msg</source>
-        <translation>第三个角差标定完成，继续点击第四个角差标定</translation>
+        <translation type="vanished">第三个角差标定完成</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="374"/>
         <source>fourth_calib_msg</source>
-        <translation>第四个角差标定完成，继续点击完成标定按键</translation>
+        <translation type="vanished">第四个角差标定完成</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="379"/>
+        <location filename="mainwindow.cpp" line="337"/>
         <source>stop_calib_msg</source>
-        <translation type="unfinished"></translation>
+        <translation>成功完成角差标定</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="568"/>
+        <location filename="mainwindow.cpp" line="589"/>
         <source>k</source>
         <translation>角差系数</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="663"/>
+        <location filename="mainwindow.cpp" line="684"/>
         <source>please select one device</source>
         <translation>请选择要修改的设备地址</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="678"/>
+        <location filename="mainwindow.cpp" line="692"/>
+        <source>address must in 1-32</source>
+        <translation>地址范围必须在1-32之间</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="700"/>
         <source>modify address successful</source>
         <translation>修改地址成功</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="683"/>
+        <location filename="mainwindow.cpp" line="705"/>
         <source>modify address failed</source>
         <translation>修改地址失败</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="691"/>
+        <location filename="mainwindow.cpp" line="713"/>
         <source>change groos net failed</source>
         <translation>毛重净重模式切换失败</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="832"/>
+        <location filename="mainwindow.cpp" line="861"/>
+        <source> format_err</source>
+        <translation>输入格式有误</translation>
     </message>
     <message>
         <source>file do not exist</source>
@@ -740,12 +777,12 @@
         <translation type="vanished">你选择的是</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="705"/>
+        <location filename="mainwindow.cpp" line="727"/>
         <source>set zero failed</source>
         <translation>清零失败</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="714"/>
+        <location filename="mainwindow.cpp" line="736"/>
         <source>zomm10x failed</source>
         <translation>放大10倍失败</translation>
     </message>

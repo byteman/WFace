@@ -3,5 +3,6 @@
         <file>mystyle.txt</file>
         <file>monitor.png</file>
         <file>cn.qm</file>
+        <file>en.qm</file>
     </qresource>
 </RCC>

@@ -2,17 +2,30 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QTranslator>
+#include <QSettings>
+void loadLang(QTranslator& translator)
+{
+
+    QSettings config("wface.ini", QSettings::IniFormat);
+
+    QString lang       = config.value("/config/lang","zh").toString();
+    if(lang == "zh")
+    {
+        translator.load(":/cn.qm");
+    }
+    else
+    {
+        translator.load(":/en.qm");
+    }
+}
 int main(int argc, char *argv[])
 {
 
 
     QApplication a(argc, argv);
     QTranslator translator;
-    bool b = false;
-    //QString path = QCoreApplication::applicationDirPath() + "/cn.qm";
-    b = translator.load(":/cn.qm");
+    loadLang(translator);
     a.installTranslator(&translator);
-
     MainWindow w(a);
     w.show();
 

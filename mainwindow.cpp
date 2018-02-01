@@ -307,7 +307,36 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
     reader.setDeviceAddr(item->text().toInt());
     ui->tabWidget->setCurrentIndex(1);
 }
+//继续下一步标定
+bool MainWindow::nextCalib(int index)
+{
 
+    EnableAllCalibButton(false);
+    ui->btnStopCalib->setEnabled(false);
+    if(corn->getSensorNum() > index)
+    {
+        //启动成功后，有大于1个传感器,就启动第2个传感器.
+        EnableCalibButton(index,true);
+        QMessageBox::information(this,tr("corn_calib_title"),tr("corn_calib_msg") + tr("click_next"));
+        return true;
+    }
+    else
+    {
+        //否则结束了,让停止键可用.
+        QMessageBox::information(this,tr("corn_calib_title"),tr("corn_calib_msg") + tr("click_stop"));
+        ui->btnStopCalib->setEnabled(true);
+        return false;
+    }
+}
+bool MainWindow::finishEndCalib()
+{
+    EnableAllCalibButton(false);
+    ui->btnStopCalib->setEnabled(false);
+    ui->btnStartCalib->setEnabled(true);
+    corn->ReadParam();
+    QMessageBox::information(this,tr("corn_calib_title"),tr("stop_calib_msg"));
+    return true;
+}
 void MainWindow::onRegOperResult(RegCmd cmd)
 {
     qDebug() << "onRegOperResult " << "reg=" << cmd.reg_addr << " num=" << cmd.reg_num << " " << cmd.isRead;
@@ -315,12 +344,12 @@ void MainWindow::onRegOperResult(RegCmd cmd)
     {
         if(cmd.error == REG_ERROR_OK)
         {
-            QMessageBox::information(this,tr("info"),"标定成功");
+            QMessageBox::information(this,tr("info"),tr("calib_ok"));
             return ;
         }
         else
         {
-            QMessageBox::information(this,tr("error"),"标定失败");
+            QMessageBox::information(this,tr("error"),tr("calib_fail"));
             return ;
         }
     }
@@ -332,15 +361,16 @@ void MainWindow::onRegOperResult(RegCmd cmd)
         {
             if(cmd.error != REG_ERROR_OK)
             {
-                QMessageBox::information(this,"提示","保存失败");
+                QMessageBox::information(this,tr("error"),tr("save_fail"));
             }
             else
             {
-                QMessageBox::information(this,tr("info"),"保存成功");
+                QMessageBox::information(this,tr("info"),tr("save_ok"));
             }
         }
         else if(cmd.reg_addr == REG_2B_AUTO_CORN)
         {
+
             if(cmd.error != REG_ERROR_OK)
             {
                 QMessageBox::information(this,tr("corn_calib_title"),tr("corn_calib_fail_msg"));
@@ -348,37 +378,27 @@ void MainWindow::onRegOperResult(RegCmd cmd)
             else if(cmd.reg_value[0] == 0)
             {
                 //启动成功,请继续点击标定按键
-                EnableAllCalibButton(false);
-                ui->btnStopCalib->setEnabled(false);
-                EnableCalibButton(0,true);
-                QMessageBox::information(this,tr("corn_calib_title"),tr("启动标定成功"));
+                nextCalib(0);
+
+
             }else if(cmd.reg_value[0] == 1)
             {
-                EnableAllCalibButton(false);
-                EnableCalibButton(1,true);
-                QMessageBox::information(this,tr("corn_calib_title"),tr("first_calib_msg"));
+                nextCalib(1);
+
             }else if(cmd.reg_value[0] == 2)
             {
-                EnableAllCalibButton(false);
-                EnableCalibButton(2,true);
-                QMessageBox::information(this,tr("corn_calib_title"),tr("second_calib_msg"));
+                nextCalib(2);
+
             }else if(cmd.reg_value[0] == 3)
             {
-                EnableAllCalibButton(false);
-                EnableCalibButton(3,true);
-                QMessageBox::information(this,tr("corn_calib_title"),tr("third_calib_msg"));
+                nextCalib(3);
+
             }else if(cmd.reg_value[0] == 4)
             {
-                EnableAllCalibButton(false);
-                ui->btnStopCalib->setEnabled(true);
-                QMessageBox::information(this,tr("corn_calib_title"),tr("fourth_calib_msg"));
+                nextCalib(4);
             }else if(cmd.reg_value[0] == 5)
             {
-                EnableAllCalibButton(false);
-                ui->btnStopCalib->setEnabled(false);
-                ui->btnStartCalib->setEnabled(true);
-                corn->ReadParam();
-                QMessageBox::information(this,tr("corn_calib_title"),tr("stop_calib_msg"));
+                finishEndCalib();
             }
         }
 
@@ -426,11 +446,11 @@ void MainWindow::onParaWriteResult(bool ok)
 {
     if(!ok)
     {
-        QMessageBox::information(this,"提示","保存失败");
+        QMessageBox::information(this,tr("info"),tr("save_fail"));
     }
     else
     {
-        QMessageBox::information(this,tr("info"),"保存成功");
+        QMessageBox::information(this,tr("info"),tr("save_ok"));
     }
 }
 void MainWindow::traversalControl(const QObjectList& q)
@@ -560,7 +580,6 @@ void MainWindow::on_btnTare_clicked()
 }
 void MainWindow::initCornFixChan()
 {
-    //ui->tblCornFix->verticalHeader()->setOffset(1);
     //ui->tblCornFix->verticalHeader()->setHidden(true);
     ui->tblCornFix->setRowCount(4);
     ui->tblCornFix->setColumnCount(3);
@@ -592,7 +611,7 @@ void MainWindow::initCornFixChan()
             item->setTextAlignment(Qt::AlignHCenter);
             ui->tblCornFix->setItem(i,j,item);
         }
-        row_headers.push_back(QString("通道%1").arg(i+1));
+        row_headers.push_back(QString(tr("通道")) + QString("%1").arg(i+1));
 
     }
 
@@ -643,8 +662,9 @@ void MainWindow::on_actionEnglish_triggered()
    QTranslator translator;
    bool b = false;
 
-   b = translator.load(QCoreApplication::applicationDirPath() + "/cn.qm");
+   b = translator.load(QCoreApplication::applicationDirPath() + "/en.qm");
    _app.installTranslator(&translator);
+   ui->retranslateUi(this);
 
 }
 
@@ -654,6 +674,7 @@ void MainWindow::on_actionChinese_triggered()
    bool b = false;
    b = translator.load(QCoreApplication::applicationDirPath() + "/cn.qm");
    _app.removeTranslator(&translator);
+   ui->retranslateUi(this);
 
 }
 
@@ -669,7 +690,8 @@ void MainWindow::on_btnAddr_clicked()
    quint16 newAddr = ui->edtAddr->text().toInt();
    if(newAddr > 32 || newAddr < 1)
    {
-       QMessageBox::information(this,tr("info"),"新地址范围 1-32 之间");
+       //新地址范围 1-32 之间
+       QMessageBox::information(this,tr("info"),tr("address must in 1-32"));
        return;
    }
    reader.setDeviceAddr(oldAddr);
@@ -809,8 +831,8 @@ void MainWindow::on_btnSrsWrite_clicked()
             float k = sk.toFloat(&ok);
             if(!ok)
             {
-                QString err= QString("[%1]格式错误").arg(item->text());
-                QMessageBox::information(this,"错误",err);
+                QString err= item->text()+QString(tr(" format_err"));
+                QMessageBox::information(this,tr("error"),err);
                 return;
             }
             ks.push_back(k);
@@ -838,8 +860,9 @@ void MainWindow::on_btnWriteK_clicked()
             float k = sk.toFloat(&ok);
             if(!ok)
             {
-                QString err= QString("[%1]格式错误").arg(item->text());
-                QMessageBox::information(this,"错误",err);
+                QString err= item->text()+QString(tr(" format_err"));
+                QMessageBox::information(this,tr("error"),err);
+
                 return;
             }
             ks.push_back(k);

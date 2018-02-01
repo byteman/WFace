@@ -97,6 +97,9 @@ private:
     void DisableAllCalibButton();
     void EnableAllCalibButton(bool disable);
     void EnableCalibButton(int index, bool disable);
+    void endCornCalib();
+    bool nextCalib(int index);
+    bool finishEndCalib();
 protected:
     void timerEvent(QTimerEvent *);
 

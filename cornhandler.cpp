@@ -6,7 +6,8 @@
 
 
 CornHandler::CornHandler(RtuReader *rtu):
-    CmdHandler(rtu)
+    CmdHandler(rtu),
+    m_sensor(0)
 {
 
 }
@@ -67,6 +68,11 @@ bool CornHandler::setKs(QList<float> ks)
 bool CornHandler::setSensorNum(quint16 num)
 {
     return postWriteRegs(REG_2B_SENSOR_NUM ,1 ,&num);
+}
+
+int CornHandler::getSensorNum()
+{
+    return m_sensor;
 }
 bool CornHandler::doWork()
 {
