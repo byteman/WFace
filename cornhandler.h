@@ -19,6 +19,7 @@ public:
     bool setK(int index,float k);
     bool setKs(QList<float> ks);
     bool setSensorNum(quint16 num);
+    void updateSensorNum(quint16 num);
     int  getSensorNum();
 
 signals:

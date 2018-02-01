@@ -70,6 +70,11 @@ bool CornHandler::setSensorNum(quint16 num)
     return postWriteRegs(REG_2B_SENSOR_NUM ,1 ,&num);
 }
 
+void CornHandler::updateSensorNum(quint16 num)
+{
+    m_sensor = num;
+}
+
 int CornHandler::getSensorNum()
 {
     return m_sensor;

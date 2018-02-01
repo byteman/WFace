@@ -356,7 +356,6 @@ void MainWindow::onRegOperResult(RegCmd cmd)
     else if(!cmd.isRead)
     {
         if( (cmd.reg_addr == REG_FULL_SPAN)||
-            (cmd.reg_addr == REG_2B_SENSOR_NUM) ||
                 (cmd.reg_addr == REG_4B_CORN_K))
         {
             if(cmd.error != REG_ERROR_OK)
@@ -365,8 +364,22 @@ void MainWindow::onRegOperResult(RegCmd cmd)
             }
             else
             {
+
+                if((cmd.reg_addr == REG_2B_SENSOR_NUM) ||
+                        (cmd.reg_addr == REG_4B_CORN_K))
+                {
+                    //写完参数后，重新读取一下参数
+                    corn->ReadParam();
+                }
+
                 QMessageBox::information(this,tr("info"),tr("save_ok"));
+
+
             }
+        }
+        else if((cmd.reg_addr == REG_2B_SENSOR_NUM))
+        {
+
         }
         else if(cmd.reg_addr == REG_2B_AUTO_CORN)
         {
