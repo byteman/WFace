@@ -343,26 +343,29 @@ void MainWindow::onRegOperResult(RegCmd cmd)
         {
             if(cmd.error != REG_ERROR_OK)
             {
-                QMessageBox::information(this,"提示","操作失败");
+                QMessageBox::information(this,tr("corn_calib_title"),tr("corn_calib_fail_msg"));
             }
             else if(cmd.reg_value[0] == 0)
             {
-                QMessageBox::information(this,"提示","启动成功");
+                //启动成功,请继续点击标定按键
+                EnableAllCalibButton(false);
+                ui->btnStopCalib->setEnabled(false);
+                QMessageBox::information(this,tr("corn_calib_title"),tr("first_calib_msg"));
             }else if(cmd.reg_value[0] == 1)
             {
-                QMessageBox::information(this,"提示","标定成功");
+                QMessageBox::information(this,tr("corn_calib_title"),tr("second_calib_msg"));
             }else if(cmd.reg_value[0] == 2)
             {
-                QMessageBox::information(this,"提示","标定成功");
+                QMessageBox::information(this,tr("corn_calib_title"),tr("third_calib_msg"));
             }else if(cmd.reg_value[0] == 3)
             {
-                QMessageBox::information(this,"提示","标定成功");
+                QMessageBox::information(this,tr("corn_calib_title"),tr("fourth_calib_msg"));
             }else if(cmd.reg_value[0] == 4)
             {
-                QMessageBox::information(this,"提示","标定成功");
+                QMessageBox::information(this,tr("corn_calib_title"),tr("fivth_calib_msg"));
             }else if(cmd.reg_value[0] == 5)
             {
-                QMessageBox::information(this,"提示","标定结束");
+                QMessageBox::information(this,tr("corn_calib_title"),tr("sixth_calib_msg"));
             }
         }
 
@@ -722,10 +725,30 @@ void MainWindow::timerEvent(QTimerEvent *)
 
     ui->statusBar->showMessage(msg);
 }
+void MainWindow::EnableAllCalibButton(bool disable)
+{
+    int rows = ui->tblCornFix->rowCount();
 
+    for(int i = 0; i < rows; i++)
+    {
+        QPushButton* btn = (QPushButton*)ui->tblCornFix->cellWidget(i,2);
+        if(btn!=NULL)
+        {
+            btn->setEnabled(disable);
+        }
+
+    }
+}
 void MainWindow::on_btnStartCalib_clicked()
 {
-    corn->startCalib();
+
+   corn->startCalib();
+
+}
+void MainWindow::on_btnStopCalib_clicked()
+{
+    ui->btnStartCalib->setEnabled(true);
+    EnableAllCalibButton(false);
 }
 
 void MainWindow::on_pushButton_2_clicked()
@@ -785,7 +808,3 @@ void MainWindow::on_btnWriteK_clicked()
     corn->setKs(ks);
 }
 
-void MainWindow::on_btnStopCalib_clicked()
-{
-    ui->btnStartCalib->setEnabled(true);
-}

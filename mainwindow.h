@@ -98,6 +98,8 @@ private:
     void changeHandler(QString name,bool start=true);
     void initCornFixChan();
     void clearCornCalib();
+    void DisableAllCalibButton();
+    void EnableAllCalibButton(bool disable);
 protected:
     void timerEvent(QTimerEvent *);
 
