@@ -65,6 +65,7 @@ void MainWindow::initUI()
     connect(calib,SIGNAL(calibReadResult(int,qint32,qint32)),this,SLOT(onReadCalibPointResult(int,int,int)));
     connect(calib,SIGNAL(calibParaResult(quint32,quint32)),this,SLOT(onReadCalibParam(quint32,quint32)));
     connect(calib,SIGNAL(OperationResult(RegCmd)),this,SLOT(onRegOperResult(RegCmd)));
+    connect(calib,SIGNAL(chanADReadResult(QList<float>)),this,SLOT(calibADReadResult(QList<float>)));
 
     connect(para,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
     connect(para,SIGNAL(paraWriteResult(bool)),this,SLOT(onParaWriteResult(bool)));
@@ -72,7 +73,18 @@ void MainWindow::initUI()
     connect(corn,SIGNAL(chanADReadResult(QList<float>)),this,SLOT(chanADReadResult(QList<float>)));
     connect(corn,SIGNAL(chanKReadResult(int,QList<float>)),this,SLOT(chanKReadResult(int,QList<float>)));
     connect(corn,SIGNAL(OperationResult(RegCmd)),this,SLOT(onRegOperResult(RegCmd)));
-
+    initAdList();
+}
+void MainWindow::initAdList()
+{
+    adlist.push_back(ui->lblAD1);
+    adlist.push_back(ui->lblAD2);
+    adlist.push_back(ui->lblAD3);
+    adlist.push_back(ui->lblAD4);
+    for(int i = 0; i < adlist.size();i++)
+    {
+        adlist[i]->clear();
+    }
 }
 //AD读取结果
 void MainWindow::chanADReadResult(QList<float> chanAD)
@@ -82,6 +94,15 @@ void MainWindow::chanADReadResult(QList<float> chanAD)
         ui->tblCornFix->item(i,0)->setText(QString("%1").arg(chanAD[i]));
     }
 
+}
+
+void MainWindow::calibADReadResult(QList<float> chanAD)
+{
+    for(int i = 0; i < chanAD.size();i++)
+    {
+        QString text = QString("AD%1:%2").arg(i+1).arg(chanAD[i]);
+        adlist[i]->setText(text);
+    }
 }
 //K系数读取结果.
 void MainWindow::chanKReadResult(int sensor, QList<float> chanK)
@@ -518,6 +539,7 @@ void MainWindow::clearCalib()
     }
     ui->edtSensorFullSpan->setText("");
     ui->edtSensorMv->setText("");
+    initAdList();
 }
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
@@ -610,8 +632,8 @@ void MainWindow::initCornFixChan()
     QSignalMapper *signalMapper = new QSignalMapper(this);
     for(int i = 0; i <=  3; i++)
     {
-
-        QPushButton* button = new QPushButton(tr("calib"),ui->tblCornFix);
+        QString title = QString("%1%2%3").arg(tr("calib")).arg(tr("corn")).arg(i+1);
+        QPushButton* button = new QPushButton(title,ui->tblCornFix);
         button->setGeometry(0,0,80,50);
         button->setEnabled(false);
         connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
@@ -624,7 +646,7 @@ void MainWindow::initCornFixChan()
             item->setTextAlignment(Qt::AlignHCenter);
             ui->tblCornFix->setItem(i,j,item);
         }
-        row_headers.push_back(QString(tr("通道")) + QString("%1").arg(i+1));
+        row_headers.push_back(QString(tr("channel")) + QString("%1").arg(i+1));
 
     }
 
@@ -651,7 +673,10 @@ void MainWindow::initCalibPoints()
     QSignalMapper *signalMapper = new QSignalMapper(this);
     for(int i = 0; i <=  5; i++)
     {
-        QPushButton* button = new QPushButton(tr("calib"),ui->tblCalib);
+        QString title;
+        if(i == 0) title = tr("calib_zero");
+        else title = QString("%1%2%3").arg(tr("calib")).arg(i).arg(tr("span"));
+        QPushButton* button = new QPushButton(title,ui->tblCalib);
         button->setGeometry(0,0,80,50);
         connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
         signalMapper->setMapping(button, i);
