@@ -88,6 +88,18 @@ void MainWindow::initAdList()
         adlist[i]->clear();
     }
 }
+
+void MainWindow::clearState()
+{
+    ui->lbl_stable->clear();
+    ui->lbl_highspan->clear();
+    ui->lbl_menucode->clear();
+    ui->lbl_net->clear();
+    ui->lbl_underflow->clear();
+    ui->lbl_upflow->clear();
+    ui->lbl_zero->clear();
+    ui->lbl_zoom->clear();
+}
 //AD读取结果
 void MainWindow::chanADReadResult(QList<float> chanAD)
 {
@@ -374,6 +386,8 @@ void MainWindow::onRegOperResult(RegCmd cmd)
     qDebug() << "onRegOperResult " << "reg=" << cmd.reg_addr << " num=" << cmd.reg_num << " " << cmd.isRead;
     if(cmd.reg_addr == REG_CALIB)
     {
+        //标定完成后，重新读取标定后的值.
+        calib->readPara();
         if(cmd.error == REG_ERROR_OK)
         {
             QMessageBox::information(this,tr("info"),tr("calib_ok"));
