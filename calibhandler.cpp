@@ -72,6 +72,19 @@ bool CalibHandler::doWork()
 
             }
         }
+        quint16 values[8];
+        if(8 == _rtu->read_registers(REG_4B_CHANNEL_AD,8,values))
+        {
+            //定时读取各路通道AD值.
+            QList<float> chanAD;
+            chanAD.push_back(values[0]+(values[1]<<16));
+            chanAD.push_back(values[2]+(values[3]<<16));
+            chanAD.push_back(values[4]+(values[5]<<16));
+            chanAD.push_back(values[6]+(values[7]<<16));
+
+            emit chanADReadResult(chanAD);
+
+        }
         this->msleep(100);
         return false;
     }

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QListWidgetItem>
+#include <QLabel>
 #include <bitset>
 #include "RtuReader.h"
 #include "scanhandler.h"
@@ -40,6 +41,7 @@ private slots:
     void onParaWriteResult(bool ok);
     void on_tabWidget_currentChanged(int index);
     void chanADReadResult(QList<float> chanAD);
+    void calibADReadResult(QList<float> chanAD);
     void chanKReadResult(int sensor, QList<float> chanK);
     void on_btnSave_clicked();
 
@@ -78,7 +80,7 @@ private slots:
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
-
+    QList<QLabel*> adlist;
     QApplication &_app;
     ScanHandler *scaner;
     WeightHandler *weight;
@@ -100,6 +102,7 @@ private:
     void endCornCalib();
     bool nextCalib(int index);
     bool finishEndCalib();
+    void initAdList();
     void clearState();
 protected:
     void timerEvent(QTimerEvent *);
