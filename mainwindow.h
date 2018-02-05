@@ -100,6 +100,7 @@ private:
     void endCornCalib();
     bool nextCalib(int index);
     bool finishEndCalib();
+    void clearState();
 protected:
     void timerEvent(QTimerEvent *);
 

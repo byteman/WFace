@@ -73,6 +73,19 @@ void MainWindow::initUI()
     connect(corn,SIGNAL(chanKReadResult(int,QList<float>)),this,SLOT(chanKReadResult(int,QList<float>)));
     connect(corn,SIGNAL(OperationResult(RegCmd)),this,SLOT(onRegOperResult(RegCmd)));
 
+    clearState();
+
+}
+void MainWindow::clearState()
+{
+    ui->lbl_stable->clear();
+    ui->lbl_net->clear();
+    ui->lbl_highspan->clear();
+    ui->lbl_zero->clear();
+    ui->lbl_zoom->clear();
+    ui->lbl_underflow->clear();
+    ui->lbl_upflow->clear();
+    ui->lbl_menucode->clear();
 }
 //AD读取结果
 void MainWindow::chanADReadResult(QList<float> chanAD)
@@ -226,47 +239,56 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
     QString ws(buf);
 
 
-    QString strState = "";
+    //QString strState = "";
     //state = 0xFF;
+    clearState();
     if(state&1)
     {
-        strState += " | " + tr("stable  ") ;
+        ui->lbl_stable->setText(tr("stable"));
+        //strState += " | " + tr("stable  ") ;
     }
     if(state&2)
     {
-       strState += " | " +tr("zero  ");
+        ui->lbl_zero->setText(tr("zero"));
+       //strState += " | " +tr("zero  ");
     }
     if(state&4)
     {
-       strState += " | " +tr("net ");
+        ui->lbl_net->setText(tr("net"));
+       //strState += " | " +tr("net ");
     }
     if(state&8)
     {
-       strState += " | " +tr("upflow ");
+        ui->lbl_upflow->setText(tr("upflow"));
+       //strState += " | " +tr("upflow ");
        ws = "------";
     }
     if(state&16)
     {
-       strState += " | " +tr("underflow ");
+       //strState += " | " +tr("underflow");
+         ui->lbl_underflow->setText(tr("underflow"));
        ws = "------";
     }
     if(state&32)
     {
-       strState += " | " +tr("highspan ");
+        ui->lbl_highspan->setText(tr("highspan"));
+       //strState += " | " +tr("highspan ");
     }
     if(state&64)
     {
-       strState += " | " +tr("zoom10x ");
+       //strState += " | " +tr("zoom10x ");
+        ui->lbl_zoom->setText(tr("zoom10x"));
     }
     if(state&128)
     {
-       strState += " | " +tr("menumode ");
+        ui->lbl_menucode->setText(tr("menumode"));
+       //strState += " | " +tr("menumode ");
     }
-    if(strState.length() > 0)
-    {
-        strState += " | ";
-        ui->lblstate->setText(strState);
-    }
+//    if(strState.length() > 0)
+//    {
+//        strState += " | ";
+//        ui->lblstate->setText(strState);
+//    }
 
     ui->lbl_display_wet->setText(ws);
 }
