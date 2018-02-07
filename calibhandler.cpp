@@ -6,7 +6,9 @@
 
 
 CalibHandler::CalibHandler(RtuReader *rtu):
-    CmdHandler(rtu)
+    CmdHandler(rtu),
+    m_dot(0),
+    m_sensor(0)
 {
     for(int i = 0 ;i < 6; i++)
     {
@@ -19,12 +21,21 @@ bool CalibHandler::paraRead(void)
 {
     quint16 values[17];
 
-    if(4 == _rtu->read_registers(REG_FULL_SPAN,4,values))
+    if(1 == _rtu->read_registers(REG_2B_SENSOR_NUM,1,values))
     {
-        quint32 sensor_full_span = values[0]+(values[1]<<16);
-        quint32 sensor_mv = values[2]+(values[3]<<16);
-        emit calibParaResult(sensor_mv, sensor_full_span);
-        return true;
+
+        m_sensor = (values[0] > 8)?4:values[0];
+        if(4 == _rtu->read_registers(REG_FULL_SPAN,4,values))
+        {
+            quint32 sensor_full_span = values[0]+(values[1]<<16);
+            quint32 sensor_mv = values[2]+(values[3]<<16);
+            emit calibParaResult(sensor_mv, sensor_full_span);
+            if(1 == _rtu->read_registers(REG_DOT,1,values))
+            {
+                m_dot = values[0];
+                return true;
+            }
+        }
     }
 
 
@@ -65,23 +76,23 @@ bool CalibHandler::doWork()
                     {
                         int weight = values[0] + (values[1] << 16);
                         int ad = values[2] + (values[3] << 16);
-                        emit calibReadResult(index, weight,ad);
+                        emit calibReadResult(index, weight,ad,m_dot);
                         m_read_calib_points[i] = false;
                     }
                 }
 
             }
         }
-        quint16 values[8];
-        if(8 == _rtu->read_registers(REG_4B_CHANNEL_AD,8,values))
+        quint16 values[17];
+        if(m_sensor*2 == _rtu->read_registers(REG_4B_CHANNEL_AD,m_sensor*2,values))
         {
             //定时读取各路通道AD值.
-            QList<float> chanAD;
-            chanAD.push_back(values[0]+(values[1]<<16));
-            chanAD.push_back(values[2]+(values[3]<<16));
-            chanAD.push_back(values[4]+(values[5]<<16));
-            chanAD.push_back(values[6]+(values[7]<<16));
 
+            QList<float> chanAD;
+            for(int i = 0; i < m_sensor; i++)
+            {
+                chanAD.push_back(values[i*2]+(values[i*2+1]<<16));
+            }
             emit chanADReadResult(chanAD);
 
         }
@@ -115,19 +126,22 @@ bool CalibHandler::readPara(int index)
     return true;
 }
 
-bool CalibHandler::calibSet(int index, qint32 weight, qint32 ad)
+bool CalibHandler::calibSet(int index, float weight, qint32 ad)
 {
+    if(!bInit) return false;
     quint16 values[4];
     values[0] = index;
     values[1] = 1;
-    values[2] = weight&0xFFFF;
-    values[3] = (weight>>16)&0xFFFF;
+    quint32 iwet = weight * pow(10,m_dot);
+    values[2] = iwet&0xFFFF;
+    values[3] = (iwet>>16)&0xFFFF;
     m_set_calib_points[index] = true;
     return postWriteRegs(REG_CALIB, 4, values);
 }
 
 bool CalibHandler::savePara( quint32 full,quint32 mv)
 {
+    if(!bInit) return false;
     quint16 values[4];
     values[0] = (full&0xFFFF);
     values[1] = (full>>16)&0xFFFF;

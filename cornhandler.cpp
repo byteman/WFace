@@ -19,11 +19,13 @@ bool CornHandler::paraRead(void)
 
     if(1 == _rtu->read_registers(REG_2B_SENSOR_NUM,1,values))
     {
-        m_sensor = values[0];
-        if(8 == _rtu->read_registers(REG_4B_CORN_K,8,values))
+
+        m_sensor = (values[0] > 8)?4:values[0];
+
+        if(m_sensor*2 == _rtu->read_registers(REG_4B_CORN_K,m_sensor*2,values))
         {
             QList<float> chanK;
-            for(int i = 0; i < 4; i++)
+            for(int i = 0; i < m_sensor; i++)
             {
                 //values[7]+(values[8]<<16);
                 float tmp = (values[i*2+0]+(values[i*2+1]<<16));
@@ -82,7 +84,7 @@ int CornHandler::getSensorNum()
 bool CornHandler::doWork()
 {
 
-    qDebug() << "CornHandler doWork";
+    //qDebug() << "CornHandler doWork";
     if(_rtu)
     {
         //qDebug() << "calib work";
@@ -91,15 +93,14 @@ bool CornHandler::doWork()
             bInit = paraRead();
         }
         quint16 values[8];
-        if(8 == _rtu->read_registers(REG_4B_CHANNEL_AD,8,values))
+        if(m_sensor*2 == _rtu->read_registers(REG_4B_CHANNEL_AD,m_sensor*2,values))
         {
             //定时读取各路通道AD值.
             QList<float> chanAD;
-            chanAD.push_back(values[0]+(values[1]<<16));
-            chanAD.push_back(values[2]+(values[3]<<16));
-            chanAD.push_back(values[4]+(values[5]<<16));
-            chanAD.push_back(values[6]+(values[7]<<16));
-
+            for(int i = 0; i < m_sensor; i++)
+            {
+                chanAD.push_back(values[i*2]+(values[i*2+1]<<16));
+            }
             emit chanADReadResult(chanAD);
 
         }

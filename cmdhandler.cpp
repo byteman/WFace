@@ -87,6 +87,12 @@ bool CmdHandler::postReadRegs(int reg_addr, int reg_num)
     return postCmd(cmd);
 }
 
+bool CmdHandler::reInit()
+{
+    bInit = false;
+    return true;
+}
+
 bool CmdHandler::startRun()
 {
     bInit = false;

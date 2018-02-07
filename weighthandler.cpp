@@ -18,8 +18,13 @@ bool WeightHandler::paraRead()
         quint16 div_low = values[1];
         quint32 span_high = values[2]+(values[3]<<16);
         quint32 span_low = values[4]+(values[5]<<16);
-        emit weightParaReadResult(div_high,div_low, span_high,span_low);
-        return true;
+        if(1 == _rtu->read_registers(REG_DOT,1,values))
+        {
+            m_dot = values[0];
+            emit weightParaReadResult(div_high,div_low, span_high,span_low,m_dot);
+            return true;
+        }
+
     }
     return false;
 }
@@ -77,6 +82,11 @@ bool WeightHandler::zoom10X()
 bool WeightHandler::changeGN()
 {
     return WriteCtrlCmd(2,5);
+}
+
+int WeightHandler::getDot()
+{
+    return m_dot;
 }
 
 

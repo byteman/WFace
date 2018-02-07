@@ -36,12 +36,13 @@ public:
     bool postCmd(RegCmd cmd);
     bool postWriteRegs(int reg_addr, int reg_num, quint16* values);
     bool postReadRegs(int reg_addr, int reg_num);
-
+    bool reInit();
     virtual bool startRun();
     virtual bool stop();
     virtual void run();
     virtual bool doWork();
     virtual bool init();
+
 signals:
     void OperationResult(RegCmd value);
 protected:

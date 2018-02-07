@@ -23,12 +23,14 @@ public:
     bool zoom10X();
     //皮重和净重切换
     bool changeGN();
+    int  getDot();
 signals:
-    void weightParaReadResult(quint16 div_high,quint16 div_low, quint32 full_high, quint32 full_low);
+    void weightParaReadResult(quint16 div_high,quint16 div_low, quint32 full_high, quint32 full_low,int dot);
     void weightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
 private:
     bool paraRead();
     bool WriteCtrlCmd(int reg, quint8 value);
+    int  m_dot;
 };
 
 #endif // WEIGHTHANDLER_H

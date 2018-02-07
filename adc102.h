@@ -13,6 +13,7 @@
 
 enum ADC102_REGS{
 
+    REG_DOT=3, //小数点点位
     REG_DIV_HIGH=8,
     REG_CALIB=20,
     REG_FULL_SPAN=26,

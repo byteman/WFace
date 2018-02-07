@@ -28,6 +28,7 @@ class ParaHandler : public CmdHandler
      Q_OBJECT
 public:
     ParaHandler(RtuReader*  rtu);
+    int getDot();
 
 signals:
     void paraReadResult(Para _para);

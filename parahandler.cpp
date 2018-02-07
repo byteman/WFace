@@ -7,6 +7,11 @@ ParaHandler::ParaHandler(RtuReader *rtu):
 
 }
 
+int ParaHandler::getDot()
+{
+    return m_para.dot;
+}
+
 bool ParaHandler::_paraSave(Para &_para)
 {
     if(_rtu)

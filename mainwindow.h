@@ -33,10 +33,10 @@ private slots:
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
     void onCalibProcessResult(int index, int result);
-    void onReadCalibPointResult(int index, int weight, int ad);
+    void onReadCalibPointResult(int index, int weight, int ad ,int dot);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
     void onRegOperResult(RegCmd cmd);
-    void onWeightParaRead(quint16 div_high,quint16 div_low, quint32 full_high, quint32 full_low);
+    void onWeightParaRead(quint16 div_high,quint16 div_low, quint32 full_high, quint32 full_low, int dot);
     void on_btnSearch_clicked();
     void onParaWriteResult(bool ok);
     void on_tabWidget_currentChanged(int index);
@@ -77,6 +77,12 @@ private slots:
 
     void on_btnStopCalib_clicked();
 
+    void on_tblCalib_cellEntered(int row, int column);
+
+    void on_tblCalib_cellChanged(int row, int column);
+
+    void on_tblCalib_cellPressed(int row, int column);
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
@@ -89,6 +95,7 @@ private:
     CornHandler* corn;
     RtuReader reader;
     QMap<QString,CmdHandler*> handlers;
+    bool pressed;
     // QObject interface
     void traversalControl(const QObjectList &q);
     void clearCalib();
@@ -104,6 +111,13 @@ private:
     bool finishEndCalib();
     void initAdList();
     void clearState();
+
+    QString formatValue(int value, int dot);
+    void clear_cork_k();
+    bool save_param();
+    int toInt(QString txt, int dot,bool *ok);
+    QString float2string(float wf, int dot);
+    QString formatfloat(float wf, int dot);
 protected:
     void timerEvent(QTimerEvent *);
 

@@ -60,9 +60,9 @@ void MainWindow::initUI()
     handlers["corn"] = corn;
     connect(scaner,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
     connect(weight,SIGNAL(weightResult(int,quint16,quint16,qint32,qint32)),this,SLOT(onWeightResult(int,quint16,quint16,qint32,qint32)));
-    connect(weight,SIGNAL(weightParaReadResult(quint16,quint16,quint32,quint32)),this,SLOT(onWeightParaRead(quint16,quint16,quint32,quint32)));
+    connect(weight,SIGNAL(weightParaReadResult(quint16,quint16,quint32,quint32,int)),this,SLOT(onWeightParaRead(quint16,quint16,quint32,quint32,int)));
 
-    connect(calib,SIGNAL(calibReadResult(int,qint32,qint32)),this,SLOT(onReadCalibPointResult(int,int,int)));
+    connect(calib,SIGNAL(calibReadResult(int,qint32,qint32,int)),this,SLOT(onReadCalibPointResult(int,int,int,int)));
     connect(calib,SIGNAL(calibParaResult(quint32,quint32)),this,SLOT(onReadCalibParam(quint32,quint32)));
     connect(calib,SIGNAL(OperationResult(RegCmd)),this,SLOT(onRegOperResult(RegCmd)));
     connect(calib,SIGNAL(chanADReadResult(QList<float>)),this,SLOT(calibADReadResult(QList<float>)));
@@ -100,7 +100,7 @@ void MainWindow::clearState()
     ui->lbl_zero->clear();
     ui->lbl_zoom->clear();
 }
-//AD读取结果
+//角差标定界面显示的实时AD
 void MainWindow::chanADReadResult(QList<float> chanAD)
 {
     for(int i = 0; i < chanAD.size();i++)
@@ -109,9 +109,13 @@ void MainWindow::chanADReadResult(QList<float> chanAD)
     }
 
 }
-
+//标定界面显示的实时AD
 void MainWindow::calibADReadResult(QList<float> chanAD)
 {
+    for(int i = 0; i < adlist.size(); i++)
+    {
+        adlist[i]->clear();
+    }
     for(int i = 0; i < chanAD.size();i++)
     {
         QString text = QString("AD%1:%2").arg(i+1).arg(chanAD[i]);
@@ -160,8 +164,17 @@ void MainWindow::on_actionChagne_triggered()
 void MainWindow::calibrate_click(int id)
 {
     qDebug() << id << "---clicked";
-    int weight = ui->tblCalib->item(id,1)->text().toInt();
-    calib->calibSet(id,weight,0);
+    bool ok = false;
+    float weight = ui->tblCalib->item(id,1)->text().toFloat(&ok);
+    if(!ok)
+    {
+        QMessageBox::information(this,tr("error"),tr("format_err"));
+        return;
+    }
+    if(!calib->calibSet(id,weight,0))
+    {
+        QMessageBox::information(this,tr("error"),tr("calib_fail"));
+    }
 }
 void MainWindow::corn_calibrate_click(int id)
 {
@@ -170,13 +183,43 @@ void MainWindow::corn_calibrate_click(int id)
 //    int weight = ui->tblCornFix->item(id,1)->text().toInt();
 //    calib->calibSet(id,weight,0);
 }
+QString format2(int value, int dot)
+{
+
+    QString svalue = QString("%1").arg(value);
+    if((svalue.size() > dot) )
+    {
+        if(dot > 0)
+        {
+            int index = svalue.size() - dot;
+            svalue.insert(index,".");
+        }
+
+    }
+    else
+    {
+        int n =  dot - svalue.size();
+        QString s = QString("0.%1").arg(QString().fill('0',n));
+        svalue.prepend(s);
+    }
+    return svalue;
+}
+QString MainWindow::formatValue(int value, int dot)
+{
+    QString str;
+    str = format2(value,dot);
+
+    return str;
+}
 void MainWindow::onParaReadResult(Para _para)
 {
     ui->cbxDot->setCurrentIndex(_para.dot);
-    ui->edtFullLow->setText(QString("%1").arg(_para.span_low));
-    ui->lbl_display_wet_4->setText(QString("Mid: %1").arg(_para.span_low));
-    ui->edtFullHigh->setText(QString("%1").arg(_para.span_high));
-    ui->lbl_display_wet_2->setText(QString("Max: %1").arg(_para.span_high));
+    ui->edtFullLow->setText(QString("%1").arg(formatValue(_para.span_low,_para.dot)));
+
+
+    ui->lbl_display_wet_4->setText(QString("Mid: %1").arg(formatValue(_para.span_low,_para.dot)));
+    ui->edtFullHigh->setText(QString("%1").arg(formatValue(_para.span_high,_para.dot)));
+    ui->lbl_display_wet_2->setText(QString("Max: %1").arg(formatValue(_para.span_high,_para.dot)));
     ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
     ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_low));
     ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
@@ -234,10 +277,32 @@ void MainWindow::onScanResult(int type,int addr)
     }
 }
 
-
-void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare)
+QString MainWindow::formatfloat(float wf, int dot)
 {
-    double wf = (double)weight;
+    char buf[64] = {0,};
+    switch(dot)
+    {
+
+        case 1:
+            qsnprintf(buf,64,"%0.1f",wf);
+            break;
+        case 2:
+            qsnprintf(buf,64,"%0.2f",wf);
+            break;
+        case 3:
+            qsnprintf(buf,64,"%0.3f",wf);
+            break;
+        case 4:
+            qsnprintf(buf,64,"%0.4f",wf);
+            break;
+        default:
+            qsnprintf(buf,64,"%d",int(wf));
+            break;
+    }
+    return buf;
+}
+QString MainWindow::float2string(float wf, int dot)
+{
     char buf[64] = {0,};
     switch(dot)
     {
@@ -255,14 +320,17 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
             qsnprintf(buf,64,"%0.4f",wf/10000);
             break;
         default:
-            qsnprintf(buf,64,"%d",weight);
+            qsnprintf(buf,64,"%d",int(wf));
             break;
     }
-    QString ws(buf);
+    return buf;
+}
+void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare)
+{
+    double wf = (double)weight;
 
+    QString ws = float2string(wf, dot);
 
-    //QString strState = "";
-    //state = 0xFF;
     clearState();
     if(state&1)
     {
@@ -331,7 +399,7 @@ void MainWindow::onCalibProcessResult(int index, int result)
     }
 }
 
-void MainWindow::onReadCalibPointResult(int index, int weight, int ad)
+void MainWindow::onReadCalibPointResult(int index, int weight, int ad ,int dot)
 {
     QTableWidgetItem *itemAd = ui->tblCalib->item(index,0);
     if(itemAd!=NULL)
@@ -341,7 +409,7 @@ void MainWindow::onReadCalibPointResult(int index, int weight, int ad)
     QTableWidgetItem *itemWt = ui->tblCalib->item(index,1);
     if(itemWt!=NULL)
     {
-        itemWt->setText(QString("%1").arg(weight));
+        itemWt->setText(QString("%1").arg(formatValue(weight,dot)));
     }
 
 }
@@ -466,11 +534,11 @@ void MainWindow::onRegOperResult(RegCmd cmd)
 
 }
 
-void MainWindow::onWeightParaRead(quint16 div_high, quint16 div_low, quint32 full_high, quint32 full_low)
+void MainWindow::onWeightParaRead(quint16 div_high, quint16 div_low, quint32 full_high, quint32 full_low, int dot)
 {
-    qDebug() << "onWeightParaRead";
-    ui->lbl_display_wet_4->setText(QString("Mid: %1").arg(full_low));
-    ui->lbl_display_wet_2->setText(QString("Max: %1").arg(full_high));
+
+    ui->lbl_display_wet_4->setText(QString("Mid: %1").arg(formatValue(full_low,dot)));
+    ui->lbl_display_wet_2->setText(QString("Max: %1").arg(formatValue(full_high,dot)));
     ui->lbl_display_wet_5->setText(QString("d2: %1").arg(div_low));
     ui->lbl_display_wet_3->setText(QString("d1: %1").arg(div_high));
 }
@@ -511,6 +579,7 @@ void MainWindow::onParaWriteResult(bool ok)
     {
         QMessageBox::information(this,tr("info"),tr("save_ok"));
     }
+    para->reInit();
 }
 void MainWindow::traversalControl(const QObjectList& q)
 {
@@ -564,7 +633,7 @@ void MainWindow::clearCalib()
     }
     ui->edtSensorFullSpan->setText("");
     ui->edtSensorMv->setText("");
-    initAdList();
+
 }
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
@@ -604,30 +673,59 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         changeHandler("corn");
     }
 }
+int MainWindow::toInt(QString txt,int dot,bool *ok)
+{
+    float tmp = txt.toFloat(ok);
+    if(!ok) return false;
 
-void MainWindow::on_btnSave_clicked()
+
+    return tmp*pow(10,dot);
+
+}
+bool MainWindow::save_param()
 {
     Para p;
+    bool ok = false;
     p.filter_level = ui->cbxFilterLvl->currentIndex();
-    p.div_high = ui->cbxDivHigh->currentText().toInt();
+    p.div_high = ui->cbxDivHigh->currentText().toInt(&ok);
+    if(!ok) return false;
     p.div_low = ui->cbxDivLow->currentText().toInt();
+    if(!ok) return false;
     p.dot = ui->cbxDot->currentIndex();
-    p.hand_zero_span = ui->edtHandZeroSpan->text().toInt();
-    p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt();
-    p.span_high = ui->edtFullHigh->text().toInt();
-    p.span_low = ui->edtFullLow->text().toInt();
-    p.stable_span = ui->edtStableSpan->text().toInt();
+    if(p.dot==-1) return false;
+    p.hand_zero_span = ui->edtHandZeroSpan->text().toInt(&ok);
+    if(!ok) return false;
+    p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt(&ok);
+    if(!ok) return false;
+    p.stable_span = ui->edtStableSpan->text().toInt(&ok);
+    if(!ok) return false;
     p.unit = ui->cbxUnit->currentIndex();
-    p.zero_track_span = ui->edtZeroSpan->text().toInt();
+    if(p.unit==-1) return false;
+    p.zero_track_span = ui->edtZeroSpan->text().toInt(&ok);
+    if(!ok) return false;
     p.adRate = ui->cbxAdRate->currentIndex();
-    para->paraSave(p);
-//    {
-//        QMessageBox::information(this,tr("info"),tr("save successful"));
-//    }
-//    else
-//    {
-//        QMessageBox::information(this,tr("info"),tr("save failed"));
-//    }
+    if(p.adRate==-1) return false;
+
+
+    quint8 dot = p.dot;
+    if(dot > 6 ) return false;
+
+    p.span_high = toInt(ui->edtFullHigh->text(),dot, &ok);
+    if(!ok) return false;
+
+    p.span_low= toInt(ui->edtFullLow->text(),dot, &ok);
+
+    if(!ok) return false;
+
+    return para->paraSave(p);
+}
+void MainWindow::on_btnSave_clicked()
+{
+    if(!save_param())
+    {
+        QMessageBox::information(this,tr("error"),tr(" format_err"));
+    }
+
 }
 
 void MainWindow::on_btnTare_clicked()
@@ -865,11 +963,26 @@ void MainWindow::on_btnStopCalib_clicked()
 
 void MainWindow::on_btnReadK_clicked()
 {
+
     corn->ReadParam();
 }
+void MainWindow::clear_cork_k()
+{
+    int rows = ui->tblCornFix->rowCount();
 
+    for(int i = 0; i < rows; i++)
+    {
+
+        QTableWidgetItem* item = ui->tblCornFix->item(i,1);
+        if(item!=NULL)
+            item->setText("");
+
+    }
+    ui->edtSensorNum->setText("");
+}
 void MainWindow::on_btnReadSrs_clicked()
 {
+    clear_cork_k();
     corn->ReadParam();
 }
 
@@ -936,3 +1049,32 @@ void MainWindow::on_btnWriteK_clicked()
     corn->setKs(ks);
 }
 
+
+void MainWindow::on_tblCalib_cellEntered(int row, int column)
+{
+    qDebug() << "enter" << row << column;
+
+}
+
+void MainWindow::on_tblCalib_cellChanged(int row, int column)
+{
+
+    if(pressed)
+    {
+        qDebug() << "changed" << row << column;
+        pressed = false;
+        QTableWidgetItem* item = ui->tblCalib->item(row,column);
+        if(item!=NULL)
+        {
+            bool ok = false;
+            float v = item->text().toFloat(&ok);
+            item->setText(formatfloat(v,calib->getDot()));
+        }
+    }
+}
+
+void MainWindow::on_tblCalib_cellPressed(int row, int column)
+{
+
+    pressed = true;
+}
