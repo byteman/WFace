@@ -11,6 +11,7 @@
 #include "calibhandler.h"
 #include "parahandler.h"
 #include "cornhandler.h"
+#include "pollhandler.h"
 #include "adc102.h"
 #include <QMap>
 namespace Ui {
@@ -32,6 +33,7 @@ private slots:
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
+    void onPollWeightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
     void onCalibProcessResult(int index, int result);
     void onReadCalibPointResult(int index, int weight, int ad ,int dot);
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
@@ -83,6 +85,8 @@ private slots:
 
     void on_tblCalib_cellPressed(int row, int column);
 
+    void on_btnSetAddr_clicked();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
@@ -93,6 +97,7 @@ private:
     CalibHandler *calib;
     ParaHandler* para;
     CornHandler* corn;
+    PollerHandler *poller;
     RtuReader reader;
     QMap<QString,CmdHandler*> handlers;
     bool pressed;

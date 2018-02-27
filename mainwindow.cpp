@@ -52,12 +52,13 @@ void MainWindow::initUI()
     calib = new CalibHandler(&reader);
     para = new ParaHandler(&reader);
     corn = new CornHandler(&reader);
-
+    poller = new PollerHandler(&reader);
     handlers["scan"] = scaner;
     handlers["weight"] = weight;
     handlers["calib"] = calib;
     handlers["para"] = para;
     handlers["corn"] = corn;
+    handlers["poll"] = poller;
     connect(scaner,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
     connect(weight,SIGNAL(weightResult(int,quint16,quint16,qint32,qint32)),this,SLOT(onWeightResult(int,quint16,quint16,qint32,qint32)));
     connect(weight,SIGNAL(weightParaReadResult(quint16,quint16,quint32,quint32,int)),this,SLOT(onWeightParaRead(quint16,quint16,quint32,quint32,int)));
@@ -73,6 +74,9 @@ void MainWindow::initUI()
     connect(corn,SIGNAL(chanADReadResult(QList<float>)),this,SLOT(chanADReadResult(QList<float>)));
     connect(corn,SIGNAL(chanKReadResult(int,QList<float>)),this,SLOT(chanKReadResult(int,QList<float>)));
     connect(corn,SIGNAL(OperationResult(RegCmd)),this,SLOT(onRegOperResult(RegCmd)));
+
+    connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),this,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
+
     initAdList();
     clearState();
 
@@ -382,6 +386,11 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
 
     ui->lbl_display_wet->setText(ws);
 }
+
+void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16 dot, qint32 gross, qint32 tare)
+{
+
+}
 //标定过程....
 void MainWindow::onCalibProcessResult(int index, int result)
 {
@@ -671,6 +680,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     {
         clearCornCalib();
         changeHandler("corn");
+    }
+    else if(index == 4)
+    {
+
+        changeHandler("poll");
     }
 }
 int MainWindow::toInt(QString txt,int dot,bool *ok)
@@ -1077,4 +1091,18 @@ void MainWindow::on_tblCalib_cellPressed(int row, int column)
 {
 
     pressed = true;
+}
+
+void MainWindow::on_btnSetAddr_clicked()
+{
+    if(poller!=NULL){
+        bool ok = false;
+
+        qint8 startAddr = ui->edtStartAddr->text().toInt(&ok);
+        if(!ok) return;
+        qint8 count = ui->edtAddrCount->text().toInt(&ok);
+        if(!ok) return;
+        if(count<0) count=0;
+        poller->setAddrSpan(startAddr,count);
+    }
 }
