@@ -2,19 +2,24 @@
 #define MYDEVICES_H
 
 #include <QObject>
-#include "mywidget.h"
-#include <QList>
+#include "devwidget.h"
+#include <QVector>
+#include <QGroupBox>
+#include <QGridLayout>
 class MyDevices:public QObject
 {
     Q_OBJECT
 public:
-    MyDevices(int max=32,QWidget* parent );
+    MyDevices(int max=32,QGroupBox* parent=NULL );
     void SetDeviceNum(int  start, int num);
     void DisplayWeight(int addr,int weight, quint16 state,quint16 dot);
 private:
-    QList<MyWidget*> widgets;
+    QVector<DevWidget*> widgets;
     void clearAll();
     int m_row,m_col;
+    int m_max;
+    QGroupBox* m_container;
+    QGridLayout* qlayout;
 };
 
 #endif // MYDEVICES_H

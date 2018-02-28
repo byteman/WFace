@@ -52,6 +52,7 @@ bool PollerHandler::setAddrSpan(qint8 startAddr, qint8 num)
 
     m_start = startAddr;
     m_end   = startAddr + num;
+
     return true;
 }
 

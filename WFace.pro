@@ -27,8 +27,9 @@ SOURCES += main.cpp\
     RtuReader.cpp \
     cornhandler.cpp \
     pollhandler.cpp \
-    mywidget.cpp \
-    mydevices.cpp
+    mydevices.cpp \
+    devwidget.cpp \
+    utils.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -41,8 +42,9 @@ HEADERS  += mainwindow.h \
     RtuReader.h \
     cornhandler.h \
     pollhandler.h \
-    mywidget.h \
-    mydevices.h
+    mydevices.h \
+    devwidget.h \
+    utils.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
@@ -55,7 +57,8 @@ win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
 win32:LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32
 win32:LIBS += -L./3rdparty/poco/lib
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    devwidget.ui
 
 RESOURCES += \
     myrc.qrc

@@ -13,6 +13,7 @@
 #include "cornhandler.h"
 #include "pollhandler.h"
 #include "adc102.h"
+#include "mydevices.h"
 #include <QMap>
 namespace Ui {
 class MainWindow;
@@ -87,6 +88,8 @@ private slots:
 
     void on_btnSetAddr_clicked();
 
+    void on_btnOpen_clicked();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
@@ -100,6 +103,7 @@ private:
     PollerHandler *poller;
     RtuReader reader;
     QMap<QString,CmdHandler*> handlers;
+    MyDevices* devices;
     bool pressed;
     // QObject interface
     void traversalControl(const QObjectList &q);

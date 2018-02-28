@@ -79,6 +79,7 @@ void MainWindow::initUI()
 
     initAdList();
     clearState();
+    devices = new MyDevices(32,ui->gbDevices);
 
 }
 void MainWindow::initAdList()
@@ -280,60 +281,12 @@ void MainWindow::onScanResult(int type,int addr)
         ui->scanPb->setValue(addr);
     }
 }
-
-QString MainWindow::formatfloat(float wf, int dot)
-{
-    char buf[64] = {0,};
-    switch(dot)
-    {
-
-        case 1:
-            qsnprintf(buf,64,"%0.1f",wf);
-            break;
-        case 2:
-            qsnprintf(buf,64,"%0.2f",wf);
-            break;
-        case 3:
-            qsnprintf(buf,64,"%0.3f",wf);
-            break;
-        case 4:
-            qsnprintf(buf,64,"%0.4f",wf);
-            break;
-        default:
-            qsnprintf(buf,64,"%d",int(wf));
-            break;
-    }
-    return buf;
-}
-QString MainWindow::float2string(float wf, int dot)
-{
-    char buf[64] = {0,};
-    switch(dot)
-    {
-
-        case 1:
-            qsnprintf(buf,64,"%0.1f",wf/10);
-            break;
-        case 2:
-            qsnprintf(buf,64,"%0.2f",wf/100);
-            break;
-        case 3:
-            qsnprintf(buf,64,"%0.3f",wf/1000);
-            break;
-        case 4:
-            qsnprintf(buf,64,"%0.4f",wf/10000);
-            break;
-        default:
-            qsnprintf(buf,64,"%d",int(wf));
-            break;
-    }
-    return buf;
-}
+#include "utils.h"
 void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare)
 {
     double wf = (double)weight;
 
-    QString ws = float2string(wf, dot);
+    QString ws = utils::float2string(wf, dot);
 
     clearState();
     if(state&1)
@@ -389,7 +342,9 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
 
 void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16 dot, qint32 gross, qint32 tare)
 {
-
+    if(devices!=NULL){
+        devices->DisplayWeight(addr,weight,state,dot);
+    }
 }
 //标定过程....
 void MainWindow::onCalibProcessResult(int index, int result)
@@ -1082,7 +1037,7 @@ void MainWindow::on_tblCalib_cellChanged(int row, int column)
         {
             bool ok = false;
             float v = item->text().toFloat(&ok);
-            item->setText(formatfloat(v,calib->getDot()));
+            item->setText(utils::formatfloat(v,calib->getDot()));
         }
     }
 }
@@ -1103,6 +1058,17 @@ void MainWindow::on_btnSetAddr_clicked()
         qint8 count = ui->edtAddrCount->text().toInt(&ok);
         if(!ok) return;
         if(count<0) count=0;
+        if( (startAddr+count) > 32)
+        {
+            QMessageBox::information(this,tr("info"),tr("error addr span"));
+            return;
+        }
         poller->setAddrSpan(startAddr,count);
+        devices->SetDeviceNum(startAddr,count);
     }
+}
+
+void MainWindow::on_btnOpen_clicked()
+{
+
 }
