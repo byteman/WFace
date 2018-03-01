@@ -29,11 +29,11 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
 }
 void MainWindow::initUI()
 {
-    QFile file(":/mystyle.txt");
-    file.open(QFile::ReadOnly);
-
-
-    QByteArray res = file.readAll();
+    //QFile file(":/mystyle.txt");
+    //file.open(QFile::ReadOnly);
+#if 1
+    qDebug() << "mainwindow thread-id:" << QThread::currentThreadId();
+    //QByteArray res = file.readAll();
 
 
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
@@ -59,7 +59,9 @@ void MainWindow::initUI()
     handlers["calib"] = calib;
     handlers["para"] = para;
     handlers["corn"] = corn;
+
     handlers["poll"] = poller;
+
     connect(scaner,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
     connect(weight,SIGNAL(weightResult(int,quint16,quint16,qint32,qint32)),this,SLOT(onWeightResult(int,quint16,quint16,qint32,qint32)));
     connect(weight,SIGNAL(weightParaReadResult(quint16,quint16,quint32,quint32,int)),this,SLOT(onWeightParaRead(quint16,quint16,quint32,quint32,int)));
@@ -81,7 +83,7 @@ void MainWindow::initUI()
     initAdList();
     clearState();
     devices = new MyDevices(32,ui->gbDevices);
-
+#endif
 }
 void MainWindow::initAdList()
 {
@@ -1067,7 +1069,7 @@ void MainWindow::on_btnSetAddr_clicked()
         qint8 count = ui->edtAddrCount->text().toInt(&ok);
         if(!ok) return;
         if(count<0) count=0;
-        if( (startAddr+count) > 32)
+        if( (startAddr+count) > 33)
         {
             QMessageBox::information(this,tr("info"),tr("error addr span"));
             return;

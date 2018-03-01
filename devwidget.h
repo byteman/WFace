@@ -18,6 +18,7 @@ public:
     void Timeout();
     void DisplayWeight(int weight, quint16 state, quint16 dot);
 private:
+    void SetOnline(bool online);
     Ui::DevWidget *ui;
     int m_addr;
     int m_timeout;

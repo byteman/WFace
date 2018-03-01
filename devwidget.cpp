@@ -10,7 +10,9 @@ DevWidget::DevWidget(int addr, QWidget *parent) :
 {
     ui->setupUi(this);
     ui->lbl_addr->setText(tr("Address") + ":" + QString("%1").arg(addr));
-
+    clearState();
+    SetOnline(true);
+    ui->lbl_weight->setText("");
 }
 
 
@@ -25,10 +27,12 @@ void DevWidget::Timeout()
     if(m_timeout > 0)
     {
         m_timeout--;
+        SetOnline(true);
     }
     if(m_timeout<=0){
         clearState();
         ui->lbl_weight->setText("");
+        SetOnline(false);
     }
 }
 
@@ -99,4 +103,13 @@ void DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
 
     ui->lbl_weight->setText(ws);
 
+}
+
+void DevWidget::SetOnline(bool online)
+{
+    if(online){
+        ui->lbl_addr->setStyleSheet("background-color: green;");
+    }else{
+        ui->lbl_addr->setStyleSheet("background-color: red;");
+    }
 }

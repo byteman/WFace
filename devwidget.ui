@@ -40,7 +40,7 @@ QWidget {
    <item>
     <widget class="QLabel" name="lbl_addr">
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(15, 111, 255);</string>
+      <string notr="true">background-color: green;</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>

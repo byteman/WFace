@@ -25,7 +25,7 @@ bool ScanHandler::init(int reg_addr,int reg_size,int min_addr,int max_addr,bool 
 
 bool ScanHandler::doWork()
 {
-
+    qDebug() << "scan thread-id:" << QThread::currentThreadId();
     if(m_addr < m_end_addr )
     {
         emit scanResult(SCAN_PROGRASS,m_addr);
@@ -64,6 +64,6 @@ bool ScanHandler::stop()
     //直接发送扫描完毕.等待线程结束.
     this->wait();
     emit scanResult(SCAN_COMPLETE,m_addr);
-    _rtu->set_response_timeout(1000000);
+    _rtu->set_response_timeout(100000);
     return true;
 }

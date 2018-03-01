@@ -14,10 +14,10 @@ PollerHandler::PollerHandler(RtuReader *rtu):
 
 bool PollerHandler::doWork()
 {
-    qDebug() << "Weight doWork";
+    qDebug() << "PollerHandler doWork";
     if(_rtu)
     {
-        for(quint8 addr = m_start; addr < m_end;  addr++)
+        for(quint8 addr = m_start; addr <= m_end;  addr++)
         {
             quint16 values[8];
             _rtu->setDeviceAddr(addr);
@@ -27,13 +27,15 @@ bool PollerHandler::doWork()
             }
             else{
                 //超时.
+                qDebug() << "addr" << addr << " timeout";
                 emit timeout(addr);
             }
             if(m_quit)
             {
+                qDebug() << "PollerHandler quit";
                 return true;
             }
-            this->msleep(10);
+
         }
 
         this->msleep(100);
