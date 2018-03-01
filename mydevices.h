@@ -12,6 +12,7 @@ class MyDevices:public QObject
 public:
     MyDevices(int max=32,QGroupBox* parent=NULL );
     void SetDeviceNum(int  start, int num);
+    void Timeout(int addr);
     void DisplayWeight(int addr,int weight, quint16 state,quint16 dot);
 private:
     QVector<DevWidget*> widgets;

@@ -14,9 +14,9 @@ MyDevices::MyDevices(int max,QGroupBox* parent):
     }
     //QGridLayout* layout = parent->layout();
 
-    qlayout = new QGridLayout();
+    //qlayout = new QGridLayout();
 
-    parent->setLayout(qlayout);
+    //parent->setLayout(qlayout);
 
 }
 
@@ -45,6 +45,14 @@ void MyDevices::SetDeviceNum(int start, int num)
         widgets[i+start-1]->setGeometry(col*w,row*h,w,h);
         //qlayout->addWidget(widgets[i+start],row,col);
         widgets[i+start-1]->show();
+    }
+}
+
+void MyDevices::Timeout(int addr)
+{
+    if(addr < widgets.size())
+    {
+        widgets[addr-1]->Timeout();
     }
 }
 

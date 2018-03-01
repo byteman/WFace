@@ -15,7 +15,7 @@ public:
     explicit DevWidget(int addr,QWidget *parent = 0);
 
     ~DevWidget();
-
+    void Timeout();
     void DisplayWeight(int weight, quint16 state, quint16 dot);
 private:
     Ui::DevWidget *ui;
@@ -24,8 +24,7 @@ private:
 
     // QObject interface
     void clearState();
-protected:
-    void timerEvent(QTimerEvent *);
+    void resetTimeout();
 };
 
 #endif // DEVWIDGET_H

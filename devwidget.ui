@@ -70,7 +70,7 @@ QWidget {
         </sizepolicy>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 75 24pt &quot;微软雅黑&quot;;</string>
+        <string notr="true">font: 75 16pt &quot;微软雅黑&quot;;</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>

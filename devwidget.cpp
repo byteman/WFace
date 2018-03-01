@@ -1,15 +1,16 @@
 #include "devwidget.h"
 #include "ui_devwidget.h"
 #include "utils.h"
+#define MAX_TIMEOUT 3
 DevWidget::DevWidget(int addr, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DevWidget),
     m_addr(addr),
-    m_timeout(3)
+    m_timeout(MAX_TIMEOUT)
 {
     ui->setupUi(this);
     ui->lbl_addr->setText(tr("Address") + ":" + QString("%1").arg(addr));
-    this->startTimer(1000);
+
 }
 
 
@@ -19,18 +20,34 @@ DevWidget::~DevWidget()
     delete ui;
 }
 
+void DevWidget::Timeout()
+{
+    if(m_timeout > 0)
+    {
+        m_timeout--;
+    }
+    if(m_timeout<=0){
+        clearState();
+        ui->lbl_weight->setText("");
+    }
+}
+
 void DevWidget::clearState()
 {
     ui->lbl_ng->clear();
     ui->lbl_still->clear();
     ui->lbl_zero->clear();
 }
+void DevWidget::resetTimeout()
+{
+    m_timeout = MAX_TIMEOUT;
+}
 void DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
 {
     double wf = (double)weight;
 
     QString ws = utils::float2string(wf, dot);
-    m_timeout = 3;
+    resetTimeout();
     clearState();
     if(state&1)
     {
@@ -82,17 +99,4 @@ void DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
 
     ui->lbl_weight->setText(ws);
 
-}
-
-
-void DevWidget::timerEvent(QTimerEvent *)
-{
-    if(m_timeout > 0)
-    {
-        m_timeout--;
-    }
-    if(m_timeout<=0){
-        clearState();
-        ui->lbl_weight->setText("");
-    }
 }

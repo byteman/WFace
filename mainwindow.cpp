@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QFile>
 #include <cstdio>
+#include "utils.h"
 static QString unit="g";
 static bool scan = false;
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
@@ -76,7 +77,7 @@ void MainWindow::initUI()
     connect(corn,SIGNAL(OperationResult(RegCmd)),this,SLOT(onRegOperResult(RegCmd)));
 
     connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),this,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
-
+    connect(poller,SIGNAL(timeout(int)),this,SLOT(onPollTimeout(int)));
     initAdList();
     clearState();
     devices = new MyDevices(32,ui->gbDevices);
@@ -281,7 +282,15 @@ void MainWindow::onScanResult(int type,int addr)
         ui->scanPb->setValue(addr);
     }
 }
-#include "utils.h"
+
+void MainWindow::onPollTimeout(int addr)
+{
+    if(devices!=NULL)
+    {
+        devices->Timeout(addr);
+    }
+}
+
 void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare)
 {
     double wf = (double)weight;
@@ -636,7 +645,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         clearCornCalib();
         changeHandler("corn");
     }
-    else if(index == 4)
+    else if(index == 5)
     {
 
         changeHandler("poll");

@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1726,129 +1726,11 @@
             <number>5</number>
            </property>
            <item>
-            <widget class="QGroupBox" name="groupBox_11">
-             <property name="minimumSize">
-              <size>
-               <width>161</width>
-               <height>220</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>161</width>
-               <height>250</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>黑体</family>
-               <pointsize>12</pointsize>
-               <weight>50</weight>
-               <bold>false</bold>
-              </font>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="title">
-              <string>COM-Port</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_12" stretch="2,2,2">
-              <property name="leftMargin">
-               <number>10</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>20</number>
-              </property>
-              <property name="bottomMargin">
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QComboBox" name="cbxPort_2"/>
-              </item>
-              <item>
-               <widget class="QComboBox" name="cbxBaud_2">
-                <item>
-                 <property name="text">
-                  <string>4800</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>9600</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>19200</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>38400</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>115200</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="cbxParity_2">
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>none</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>even</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnOpen">
-             <property name="minimumSize">
-              <size>
-               <width>161</width>
-               <height>32</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>161</width>
-               <height>32</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="text">
-              <string>DevOpen</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QGroupBox" name="groupBox_12">
              <property name="minimumSize">
               <size>
                <width>161</width>
-               <height>151</height>
+               <height>160</height>
               </size>
              </property>
              <property name="maximumSize">
@@ -1922,6 +1804,12 @@
               </item>
               <item>
                <widget class="QPushButton" name="btnSetAddr">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>32</height>
+                 </size>
+                </property>
                 <property name="text">
                  <string>SetAddr</string>
                 </property>

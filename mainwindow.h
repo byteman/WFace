@@ -33,6 +33,7 @@ private slots:
     void calibrate_click(int id);
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
+    void onPollTimeout(int addr);
     void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
     void onPollWeightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
     void onCalibProcessResult(int index, int result);
