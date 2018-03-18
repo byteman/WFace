@@ -72,7 +72,7 @@ void DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
     {
        // ui->lbl_upflow->setText(tr("upflow"));
        //strState += " | " +tr("upflow ");
-       ws = "------";
+       //ws = "------";
     }
     if(state&16)
     {

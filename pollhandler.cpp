@@ -5,7 +5,7 @@
 
 PollerHandler::PollerHandler(RtuReader *rtu):
     CmdHandler(rtu),
-    m_start(0),
+    m_start(1),
     m_end(0),
     m_quit(false)
 {
@@ -77,7 +77,7 @@ void PollerHandler::getAddrSpan(qint8 &startAddr, qint8 &num)
 //最大超时时间100ms,
 bool PollerHandler::startRun()
 {
-    _rtu->set_response_timeout(100000);
+    _rtu->set_response_timeout(30000);
     m_quit = false;
     return CmdHandler::startRun();
 }

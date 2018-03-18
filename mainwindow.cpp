@@ -1069,7 +1069,7 @@ void MainWindow::on_btnSetAddr_clicked()
         qint8 count = ui->edtAddrCount->text().toInt(&ok);
         if(!ok) return;
         if(count<0) count=0;
-        if( (startAddr+count) > 33)
+        if( (startAddr+count) > 32)
         {
             QMessageBox::information(this,tr("info"),tr("error addr span"));
             return;
