@@ -1,6 +1,8 @@
 #include "mydevices.h"
 #include <QGridLayout>
 #include "utils.h"
+#include <QDir>
+#include <QDateTime>
 MyDevices::MyDevices(int max,QGroupBox* parent):
     m_container(parent),
     m_max(36),
@@ -64,18 +66,50 @@ void MyDevices::DisplayWeight(int addr, int weight, quint16 state, quint16 dot)
 {
     if(addr < widgets.size())
     {
-        m_values[addr].push_back(weight);
+        m_values[addr].append((const char*)&weight,sizeof(int));
         widgets[addr-1]->DisplayWeight(weight,state,dot);
     }
 }
+QString MyDevices::CreateDir()
+{
 
+    QString target_dir=QString("%1/wave/").arg(QDir::currentPath());
+    QDir dir(target_dir);
+    if(!dir.exists())
+    {
+        dir.mkpath(target_dir);
+    }
+    return target_dir;
+}
+QString MyDevices::GetFileName()
+{
+    QString dt  = QDateTime::currentDateTime().toString("yyyyMMddhhmmss");
+    QString dir = CreateDir();
+    QString file = QString("%1/%2.wave").arg(dir).arg(dt);
+    return file;
+}
+#include "wavefile.h"
 void MyDevices::SaveWave()
 {
-    QMapIterator<int, QVector<float>> i(m_values);
+    QString fname = GetFileName();
+    WaveFile wv(fname);
+
+    QMapIterator<int, QByteArray> i(m_values);
     while (i.hasNext()) {
         i.next();
+        wv.writeChan(i.key(),m_values[i.key()]);
         //cout << i.key() << ": " << i.value() << endl;
     }
+    m_values.clear();
+}
+
+void MyDevices::LoadWave(QString file, ChannelsData &datas)
+{
+    QString filename = CreateDir() + "/" + file;
+
+    WaveFile wvf;
+    wvf.load(filename,datas);
+
 }
 
 void MyDevices::GetNum(int &start, int &num)
@@ -84,5 +118,10 @@ void MyDevices::GetNum(int &start, int &num)
     num = m_num;
 }
 
-
+void MyDevices::listWaveFiles(QStringList &files)
+{
+    QString dir = CreateDir();
+    QDir wvDir(dir);
+    files = wvDir.entryList(QDir::Files);
+}
 

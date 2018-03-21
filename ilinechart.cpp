@@ -64,6 +64,12 @@ void ILineChart::SetDataArray(QVector<QVector<double>> &samples)
     }
 
 }
+
+void ILineChart::SetChanDataArray(int chan, QVector<double> &samples)
+{
+    if(chan >= channels.size()) return;
+    channels[chan]->SetDataArray(samples);
+}
 #endif
 void ILineChart::InitChannel(QWidget *parent, int num)
 {

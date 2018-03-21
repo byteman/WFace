@@ -5,6 +5,7 @@
 #include <QVector>
 //#include "qwtchannel.h"
 #include "ilinechart.h"
+#include "wavefile.h"
 typedef QVector<float> ChannelData;
 typedef QVector<ChannelData> ChannelDataArray;
 
@@ -18,11 +19,13 @@ public:
     ~WaveWidget();
     void DisplayChannel(int chan=0,bool bshow=false);
     void DisplayAllChannel(bool show);
+    void SetData(ChannelsData& waves);
     void AppendDataArr(ChannelDataArray &wvd);
     void AppendData(int addr, float value);
     void SetChannel(int start,int num);
     void CloseAll();
     void Clear();
+    void SaveWave();
 private:
 
     int m_num;

@@ -88,6 +88,7 @@ void MainWindow::initUI()
     initAdList();
     clearState();
     devices = new MyDevices(32,ui->gbDevices);
+    waveWidget = new WaveWidget(ui->widget);
 #endif
 }
 void MainWindow::initAdList()
@@ -621,11 +622,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     {
         if(index != 0)
         {
-            ui->tabWidget->setCurrentIndex(0);
+            //ui->tabWidget->setCurrentIndex(0);
             QMessageBox::information(this,tr("info"),tr("please scan device first"));
         }
 
-        return ;
+        //return ;
     }
 
     if(index == 0)
@@ -657,6 +658,19 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
         changeHandler("poll");
     }
+    else if(index == 6)
+    {
+        changeHandler("dumy");
+        ReadWaveList();
+    }
+}
+int MainWindow::ReadWaveList()
+{
+    ui->listWave->clear();
+    QStringList files;
+    devices->listWaveFiles(files);
+    ui->listWave->addItems(files);
+    return 0;
 }
 int MainWindow::toInt(QString txt,int dot,bool *ok)
 {
@@ -910,7 +924,9 @@ void MainWindow::timerEvent(QTimerEvent *)
     //adc102.getRXTX(rx,tx);
     reader.get_rx_tx(rx,tx);
     QString msg = QString("TX:%1|RX:%2 ").arg(tx).arg(rx);
-
+//    if(devices!=NULL){
+//        devices->DisplayWeight(1,1000,0,0);
+//    }
     ui->statusBar->showMessage(msg);
 }
 void MainWindow::EnableAllCalibButton(bool disable)
@@ -1110,4 +1126,24 @@ void MainWindow::onFinished(int code)
     //connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),waveDlg,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
     disconnect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),waveDlg,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
 
+}
+#include "mydevices.h"
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    devices->SaveWave();
+}
+
+void MainWindow::on_listWave_itemClicked(QListWidgetItem *item)
+{
+    ChannelsData wvd;
+    devices->LoadWave(item->text(),wvd);
+    waveWidget->SetData(wvd);
+    waveWidget->DisplayAllChannel(true);
+}
+
+void MainWindow::on_btnClearWave_clicked()
+{
+    waveWidget->Clear();
 }

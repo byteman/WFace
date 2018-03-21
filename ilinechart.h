@@ -10,6 +10,7 @@ struct ILineChart{
     virtual void DisplayChannel(int chan=0,bool bshow=true);
     virtual void DisplayAllChannel(bool bshow);
     virtual void SetDataArray(QVector<QVector<double>> &samples);
+    virtual void SetChanDataArray(int chan ,QVector<double> &samples);
     virtual void AppendDataArray(QVector<QVector<double>> &samples);
     virtual void AppendData(int chan,float value);
 

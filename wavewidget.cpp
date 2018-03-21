@@ -27,6 +27,33 @@ void WaveWidget::DisplayAllChannel(bool show)
     m_chart->DisplayAllChannel(show);
 }
 
+void WaveWidget::SetData(ChannelsData &waves)
+{
+    QMapIterator<int, ChannelSample> i(waves);
+    int start=33,num=0;
+
+    while (i.hasNext()) {
+        i.next();
+        if(i.key() < start)
+        {
+            start = i.key();
+        }
+        num++;
+
+       // m_chart->SetChanDataArray(chan,waves[i.key()]);
+        //cout << i.key() << ": " << i.value() << endl;
+    }
+    if(num > 0)
+    {
+        m_chart->SetChannel(start,num);
+        for(int i = 0; i < num; i++)
+        {
+            m_chart->SetChanDataArray(i,waves[start+i]);
+        }
+    }
+
+}
+
 void WaveWidget::AppendData(int addr, float value)
 {
     if(m_start == 0) return;

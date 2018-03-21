@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1205</width>
+    <width>1225</width>
     <height>700</height>
    </rect>
   </property>
@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1727,16 +1727,22 @@
            </property>
            <item>
             <widget class="QGroupBox" name="groupBox_12">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>161</width>
-               <height>160</height>
+               <height>200</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>161</width>
-               <height>200</height>
+               <height>300</height>
               </size>
              </property>
              <property name="styleSheet">
@@ -1872,7 +1878,14 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
-            <widget class="QListWidget" name="listWidget_2"/>
+            <widget class="QListWidget" name="listWave"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnClearWave">
+             <property name="text">
+              <string>ClearWave</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -1891,8 +1904,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1205</width>
-     <height>23</height>
+     <width>1225</width>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuChange">

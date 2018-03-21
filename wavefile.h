@@ -3,21 +3,19 @@
 
 #include <QFile>
 #include <QVector>
-class ChannelSample:public QVector<qint32>
-{
-
-};
-
-
-
+#include <QMap>
+typedef QVector<double> ChannelSample;
+typedef QMap<int,ChannelSample > ChannelsData;
 
 class WaveFile
 {
 public:
     WaveFile();
+    ~WaveFile();
     WaveFile(QString file);
-    bool load(QString file,ChannelSample& samples);
+    bool load(QString file,ChannelsData& samples);
     qint64 write(QByteArray& data);
+    qint64 writeChan(int addr,QByteArray& data);
     void close();
 private:
     QFile *m_file;

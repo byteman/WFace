@@ -7,6 +7,7 @@
 #include <QGroupBox>
 #include <QGridLayout>
 #include <QMap>
+#include "wavefile.h"
 class MyDevices:public QObject
 {
     Q_OBJECT
@@ -16,7 +17,9 @@ public:
     void Timeout(int addr);
     void DisplayWeight(int addr,int weight, quint16 state,quint16 dot);
     void SaveWave();
+    void LoadWave(QString file,ChannelsData& datas);
     void GetNum(int &start,int &num);
+    void listWaveFiles(QStringList &files);
 private:
     QVector<DevWidget*> widgets;
     void clearAll();
@@ -24,9 +27,11 @@ private:
     int m_max;
     QGroupBox* m_container;
     QGridLayout* qlayout;
-    QMap<int,QVector<float> > m_values;
+    QMap<int,QByteArray > m_values;
     int m_num;
     int m_start;
+    QString CreateDir();
+    QString GetFileName();
 };
 
 #endif // MYDEVICES_H

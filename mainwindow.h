@@ -95,6 +95,13 @@ private slots:
     void on_btnShowWave_clicked();
     void onAccept();
     void onFinished(int code);
+
+    void on_pushButton_clicked();
+
+    void on_listWave_itemClicked(QListWidgetItem *item);
+
+    void on_btnClearWave_clicked();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
@@ -109,6 +116,7 @@ private:
     RtuReader reader;
     QMap<QString,CmdHandler*> handlers;
     MyDevices* devices;
+    WaveWidget*  waveWidget;
     DialogWave * waveDlg;
     bool pressed;
     // QObject interface
@@ -133,6 +141,7 @@ private:
     int toInt(QString txt, int dot,bool *ok);
     QString float2string(float wf, int dot);
     QString formatfloat(float wf, int dot);
+    int ReadWaveList();
 protected:
     void timerEvent(QTimerEvent *);
 
