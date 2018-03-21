@@ -93,7 +93,8 @@ private slots:
     void on_btnOpen_clicked();
 
     void on_btnShowWave_clicked();
-
+    void onAccept();
+    void onFinished(int code);
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;

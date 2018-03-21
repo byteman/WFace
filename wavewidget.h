@@ -26,7 +26,7 @@ public:
 private:
 
     int m_num;
-
+    int m_start;
     ILineChart* m_chart;
 
 

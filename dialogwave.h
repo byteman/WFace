@@ -17,6 +17,13 @@ public:
     void SetChannel(int start,int num);
 public slots:
     void onPollWeightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
+private slots:
+    void on_btnClear_clicked();
+
+    void on_btnClose_clicked();
+
+    void on_btnSave_clicked();
+
 private:
     Ui::DialogWave *ui;
     WaveWidget *m_waveWdg;

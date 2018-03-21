@@ -9,6 +9,7 @@ QCustomPlotChannel::QCustomPlotChannel(int index,QCPGraph* graph):
     QPen pen(colors[index]);
     pen.setWidth(2);
     graph->setPen(pen);
+
 }
 
 void QCustomPlotChannel::SetDataArray(QVector<double> &values)
@@ -73,6 +74,11 @@ void QCustomPlotChannel::Clear()
 void QCustomPlotChannel::SetPen(QPen &pen)
 {
 
+}
+
+void QCustomPlotChannel::SetName(QString &name)
+{
+    m_graph->setName(name);
 }
 
 void QCustomPlotChannel::GetValueRange(double &min, double &max)

@@ -82,7 +82,8 @@ void MainWindow::initUI()
     connect(poller,SIGNAL(timeout(int)),this,SLOT(onPollTimeout(int)));
 
     waveDlg = new DialogWave(this,1);
-    connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),waveDlg,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
+    connect(waveDlg,SIGNAL(accepted()),this,SLOT(onAccept()));
+    connect(waveDlg,SIGNAL(finished(int)),this,SLOT(onFinished(int)));
 
     initAdList();
     clearState();
@@ -1091,8 +1092,22 @@ void MainWindow::on_btnOpen_clicked()
 void MainWindow::on_btnShowWave_clicked()
 {
 
+    int startAddr,count;
+    devices->GetNum(startAddr,count);
 
-    waveDlg->SetChannel(devices->GetNum());
+    waveDlg->SetChannel(startAddr, count);
+    connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),waveDlg,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
+}
 
+void MainWindow::onAccept()
+{
+    qDebug() << "onAccept";
+}
+
+void MainWindow::onFinished(int code)
+{
+    qDebug() << "onFinished  " << code;
+    //connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),waveDlg,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
+    disconnect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),waveDlg,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
 
 }

@@ -23,6 +23,7 @@ void ILineChart::AppendDataArray(QVector<QVector<double>> &samples)
 
 void ILineChart::AppendData(int chan,float value)
 {
+    if(chan >= channels.size()) return;
     channels[chan]->AddData(0,value);
 }
 #if 0
@@ -78,6 +79,8 @@ void ILineChart::InitChannel(QWidget *parent, int num)
     //Qt::darkCyan	16	Dark cyan (#008080)
 
 }
+
+
 
 void ILineChart::DisplayChannel(int chan,bool bshow)
 {

@@ -13,6 +13,7 @@ public:
     virtual void Clear()=0;
     virtual int  Size()=0;
     virtual void SetPen(QPen& pen)=0;
+    virtual void SetName(QString &name) = 0;
     virtual void GetKeyRange(double& min,double &max)=0;
     virtual void GetValueRange(double& min,double &max)=0;
 protected:

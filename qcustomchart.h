@@ -12,6 +12,7 @@ private:
 
     // ILineChart interface
     void SetChannel(int start,int num);
+    void AddChannel(QString name);
 public:
     virtual void DisplayChannel(int chan=0,bool bshow=true);
     virtual void DisplayAllChannel(bool show);

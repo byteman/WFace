@@ -48,6 +48,7 @@ void MyDevices::SetDeviceNum(int start, int num)
         widgets[i+start-1]->show();
     }
     m_num = num;
+    m_start = start;
     m_values.clear();
 }
 
@@ -77,8 +78,11 @@ void MyDevices::SaveWave()
     }
 }
 
-int MyDevices::GetNum()
+void MyDevices::GetNum(int &start, int &num)
 {
-    return m_num;
+    start = m_start;
+    num = m_num;
 }
+
+
 
