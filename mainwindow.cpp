@@ -80,6 +80,10 @@ void MainWindow::initUI()
 
     connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),this,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
     connect(poller,SIGNAL(timeout(int)),this,SLOT(onPollTimeout(int)));
+
+    waveDlg = new DialogWave(this,1);
+    connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),waveDlg,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
+
     initAdList();
     clearState();
     devices = new MyDevices(32,ui->gbDevices);
@@ -1081,5 +1085,14 @@ void MainWindow::on_btnSetAddr_clicked()
 
 void MainWindow::on_btnOpen_clicked()
 {
+
+}
+
+void MainWindow::on_btnShowWave_clicked()
+{
+
+
+    waveDlg->SetChannel(devices->GetNum());
+
 
 }

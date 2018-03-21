@@ -6,12 +6,12 @@
 
 QT       += core gui
 QT +=  serialport
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = WFace
 TEMPLATE = app
 
-
+DEFINES += QCUSTOMPLOT_USE_OPENGL
 SOURCES += main.cpp\
         mainwindow.cpp \
         3rdparty/libmodbus/src/modbus.c \
@@ -29,7 +29,16 @@ SOURCES += main.cpp\
     pollhandler.cpp \
     mydevices.cpp \
     devwidget.cpp \
-    utils.cpp
+    utils.cpp \
+    ifilter.cpp \
+    igraphicchannel.cpp \
+    ilinechart.cpp \
+    qcustomchart.cpp \
+    qcustomplot.cpp \
+    qcustomplotchannel.cpp \
+    wavefile.cpp \
+    wavewidget.cpp \
+    dialogwave.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -44,7 +53,16 @@ HEADERS  += mainwindow.h \
     pollhandler.h \
     mydevices.h \
     devwidget.h \
-    utils.h
+    utils.h \
+    ifilter.h \
+    igraphicchannel.h \
+    ilinechart.h \
+    qcustomchart.h \
+    qcustomplot.h \
+    qcustomplotchannel.h \
+    wavefile.h \
+    wavewidget.h \
+    dialogwave.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
@@ -56,9 +74,11 @@ win32:DEFINES += _TTY_WIN_  WINVER=0x0501
 win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
 win32:LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32
 win32:LIBS += -L./3rdparty/poco/lib
-
+LIBS += -lOpengl32 \
+                -lglu32
 FORMS    += mainwindow.ui \
-    devwidget.ui
+    devwidget.ui \
+    dialogwave.ui
 
 RESOURCES += \
     myrc.qrc

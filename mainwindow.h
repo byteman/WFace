@@ -14,6 +14,7 @@
 #include "pollhandler.h"
 #include "adc102.h"
 #include "mydevices.h"
+#include "dialogwave.h"
 #include <QMap>
 namespace Ui {
 class MainWindow;
@@ -91,6 +92,8 @@ private slots:
 
     void on_btnOpen_clicked();
 
+    void on_btnShowWave_clicked();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
@@ -105,6 +108,7 @@ private:
     RtuReader reader;
     QMap<QString,CmdHandler*> handlers;
     MyDevices* devices;
+    DialogWave * waveDlg;
     bool pressed;
     // QObject interface
     void traversalControl(const QObjectList &q);

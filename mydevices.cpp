@@ -4,7 +4,8 @@
 MyDevices::MyDevices(int max,QGroupBox* parent):
     m_container(parent),
     m_max(36),
-    m_row(6),m_col(6)
+    m_row(6),m_col(6),
+    m_num(1)
 {
     for(int i = 0; i < max; i++ )
     {
@@ -46,6 +47,8 @@ void MyDevices::SetDeviceNum(int start, int num)
         //qlayout->addWidget(widgets[i+start],row,col);
         widgets[i+start-1]->show();
     }
+    m_num = num;
+    m_values.clear();
 }
 
 void MyDevices::Timeout(int addr)
@@ -60,7 +63,22 @@ void MyDevices::DisplayWeight(int addr, int weight, quint16 state, quint16 dot)
 {
     if(addr < widgets.size())
     {
+        m_values[addr].push_back(weight);
         widgets[addr-1]->DisplayWeight(weight,state,dot);
     }
+}
+
+void MyDevices::SaveWave()
+{
+    QMapIterator<int, QVector<float>> i(m_values);
+    while (i.hasNext()) {
+        i.next();
+        //cout << i.key() << ": " << i.value() << endl;
+    }
+}
+
+int MyDevices::GetNum()
+{
+    return m_num;
 }
 

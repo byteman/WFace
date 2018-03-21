@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1812,6 +1812,13 @@
                 </property>
                 <property name="text">
                  <string>SetAddr</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnShowWave">
+                <property name="text">
+                 <string>ShowWave</string>
                 </property>
                </widget>
               </item>
