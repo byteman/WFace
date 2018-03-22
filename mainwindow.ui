@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1823,6 +1823,12 @@
               </item>
               <item>
                <widget class="QPushButton" name="btnShowWave">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>32</height>
+                 </size>
+                </property>
                 <property name="text">
                  <string>ShowWave</string>
                 </property>
@@ -1905,7 +1911,7 @@
      <x>0</x>
      <y>0</y>
      <width>1225</width>
-     <height>30</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuChange">

@@ -8,6 +8,8 @@ QCustomChart::QCustomChart(QCustomPlot *parent, int num):
    m_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
    m_plot->xAxis->scaleRange(0,200);
    m_plot->yAxis->scaleRange(0,2000);
+   m_plot->yAxis->setScaleRatio(m_plot->yAxis,1.3);
+     //ui.ImgQCustomPlot->yAxis->setScaleRatio(ui.ImgQCustomPlot->xAxis, 1);
    m_plot->setOpenGl(true);
    //SetChannel(0,num);
 }
@@ -42,8 +44,8 @@ void QCustomChart::DisplayAllChannel(bool show)
     ILineChart::DisplayAllChannel(show);
 
     m_plot->rescaleAxes();
+    m_plot->yAxis->setScaleRatio(m_plot->yAxis,1.3);
     m_plot->replot();
-
 }
 
 

@@ -49,7 +49,7 @@ private slots:
     void calibADReadResult(QList<float> chanAD);
     void chanKReadResult(int sensor, QList<float> chanK);
     void on_btnSave_clicked();
-
+    void onSaveWave();
     void on_btnTare_clicked();
 
     void on_actionEnglish_triggered();

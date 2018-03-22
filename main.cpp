@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QSettings>
+#include <QSplashScreen>
 void loadLang(QTranslator& translator)
 {
 
@@ -23,11 +24,18 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
+//    QPixmap pixmap("splash.jpg");
+//    QSplashScreen splash(pixmap);
+//    splash.show();
     QTranslator translator;
     loadLang(translator);
     a.installTranslator(&translator);
+
+    /*使程序在显示启动画面的同时仍能响应鼠标等其他事件*/
+    a.processEvents();
+
     MainWindow w(a);
     w.show();
-
+    //splash.finish(&w);
     return a.exec();
 }

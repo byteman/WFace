@@ -31,11 +31,12 @@ void MainWindow::initUI()
 {
     //QFile file(":/mystyle.txt");
     //file.open(QFile::ReadOnly);
+    qDebug() << QDateTime::currentMSecsSinceEpoch();
 #if 1
     qDebug() << "mainwindow thread-id:" << QThread::currentThreadId();
     //QByteArray res = file.readAll();
 
-
+    pressed = false;
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
 
     QSerialPortInfo port;
@@ -84,11 +85,12 @@ void MainWindow::initUI()
     waveDlg = new DialogWave(this,1);
     connect(waveDlg,SIGNAL(accepted()),this,SLOT(onAccept()));
     connect(waveDlg,SIGNAL(finished(int)),this,SLOT(onFinished(int)));
-
+    connect(waveDlg,SIGNAL(saveWave()),this,SLOT(onSaveWave()));
     initAdList();
     clearState();
     devices = new MyDevices(32,ui->gbDevices);
     waveWidget = new WaveWidget(ui->widget);
+    qDebug() << QDateTime::currentMSecsSinceEpoch();
 #endif
 }
 void MainWindow::initAdList()
@@ -618,15 +620,15 @@ void MainWindow::clearCalib()
 }
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    if(!reader.hasConnected())
+    if(!reader.hasConnected() && index != 6)
     {
         if(index != 0)
         {
-            //ui->tabWidget->setCurrentIndex(0);
+            ui->tabWidget->setCurrentIndex(0);
             QMessageBox::information(this,tr("info"),tr("please scan device first"));
         }
 
-        //return ;
+        return ;
     }
 
     if(index == 0)
@@ -725,6 +727,13 @@ void MainWindow::on_btnSave_clicked()
         QMessageBox::information(this,tr("error"),tr(" format_err"));
     }
 
+}
+
+void MainWindow::onSaveWave()
+{
+    devices->SaveWave();
+    waveWidget->Clear();
+    QMessageBox::information(this,tr("info"),tr("save ok"));
 }
 
 void MainWindow::on_btnTare_clicked()
@@ -925,7 +934,8 @@ void MainWindow::timerEvent(QTimerEvent *)
     reader.get_rx_tx(rx,tx);
     QString msg = QString("TX:%1|RX:%2 ").arg(tx).arg(rx);
 //    if(devices!=NULL){
-//        devices->DisplayWeight(1,1000,0,0);
+//        devices->DisplayWeight(2,1000,0,0);
+//        waveDlg->onPollWeightResult(2,1000,0,0,0,0);
 //    }
     ui->statusBar->showMessage(msg);
 }

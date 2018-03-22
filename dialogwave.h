@@ -17,6 +17,8 @@ public:
     void SetChannel(int start,int num);
 public slots:
     void onPollWeightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
+signals:
+    void saveWave();
 private slots:
     void on_btnClear_clicked();
 

@@ -42,5 +42,5 @@ void DialogWave::on_btnClose_clicked()
 
 void DialogWave::on_btnSave_clicked()
 {
-
+    emit saveWave();
 }
