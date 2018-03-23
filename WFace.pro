@@ -83,5 +83,5 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     myrc.qrc
 TRANSLATIONS+=cn.ts en.ts
-RC_FILE=icon.rc
+#RC_FILE=icon.rc
 DISTFILES +=
