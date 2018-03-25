@@ -15,6 +15,7 @@
 #include "adc102.h"
 #include "mydevices.h"
 #include "dialogwave.h"
+#include "myconfig.h"
 #include <QMap>
 namespace Ui {
 class MainWindow;
@@ -43,7 +44,7 @@ private slots:
     void onRegOperResult(RegCmd cmd);
     void onWeightParaRead(quint16 div_high,quint16 div_low, quint32 full_high, quint32 full_low, int dot);
     void on_btnSearch_clicked();
-    void onParaWriteResult(bool ok);
+    void onParaWriteResult(int result);
     void on_tabWidget_currentChanged(int index);
     void chanADReadResult(QList<float> chanAD);
     void calibADReadResult(QList<float> chanAD);
@@ -91,16 +92,13 @@ private slots:
     void on_btnSetAddr_clicked();
 
     void on_btnOpen_clicked();
-
-    void on_btnShowWave_clicked();
-    void onAccept();
-    void onFinished(int code);
-
-    void on_pushButton_clicked();
-
     void on_listWave_itemClicked(QListWidgetItem *item);
 
     void on_btnClearWave_clicked();
+
+    void on_btnSaveWave_clicked();
+
+    void on_btnClear_clicked();
 
 private:
     void initCalibPoints();
@@ -117,7 +115,9 @@ private:
     QMap<QString,CmdHandler*> handlers;
     MyDevices* devices;
     WaveWidget*  waveWidget;
+    WaveWidget*  rtwaveWidget;
     DialogWave * waveDlg;
+    MyConfig cfg;
     bool pressed;
     // QObject interface
     void traversalControl(const QObjectList &q);

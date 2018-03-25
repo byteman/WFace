@@ -38,7 +38,9 @@ SOURCES += main.cpp\
     qcustomplotchannel.cpp \
     wavefile.cpp \
     wavewidget.cpp \
-    dialogwave.cpp
+    dialogwave.cpp \
+    myconfig.cpp \
+    csvfile.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -62,7 +64,9 @@ HEADERS  += mainwindow.h \
     qcustomplotchannel.h \
     wavefile.h \
     wavewidget.h \
-    dialogwave.h
+    dialogwave.h \
+    myconfig.h \
+    csvfile.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 

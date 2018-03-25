@@ -46,11 +46,12 @@ void DevWidget::resetTimeout()
 {
     m_timeout = MAX_TIMEOUT;
 }
-void DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
+QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
 {
     double wf = (double)weight;
 
     QString ws = utils::float2string(wf, dot);
+    QString wt = ws;
     resetTimeout();
     clearState();
     if(state&1)
@@ -95,6 +96,8 @@ void DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
         //ui->lbl_menucode->setText(tr("menumode"));
        //strState += " | " +tr("menumode ");
     }
+    //int unit= (state >>8)&0x7;
+
 //    if(strState.length() > 0)
 //    {
 //        strState += " | ";
@@ -102,6 +105,7 @@ void DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
 //    }
 
     ui->lbl_weight->setText(ws);
+    return wt;
 
 }
 

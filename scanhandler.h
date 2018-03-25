@@ -22,11 +22,13 @@ private:
     int m_reg_size;
     int m_start_addr;
     int m_end_addr;
+    int m_start_us,m_stop_us;
     bool m_findOnce; //只搜索最先找到的第一个.
     // CmdHandler interface
 public:
     virtual bool doWork();
     bool stop();
+    void setTimeOut(int startUs, int stopUs);
 };
 
 #endif // SCANHANDLER_H

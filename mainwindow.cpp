@@ -11,6 +11,7 @@
 #include <QFile>
 #include <cstdio>
 #include "utils.h"
+
 static QString unit="g";
 static bool scan = false;
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
@@ -50,11 +51,13 @@ void MainWindow::initUI()
     initCornFixChan();
     reader.start(100);
     scaner = new ScanHandler(&reader);
+    scaner->setTimeOut(cfg.m_scan_timeout,cfg.m_read_timeout);
     weight = new WeightHandler(&reader);
     calib = new CalibHandler(&reader);
     para = new ParaHandler(&reader);
     corn = new CornHandler(&reader);
     poller = new PollerHandler(&reader);
+    poller->setTimeOut(cfg.m_poll_timeout,cfg.m_read_timeout);
     handlers["scan"] = scaner;
     handlers["weight"] = weight;
     handlers["calib"] = calib;
@@ -73,7 +76,7 @@ void MainWindow::initUI()
     connect(calib,SIGNAL(chanADReadResult(QList<float>)),this,SLOT(calibADReadResult(QList<float>)));
 
     connect(para,SIGNAL(paraReadResult(Para)),this,SLOT(onParaReadResult(Para)));
-    connect(para,SIGNAL(paraWriteResult(bool)),this,SLOT(onParaWriteResult(bool)));
+    connect(para,SIGNAL(paraWriteResult(int)),this,SLOT(onParaWriteResult(int)));
 
     connect(corn,SIGNAL(chanADReadResult(QList<float>)),this,SLOT(chanADReadResult(QList<float>)));
     connect(corn,SIGNAL(chanKReadResult(int,QList<float>)),this,SLOT(chanKReadResult(int,QList<float>)));
@@ -82,14 +85,19 @@ void MainWindow::initUI()
     connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),this,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
     connect(poller,SIGNAL(timeout(int)),this,SLOT(onPollTimeout(int)));
 
-    waveDlg = new DialogWave(this,1);
-    connect(waveDlg,SIGNAL(accepted()),this,SLOT(onAccept()));
-    connect(waveDlg,SIGNAL(finished(int)),this,SLOT(onFinished(int)));
-    connect(waveDlg,SIGNAL(saveWave()),this,SLOT(onSaveWave()));
+    //waveDlg = new DialogWave(this,1);
+//    connect(waveDlg,SIGNAL(accepted()),this,SLOT(onAccept()));
+//    connect(waveDlg,SIGNAL(finished(int)),this,SLOT(onFinished(int)));
+//    connect(waveDlg,SIGNAL(saveWave()),this,SLOT(onSaveWave()));
+
+
     initAdList();
     clearState();
     devices = new MyDevices(32,ui->gbDevices);
+    devices->SetMaxSampleNum(cfg.m_max_sample);
+    //connect(devices,SIGNAL(WaveFull()),this,SLOT(onSaveWave()));
     waveWidget = new WaveWidget(ui->widget);
+    rtwaveWidget = new WaveWidget(ui->rtplot,1);
     qDebug() << QDateTime::currentMSecsSinceEpoch();
 #endif
 }
@@ -363,6 +371,8 @@ void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16
 {
     if(devices!=NULL){
         devices->DisplayWeight(addr,weight,state,dot);
+        rtwaveWidget->AppendData(addr,utils::int2float(weight,dot));
+        rtwaveWidget->DisplayAllChannel(true);
     }
 }
 //标定过程....
@@ -552,11 +562,11 @@ void MainWindow::on_btnSearch_clicked()
 
 }
 
-void MainWindow::onParaWriteResult(bool ok)
+void MainWindow::onParaWriteResult(int result)
 {
-    if(!ok)
+    if(0!=result)
     {
-        QMessageBox::information(this,tr("info"),tr("save_fail"));
+        QMessageBox::information(this,tr("info"),tr("save_fail") + QString("code=%1").arg(result));
     }
     else
     {
@@ -1105,8 +1115,18 @@ void MainWindow::on_btnSetAddr_clicked()
             QMessageBox::information(this,tr("info"),tr("error addr span"));
             return;
         }
+        int index = ui->cbxAcqSpan->currentIndex();
+        if(index == 0) index = 10;
+        else if(index == 1) index = 5;
+        else index = 1;
+
+        int timeout = (1000000/index) / count;
+        if(timeout < 50000) timeout = 50000;
+        poller->setTimeOut(timeout,cfg.m_read_timeout);
         poller->setAddrSpan(startAddr,count);
         devices->SetDeviceNum(startAddr,count);
+        rtwaveWidget->SetChannel(startAddr,count);
+        rtwaveWidget->Clear();
     }
 }
 
@@ -1115,35 +1135,7 @@ void MainWindow::on_btnOpen_clicked()
 
 }
 
-void MainWindow::on_btnShowWave_clicked()
-{
-
-    int startAddr,count;
-    devices->GetNum(startAddr,count);
-
-    waveDlg->SetChannel(startAddr, count);
-    connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),waveDlg,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
-}
-
-void MainWindow::onAccept()
-{
-    qDebug() << "onAccept";
-}
-
-void MainWindow::onFinished(int code)
-{
-    qDebug() << "onFinished  " << code;
-    //connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),waveDlg,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
-    disconnect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),waveDlg,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
-
-}
 #include "mydevices.h"
-
-
-void MainWindow::on_pushButton_clicked()
-{
-    devices->SaveWave();
-}
 
 void MainWindow::on_listWave_itemClicked(QListWidgetItem *item)
 {
@@ -1156,4 +1148,15 @@ void MainWindow::on_listWave_itemClicked(QListWidgetItem *item)
 void MainWindow::on_btnClearWave_clicked()
 {
     waveWidget->Clear();
+}
+
+void MainWindow::on_btnSaveWave_clicked()
+{
+    devices->SaveWave();
+    waveWidget->Clear();
+}
+
+void MainWindow::on_btnClear_clicked()
+{
+    rtwaveWidget->Clear();
 }

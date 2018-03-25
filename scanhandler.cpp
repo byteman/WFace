@@ -5,11 +5,17 @@
 ScanHandler::ScanHandler(RtuReader *rtu):
     CmdHandler(rtu),
     m_addr(1),
+    m_start_us(100000),
+    m_stop_us(1000000),
     m_findOnce(true)
 {
 
 }
-
+void ScanHandler::setTimeOut(int startUs, int stopUs)
+{
+    m_start_us = startUs;
+    m_stop_us = stopUs;
+}
 bool ScanHandler::init(int reg_addr,int reg_size,int min_addr,int max_addr,bool findOne)
 {
     m_addr = 1;
@@ -18,7 +24,7 @@ bool ScanHandler::init(int reg_addr,int reg_size,int min_addr,int max_addr,bool 
     m_reg_size = reg_size;
     m_end_addr = max_addr;
     m_start_addr = min_addr;
-    _rtu->set_response_timeout(100000);
+    _rtu->set_response_timeout(m_start_us);
     return true;
 }
 
@@ -64,6 +70,6 @@ bool ScanHandler::stop()
     //直接发送扫描完毕.等待线程结束.
     this->wait();
     emit scanResult(SCAN_COMPLETE,m_addr);
-    _rtu->set_response_timeout(100000);
+    _rtu->set_response_timeout(m_stop_us);
     return true;
 }

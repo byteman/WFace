@@ -16,7 +16,7 @@ public:
 
     ~DevWidget();
     void Timeout();
-    void DisplayWeight(int weight, quint16 state, quint16 dot);
+    QString DisplayWeight(int weight, quint16 state, quint16 dot);
 private:
     void SetOnline(bool online);
     Ui::DevWidget *ui;

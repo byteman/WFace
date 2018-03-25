@@ -32,7 +32,7 @@ public:
 
 signals:
     void paraReadResult(Para _para);
-    void paraWriteResult(bool ok);
+    void paraWriteResult(int result);
 public slots:
 
     bool paraSave(Para _para);
@@ -41,7 +41,7 @@ public:
     virtual bool doWork();
 
 private:
-    bool _paraSave(Para &_para);
+    bool _paraSave(Para &_para,int &reg);
     bool m_write;
     Para m_para;
 };

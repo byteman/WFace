@@ -19,6 +19,7 @@ public:
     int  getDot();
     bool  setAddrSpan(qint8 startAddr, qint8 num);
     void  getAddrSpan(qint8 &startAddr, qint8& num);
+    void  setTimeOut(int startUs, int stopUs);
 signals:
 
     void weightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
@@ -29,6 +30,7 @@ private:
     int  m_dot;
     qint8  m_start,m_end;
     bool m_quit;
+    int m_start_us,m_stop_us;
     // CmdHandler interface
 public:
     bool startRun();

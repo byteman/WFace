@@ -40,7 +40,7 @@ bool WaveFile::load(QString file, ChannelsData &samples)
 
     int addr = 0;
     int size = 0;
-    int value;
+    float value;
     bool ok = false;
 
     QByteArray &temp = data;
@@ -54,8 +54,8 @@ bool WaveFile::load(QString file, ChannelsData &samples)
 
         for(int i = 0; i < size; i++)
         {
-            memcpy(&value, temp.data(),sizeof(int));
-            temp = temp.remove(0,sizeof(int));
+            memcpy(&value, temp.data(),sizeof(float));
+            temp = temp.remove(0,sizeof(float));
             sample.push_back(value);
         }
 

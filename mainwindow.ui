@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1225</width>
-    <height>700</height>
+    <width>1371</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>700</height>
+    <height>800</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1705,7 +1705,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>201</width>
+            <width>220</width>
             <height>50000</height>
            </size>
           </property>
@@ -1722,13 +1722,19 @@
            <number>0</number>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
            <property name="rightMargin">
-            <number>5</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QGroupBox" name="groupBox_12">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -1741,17 +1747,20 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>161</width>
-               <height>300</height>
+               <width>250</width>
+               <height>700</height>
               </size>
              </property>
              <property name="styleSheet">
               <string notr="true"/>
              </property>
              <property name="title">
-              <string>Address</string>
+              <string/>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_13">
+              <property name="spacing">
+               <number>14</number>
+              </property>
               <item>
                <widget class="QLabel" name="label_18">
                 <property name="text">
@@ -1760,23 +1769,18 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="edtStartAddr">
+               <widget class="QSpinBox" name="edtStartAddr">
                 <property name="font">
                  <font>
-                  <family>黑体</family>
-                  <pointsize>12</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
+                  <family>Arial</family>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
-                <property name="text">
-                 <string>1</string>
+                <property name="minimum">
+                 <number>1</number>
                 </property>
-                <property name="frame">
-                 <bool>true</bool>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
+                <property name="maximum">
+                 <number>32</number>
                 </property>
                </widget>
               </item>
@@ -1788,32 +1792,89 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="edtAddrCount">
+               <widget class="QSpinBox" name="edtAddrCount">
                 <property name="font">
                  <font>
-                  <family>黑体</family>
-                  <pointsize>12</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
+                  <family>Arial</family>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
-                <property name="text">
-                 <string>1</string>
+                <property name="maximum">
+                 <number>32</number>
                 </property>
-                <property name="frame">
-                 <bool>true</bool>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
+                <property name="value">
+                 <number>1</number>
                 </property>
                </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_21">
+                <property name="text">
+                 <string>存储间隔(分钟)</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="edtSaveTime">
+                <property name="font">
+                 <font>
+                  <family>Arial</family>
+                  <pointsize>14</pointsize>
+                 </font>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_20">
+                <property name="text">
+                 <string>采集速度(次/秒)</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="cbxAcqSpan">
+                <property name="font">
+                 <font>
+                  <family>Arial</family>
+                  <pointsize>14</pointsize>
+                 </font>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>10次/秒</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>5次/秒</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1次/秒</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item>
                <widget class="QPushButton" name="btnSetAddr">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>32</height>
+                  <height>40</height>
                  </size>
                 </property>
                 <property name="text">
@@ -1822,46 +1883,105 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="btnShowWave">
+               <widget class="QPushButton" name="btnSaveWave">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>32</height>
+                  <height>40</height>
                  </size>
                 </property>
                 <property name="text">
-                 <string>ShowWave</string>
+                 <string>SaveWave</string>
                 </property>
                </widget>
               </item>
              </layout>
             </widget>
            </item>
-           <item>
-            <spacer name="verticalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>99</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="gbDevices">
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(95, 95, 95);</string>
+         <widget class="QTabWidget" name="tabWidget_2">
+          <property name="currentIndex">
+           <number>1</number>
           </property>
-          <property name="title">
-           <string/>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_14"/>
+          <widget class="QWidget" name="tab_6">
+           <attribute name="title">
+            <string>实时重量</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_13">
+            <item>
+             <widget class="QGroupBox" name="gbDevices">
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(95, 95, 95);</string>
+              </property>
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_14"/>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_7">
+           <attribute name="title">
+            <string>实时波形</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_15">
+            <item>
+             <widget class="QCustomPlot" name="rtplot" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_11">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="title">
+               <string>Operation</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_14">
+               <item>
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>666</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnClear">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>ClearWave</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -1910,8 +2030,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1225</width>
-     <height>23</height>
+     <width>1371</width>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuChange">

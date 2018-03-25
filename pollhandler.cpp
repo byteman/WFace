@@ -7,6 +7,8 @@ PollerHandler::PollerHandler(RtuReader *rtu):
     CmdHandler(rtu),
     m_start(1),
     m_end(0),
+    m_start_us(30000),
+    m_stop_us(1000000),
     m_quit(false)
 {
 
@@ -21,8 +23,10 @@ bool PollerHandler::doWork()
         {
             quint16 values[8];
             _rtu->setDeviceAddr(addr);
+
             if(4 == _rtu->read_registers(0,4,values))
             {
+
                 emit weightResult(addr,values[0]+(values[1]<<16),values[2],values[3],values[4]+(values[5]<<16),values[6] +( values[7]<<16 ) );
             }
             else{
@@ -74,10 +78,17 @@ void PollerHandler::getAddrSpan(qint8 &startAddr, qint8 &num)
     num = (m_end - startAddr);
 }
 
+void PollerHandler::setTimeOut(int startUs, int stopUs)
+{
+    m_start_us = startUs;
+    m_stop_us = stopUs;
+    _rtu->set_response_timeout(startUs);
+}
+
 //最大超时时间100ms,
 bool PollerHandler::startRun()
 {
-    _rtu->set_response_timeout(30000);
+    _rtu->set_response_timeout(m_start_us);
     m_quit = false;
     return CmdHandler::startRun();
 }
@@ -86,6 +97,6 @@ bool PollerHandler::stop()
 {
     m_quit = true;
     CmdHandler::stop();
-    _rtu->set_response_timeout(1000000);
+    _rtu->set_response_timeout(m_stop_us);
     return true;
 }

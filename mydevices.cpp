@@ -7,7 +7,7 @@ MyDevices::MyDevices(int max,QGroupBox* parent):
     m_container(parent),
     m_max(36),
     m_row(6),m_col(6),
-    m_num(1)
+    m_num(1),m_max_sample(5000)
 {
     for(int i = 0; i < max; i++ )
     {
@@ -51,7 +51,13 @@ void MyDevices::SetDeviceNum(int start, int num)
     }
     m_num = num;
     m_start = start;
+    m_end = start+num - 1;
     m_values.clear();
+}
+
+void MyDevices::SetMaxSampleNum(int max)
+{
+    m_max_sample = max;
 }
 
 void MyDevices::Timeout(int addr)
@@ -59,6 +65,7 @@ void MyDevices::Timeout(int addr)
     if(addr < widgets.size())
     {
         widgets[addr-1]->Timeout();
+        m_csv.Append(addr, "",m_end);
     }
 }
 
@@ -66,8 +73,10 @@ void MyDevices::DisplayWeight(int addr, int weight, quint16 state, quint16 dot)
 {
     if(addr < widgets.size())
     {
-        m_values[addr].append((const char*)&weight,sizeof(int));
-        widgets[addr-1]->DisplayWeight(weight,state,dot);
+
+        QString str = widgets[addr-1]->DisplayWeight(weight,state,dot);
+        m_csv.Append(addr, str,m_end);
+        AppendWave(addr, utils::int2float(weight,dot));
     }
 }
 QString MyDevices::CreateDir()
@@ -123,5 +132,15 @@ void MyDevices::listWaveFiles(QStringList &files)
     QString dir = CreateDir();
     QDir wvDir(dir);
     files = wvDir.entryList(QDir::Files);
+}
+
+void MyDevices::AppendWave(int addr, float value)
+{
+    m_values[addr].append((const char*)&value,sizeof(float));
+    if(m_values[addr].size() > m_max_sample)
+    {
+        emit WaveFull();
+    }
+
 }
 

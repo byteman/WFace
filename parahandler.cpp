@@ -12,7 +12,7 @@ int ParaHandler::getDot()
     return m_para.dot;
 }
 
-bool ParaHandler::_paraSave(Para &_para)
+bool ParaHandler::_paraSave(Para &_para,int &reg)
 {
     if(_rtu)
     {
@@ -30,22 +30,25 @@ bool ParaHandler::_paraSave(Para &_para)
         values[10] = _para.zero_track_span;
         values[11] = _para.stable_span;
         values[12] = _para.filter_level;
-
+        reg = 3;
        if(1 == _rtu->write_registers(3,1,values))
        {
+           reg = 8;
            if(_rtu->write_registers(8,2,values+1) != 2)return false;
+           reg = 10;
            if(_rtu->write_registers(10,2,values+3) != 2)return false;
-
+           reg = 12;
            if(_rtu->write_registers(12,2,values+5) != 2)return false;
+           reg = 14;
            if(_rtu->write_registers(14,6,values+7) != 6)return false;
 
-
-
+                reg = 96;
                _rtu->write_registers(96,1,&_para.adRate);
                _rtu->read_registers(96,1,values);
                if(_para.adRate == values[0])
                {
-                    return true;
+                   reg = 0;
+                   return true;
                }
 
 
@@ -109,8 +112,10 @@ bool ParaHandler::doWork()
        }
        if(m_write)
        {
-           m_write = !_paraSave(m_para);
-           emit paraWriteResult(!m_write);
+           int reg = 0;
+           _paraSave(m_para,reg);
+           m_write = false;
+           emit paraWriteResult(reg);
        }
 
     }
