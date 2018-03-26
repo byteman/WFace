@@ -493,7 +493,7 @@
     <message>
         <location filename="mainwindow.ui" line="985"/>
         <source>Div1</source>
-        <translation>分度值1</translation>
+        <translation>分度值</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="887"/>

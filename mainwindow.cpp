@@ -238,17 +238,17 @@ QString MainWindow::formatValue(int value, int dot)
 void MainWindow::onParaReadResult(Para _para)
 {
     ui->cbxDot->setCurrentIndex(_para.dot);
-    ui->edtFullLow->setText(QString("%1").arg(formatValue(_para.span_low,_para.dot)));
+    //ui->edtFullLow->setText(QString("%1").arg(formatValue(_para.span_low,_para.dot)));
 
 
     ui->lbl_display_wet_4->setText(QString("Mid: %1").arg(formatValue(_para.span_low,_para.dot)));
-    ui->edtFullHigh->setText(QString("%1").arg(formatValue(_para.span_high,_para.dot)));
+    //ui->edtFullHigh->setText(QString("%1").arg(formatValue(_para.span_high,_para.dot)));
     ui->lbl_display_wet_2->setText(QString("Max: %1").arg(formatValue(_para.span_high,_para.dot)));
     ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
     ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_low));
-    ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
+    //ui->cbxDivLow->setCurrentText(QString("%1").arg(_para.div_low));
     ui->lbl_display_wet_3->setText(QString("d1: %1").arg(_para.div_high));
-    ui->cbxUnit->setCurrentIndex(_para.unit);
+    //ui->cbxUnit->setCurrentIndex(_para.unit);
     ui->edtSerial->setText(QString("%1").arg(_para.serial));
     if(_para.unit == 0) {
         ui->lblunit->setText("kg");
@@ -269,7 +269,7 @@ void MainWindow::onParaReadResult(Para _para)
     //ui->edtSlaveAddr->setText(QString("%1").arg(_para.slave_addr));
     ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
     ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
-    ui->cbxAdRate->setCurrentIndex(_para.adRate);
+    //ui->cbxAdRate->setCurrentIndex(_para.adRate);
 
     ui->edtVersion->setText(QString("V%1.%2.%3").arg(_para.version/10000).arg((_para.version%10000)/100).arg(_para.version%100));
 }
@@ -700,7 +700,7 @@ bool MainWindow::save_param()
     p.filter_level = ui->cbxFilterLvl->currentIndex();
     p.div_high = ui->cbxDivHigh->currentText().toInt(&ok);
     if(!ok) return false;
-    p.div_low = ui->cbxDivLow->currentText().toInt();
+    p.div_low = ui->cbxDivHigh->currentText().toInt();
     if(!ok) return false;
     p.dot = ui->cbxDot->currentIndex();
     if(p.dot==-1) return false;
@@ -710,7 +710,7 @@ bool MainWindow::save_param()
     if(!ok) return false;
     p.stable_span = ui->edtStableSpan->text().toInt(&ok);
     if(!ok) return false;
-    p.unit = ui->cbxUnit->currentIndex();
+    p.unit = 0;//ui->cbxUnit->currentIndex();
     if(p.unit==-1) return false;
     p.zero_track_span = ui->edtZeroSpan->text().toInt(&ok);
     if(!ok) return false;
@@ -724,7 +724,7 @@ bool MainWindow::save_param()
     p.span_high = toInt(ui->edtFullHigh->text(),dot, &ok);
     if(!ok) return false;
 
-    p.span_low= toInt(ui->edtFullLow->text(),dot, &ok);
+    p.span_low= toInt(ui->edtFullHigh->text(),dot, &ok);
 
     if(!ok) return false;
 
