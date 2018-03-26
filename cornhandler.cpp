@@ -20,7 +20,7 @@ bool CornHandler::paraRead(void)
     if(1 == _rtu->read_registers(REG_2B_SENSOR_NUM,1,values))
     {
 
-        m_sensor = (values[0] > 8)?4:values[0];
+        m_sensor = (values[0] > 4)?4:values[0];
 
         if(m_sensor*2 == _rtu->read_registers(REG_4B_CORN_K,m_sensor*2,values))
         {

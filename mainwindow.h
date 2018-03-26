@@ -117,6 +117,7 @@ private:
     WaveWidget*  waveWidget;
     WaveWidget*  rtwaveWidget;
     DialogWave * waveDlg;
+    int m_select_addr;
     MyConfig cfg;
     bool pressed;
     // QObject interface

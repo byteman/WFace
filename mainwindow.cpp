@@ -38,6 +38,7 @@ void MainWindow::initUI()
     //QByteArray res = file.readAll();
 
     pressed = false;
+    m_select_addr = 1;
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
 
     QSerialPortInfo port;
@@ -136,6 +137,7 @@ void MainWindow::chanADReadResult(QList<float> chanAD)
 //标定界面显示的实时AD
 void MainWindow::calibADReadResult(QList<float> chanAD)
 {
+
     for(int i = 0; i < adlist.size(); i++)
     {
         adlist[i]->clear();
@@ -149,9 +151,15 @@ void MainWindow::calibADReadResult(QList<float> chanAD)
 //K系数读取结果.
 void MainWindow::chanKReadResult(int sensor, QList<float> chanK)
 {
+
     for(int i = 0; i < chanK.size();i++)
     {
-        ui->tblCornFix->item(i,1)->setText(QString("%1").arg(chanK[i]));
+        QTableWidgetItem* item = ui->tblCornFix->item(i,1);
+        if(item!=NULL)
+        {
+            item->setText(QString("%1").arg(chanK[i]));
+        }
+
     }
     ui->edtSensorNum->setText(QString("%1").arg(sensor));
 }
@@ -165,8 +173,13 @@ void MainWindow::changeHandler(QString name,bool start)
     }
     if(start)
     {
+        if(name != "dummy")
+        {
+           reader.setDeviceAddr(m_select_addr);
+        }
         if(handlers.contains(name))
             handlers[name]->startRun();
+
     }
 }
 MainWindow::~MainWindow()
@@ -242,7 +255,7 @@ void MainWindow::onParaReadResult(Para _para)
 
 
     ui->lbl_display_wet_4->setText(QString("Mid: %1").arg(formatValue(_para.span_low,_para.dot)));
-    //ui->edtFullHigh->setText(QString("%1").arg(formatValue(_para.span_high,_para.dot)));
+    ui->edtFullHigh->setText(QString("%1").arg(formatValue(_para.span_high,_para.dot)));
     ui->lbl_display_wet_2->setText(QString("Max: %1").arg(formatValue(_para.span_high,_para.dot)));
     ui->cbxDivHigh->setCurrentText(QString("%1").arg(_para.div_high));
     ui->lbl_display_wet_5->setText(QString("d2: %1").arg(_para.div_low));
@@ -394,6 +407,7 @@ void MainWindow::onCalibProcessResult(int index, int result)
 
 void MainWindow::onReadCalibPointResult(int index, int weight, int ad ,int dot)
 {
+
     QTableWidgetItem *itemAd = ui->tblCalib->item(index,0);
     if(itemAd!=NULL)
     {
@@ -409,7 +423,8 @@ void MainWindow::onReadCalibPointResult(int index, int weight, int ad ,int dot)
 
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
-    reader.setDeviceAddr(item->text().toInt());
+    m_select_addr = item->text().toInt();
+    reader.setDeviceAddr(m_select_addr);
     ui->tabWidget->setCurrentIndex(1);
 }
 //继续下一步标定
@@ -673,6 +688,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     else if(index == 6)
     {
         changeHandler("dumy");
+        waveWidget->Clear();
         ReadWaveList();
     }
 }
@@ -1028,9 +1044,10 @@ void MainWindow::on_btnSrsWrite_clicked()
             float k = sk.toFloat(&ok);
             if(!ok)
             {
-                QString err= item->text()+QString(tr(" format_err"));
-                QMessageBox::information(this,tr("error"),err);
-                return;
+                continue;
+                //QString err= item->text()+QString(tr(" format_err"));
+                //QMessageBox::information(this,tr("error"),err);
+                //return;
             }
             ks.push_back(k);
             num++;
