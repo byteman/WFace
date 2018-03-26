@@ -40,10 +40,11 @@ private:
     int m_start;
     int m_end;
     int m_index;
-    QString CreateDir();
+    QString CreateDir(QString type);
     QString GetFileName();
     void AppendItem(QString &output, QString item);
 
+    void GetFileName(QString &csvFile, QString &waveFile);
 };
 
 #endif // MYDEVICES_H

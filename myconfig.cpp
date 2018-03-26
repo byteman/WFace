@@ -12,8 +12,17 @@ MyConfig::MyConfig()
     if(m_read_timeout < 500000) m_read_timeout = 500000;
     m_max_sample       = config.value("/config/max_save_sample",5000).toInt();
     if(m_max_sample < 500) m_max_sample = 500;
+    m_save_time_min       = config.value("/config/save_time_min",5).toInt();
+    if(m_max_sample > 24*60 ) m_max_sample = 24*60;
 
 
 
+}
+
+void MyConfig::SetSaveTime(int value)
+{
+    m_save_time_min = value;
+    QSettings config("wface.ini", QSettings::IniFormat);
+    config.setValue("/config/save_time_min",value);
 }
 

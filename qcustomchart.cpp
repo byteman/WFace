@@ -9,6 +9,15 @@ QCustomChart::QCustomChart(QCustomPlot *parent, int num):
    m_plot->xAxis->scaleRange(0,200);
    m_plot->yAxis->scaleRange(0,2000);
 
+   m_plot->xAxis->setLabel("时间");
+   m_plot->yAxis->setLabel("牛顿");
+
+   QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+   timeTicker->setTimeFormat("%h:%m:%s");
+   m_plot->xAxis->setTicker(timeTicker);
+   m_plot->axisRect()->setupFullAxesBox();
+   //customPlot->yAxis->setRange(-1.2, 1.2);
+
    m_plot->yAxis->setScaleRatio(m_plot->yAxis,1.3);
      //ui.ImgQCustomPlot->yAxis->setScaleRatio(ui.ImgQCustomPlot->xAxis, 1);
    m_plot->setOpenGl(true);
@@ -45,7 +54,8 @@ void QCustomChart::DisplayAllChannel(bool show)
     ILineChart::DisplayAllChannel(show);
 
     m_plot->rescaleAxes();
-    m_plot->yAxis->setScaleRatio(m_plot->yAxis,1.3);
+    //如果数值一直不变，会导致Y轴持续变大.
+    //m_plot->yAxis->setScaleRatio(m_plot->yAxis,1.3);
     m_plot->replot();
 }
 

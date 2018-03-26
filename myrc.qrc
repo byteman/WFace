@@ -4,5 +4,6 @@
         <file>monitor.png</file>
         <file>cn.qm</file>
         <file>en.qm</file>
+        <file>csv.txt</file>
     </qresource>
 </RCC>

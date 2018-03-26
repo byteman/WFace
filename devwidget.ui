@@ -92,7 +92,7 @@ QWidget {
         <string notr="true"/>
        </property>
        <property name="text">
-        <string>kg</string>
+        <string>牛</string>
        </property>
       </widget>
      </item>

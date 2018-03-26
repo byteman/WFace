@@ -9,6 +9,7 @@ QCustomPlotChannel::QCustomPlotChannel(int index,QCPGraph* graph):
     QPen pen(colors[index]);
     pen.setWidth(2);
     graph->setPen(pen);
+    Clear();
 
 }
 
@@ -38,8 +39,12 @@ void QCustomPlotChannel::SetDataArray(QVector<double> &values)
 
 void QCustomPlotChannel::AddData(double key, double value)
 {
-    int index = m_graph->dataCount();
-    m_graph->addData(index,value);
+    //int index = m_graph->dataCount();
+    //time = QTime::currentTime();
+    // calculate two new data points:
+    key = time.elapsed()/1000.0;
+
+    m_graph->addData(key,value);
 }
 
 void QCustomPlotChannel::AddDataArray(QVector<double> &samples)
@@ -66,7 +71,7 @@ void QCustomPlotChannel::Clear()
 {
 
     QVector<double> keys;
-
+    time = QTime::currentTime();
     m_graph->setData(keys,keys);
 }
 

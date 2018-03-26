@@ -99,6 +99,7 @@ void MainWindow::initUI()
     //connect(devices,SIGNAL(WaveFull()),this,SLOT(onSaveWave()));
     waveWidget = new WaveWidget(ui->widget);
     rtwaveWidget = new WaveWidget(ui->rtplot,1);
+    ui->edtSaveTime->setValue(cfg.m_save_time_min);
     qDebug() << QDateTime::currentMSecsSinceEpoch();
 #endif
 }
@@ -128,9 +129,13 @@ void MainWindow::clearState()
 //角差标定界面显示的实时AD
 void MainWindow::chanADReadResult(QList<float> chanAD)
 {
+    QTableWidgetItem *item = NULL;
+
     for(int i = 0; i < chanAD.size();i++)
     {
-        ui->tblCornFix->item(i,0)->setText(QString("%1").arg(chanAD[i]));
+        item = ui->tblCornFix->item(i,0);
+        if(item!=NULL)
+            item->setText(QString("%1").arg(chanAD[i]));
     }
 
 }
@@ -275,6 +280,7 @@ void MainWindow::onParaReadResult(Para _para)
         unit = "t";
         ui->lblunit->setText("t");
     }
+    ui->lblunit->setText(tr("N"));
     ui->edtZeroSpan->setText(QString("%1").arg(_para.zero_track_span));
     ui->edtStableSpan->setText(QString("%1").arg(_para.stable_span));
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
@@ -610,7 +616,7 @@ void MainWindow::traversalControl(const QObjectList& q)
     }
 
 }
-void MainWindow::clearCornCalib()
+void MainWindow::clearCornCalib(bool clear)
 {
     int rows = ui->tblCornFix->rowCount();
     int cols = ui->tblCornFix->columnCount();
@@ -618,11 +624,12 @@ void MainWindow::clearCornCalib()
     {
         for(int j = 0; j < cols; j++)
         {
-            QTableWidgetItem* item = ui->tblCalib->item(i,j);
+            QTableWidgetItem* item = ui->tblCornFix->item(i,j);
             if(item!=NULL)
                 item->setText("");
         }
     }
+    if(clear)
     ui->edtSensorNum->setText("");
 
 }
@@ -677,13 +684,14 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     }
     else if(index == 4)
     {
-        clearCornCalib();
+        clearCornCalib(true);
         changeHandler("corn");
     }
     else if(index == 5)
     {
 
         changeHandler("poll");
+
     }
     else if(index == 6)
     {
@@ -961,9 +969,26 @@ void MainWindow::timerEvent(QTimerEvent *)
     QString msg = QString("TX:%1|RX:%2 ").arg(tx).arg(rx);
 //    if(devices!=NULL){
 //        devices->DisplayWeight(2,1000,0,0);
-//        waveDlg->onPollWeightResult(2,1000,0,0,0,0);
+//        rtwaveWidget->AppendData(2,1000);
+//        rtwaveWidget->DisplayAllChannel(true);
+//        //waveDlg->onPollWeightResult(2,1000,0,0,0,0);
 //    }
     ui->statusBar->showMessage(msg);
+    if(ui->tabWidget->currentIndex() == 5)
+    {
+        int min = m_time.elapsed() / 60000;
+        qDebug() << "min=" << min << " save=" << cfg.m_save_time_min;
+        if(cfg.m_save_time_min == 0)
+        {
+            m_time = QTime::currentTime();
+        }
+        else if( min >= cfg.m_save_time_min )
+        {
+            on_btnSaveWave_clicked();
+        }
+
+    }
+
 }
 void MainWindow::EnableAllCalibButton(bool disable)
 {
@@ -1028,7 +1053,16 @@ void MainWindow::on_btnSrsWrite_clicked()
     bool ok = false;
     int num = ui->edtSensorNum->text().toInt(&ok);
 
+    if(num > 4 || num < 1)
+    {
+        return;
+    }
     corn->setSensorNum(num);
+
+    clearCornCalib(false);
+     corn->ReadParam();
+
+#if 0
     QList<float> ks;
     int rows = ui->tblCornFix->rowCount();
 
@@ -1055,6 +1089,7 @@ void MainWindow::on_btnSrsWrite_clicked()
     }
 
     corn->setKs(ks);
+#endif
 }
 
 void MainWindow::on_btnWriteK_clicked()
@@ -1144,6 +1179,7 @@ void MainWindow::on_btnSetAddr_clicked()
         devices->SetDeviceNum(startAddr,count);
         rtwaveWidget->SetChannel(startAddr,count);
         rtwaveWidget->Clear();
+        m_time = QTime::currentTime();
     }
 }
 
@@ -1170,10 +1206,16 @@ void MainWindow::on_btnClearWave_clicked()
 void MainWindow::on_btnSaveWave_clicked()
 {
     devices->SaveWave();
-    waveWidget->Clear();
+    rtwaveWidget->Clear();
+    m_time = QTime::currentTime();
 }
 
 void MainWindow::on_btnClear_clicked()
 {
     rtwaveWidget->Clear();
+}
+
+void MainWindow::on_edtSaveTime_valueChanged(int arg1)
+{
+    cfg.SetSaveTime(arg1);
 }

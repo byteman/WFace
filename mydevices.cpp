@@ -65,7 +65,7 @@ void MyDevices::Timeout(int addr)
     if(addr < widgets.size())
     {
         widgets[addr-1]->Timeout();
-        m_csv.Append(addr, "",m_end);
+        m_csv.Append(addr, "",m_end,false);
     }
 }
 
@@ -75,14 +75,14 @@ void MyDevices::DisplayWeight(int addr, int weight, quint16 state, quint16 dot)
     {
 
         QString str = widgets[addr-1]->DisplayWeight(weight,state,dot);
-        m_csv.Append(addr, str,m_end);
+        m_csv.Append(addr, str,m_end,false);
         AppendWave(addr, utils::int2float(weight,dot));
     }
 }
-QString MyDevices::CreateDir()
+QString MyDevices::CreateDir(QString type)
 {
 
-    QString target_dir=QString("%1/wave/").arg(QDir::currentPath());
+    QString target_dir=QString("%1/%2").arg(QDir::currentPath()).arg(type);
     QDir dir(target_dir);
     if(!dir.exists())
     {
@@ -90,31 +90,35 @@ QString MyDevices::CreateDir()
     }
     return target_dir;
 }
-QString MyDevices::GetFileName()
+void MyDevices::GetFileName(QString &csvFile,QString &waveFile)
 {
     QString dt  = QDateTime::currentDateTime().toString("yyyyMMddhhmmss");
-    QString dir = CreateDir();
-    QString file = QString("%1/%2.wave").arg(dir).arg(dt);
-    return file;
+    QString wave_dir = CreateDir("wave");
+    QString csv_dir = CreateDir("csv");
+    waveFile = QString("%1/%2.wave").arg(wave_dir).arg(dt);
+    csvFile = QString("%1/%2.csv").arg(csv_dir).arg(dt);
+
 }
 #include "wavefile.h"
 void MyDevices::SaveWave()
 {
-    QString fname = GetFileName();
-    WaveFile wv(fname);
-
+    QString wave,csv;
+    GetFileName(csv,wave);
+    WaveFile wv(wave);
+    //CSVFile  csv(fname);
     QMapIterator<int, QByteArray> i(m_values);
     while (i.hasNext()) {
         i.next();
         wv.writeChan(i.key(),m_values[i.key()]);
         //cout << i.key() << ": " << i.value() << endl;
     }
+    m_csv.SaveFile(csv);
     m_values.clear();
 }
 
 void MyDevices::LoadWave(QString file, ChannelsData &datas)
 {
-    QString filename = CreateDir() + "/" + file;
+    QString filename = CreateDir("wave") + "/" + file;
 
     WaveFile wvf;
     wvf.load(filename,datas);
@@ -129,7 +133,7 @@ void MyDevices::GetNum(int &start, int &num)
 
 void MyDevices::listWaveFiles(QStringList &files)
 {
-    QString dir = CreateDir();
+    QString dir = CreateDir("wave");
     QDir wvDir(dir);
     files = wvDir.entryList(QDir::Files);
 }

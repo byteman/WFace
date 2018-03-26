@@ -100,6 +100,8 @@ private slots:
 
     void on_btnClear_clicked();
 
+    void on_edtSaveTime_valueChanged(int arg1);
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
@@ -118,6 +120,7 @@ private:
     WaveWidget*  rtwaveWidget;
     DialogWave * waveDlg;
     int m_select_addr;
+    QTime m_time;
     MyConfig cfg;
     bool pressed;
     // QObject interface
@@ -126,7 +129,7 @@ private:
     void initUI();
     void changeHandler(QString name,bool start=true);
     void initCornFixChan();
-    void clearCornCalib();
+    void clearCornCalib(bool clear);
     void DisableAllCalibButton();
     void EnableAllCalibButton(bool disable);
     void EnableCalibButton(int index, bool disable);
