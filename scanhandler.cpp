@@ -57,6 +57,7 @@ bool ScanHandler::doWork()
         }
 
         m_addr++;
+        msleep(10);
         //还没有扫描完毕
         return false;
     }

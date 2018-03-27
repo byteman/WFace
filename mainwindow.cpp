@@ -103,6 +103,7 @@ void MainWindow::initUI()
     rtwaveWidget = new WaveWidget(ui->rtplot,1);
     ui->edtSaveTime->setValue(cfg.m_save_time_min);
     qDebug() << QDateTime::currentMSecsSinceEpoch();
+    devices->SetUnit(cfg.Unit());
 #endif
 }
 void MainWindow::initAdList()
@@ -282,7 +283,8 @@ void MainWindow::onParaReadResult(Para _para)
         unit = "t";
         ui->lblunit->setText("t");
     }
-    ui->lblunit->setText(cfg.Unit());
+    ui->edtUnit->setText(cfg.Unit());
+
     ui->edtZeroSpan->setText(QString("%1").arg(_para.zero_track_span));
     ui->edtStableSpan->setText(QString("%1").arg(_para.stable_span));
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
@@ -384,7 +386,7 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
 //        strState += " | ";
 //        ui->lblstate->setText(strState);
 //    }
-
+    ui->lblunit->setText(cfg.Unit());
     ui->lbl_display_wet->setText(ws);
 }
 
@@ -763,6 +765,7 @@ void MainWindow::on_btnSave_clicked()
         QMessageBox::information(this,tr("error"),tr(" format_err"));
     }
     cfg.SaveUnit(ui->edtUnit->text());
+    devices->SetUnit(cfg.Unit());
 
 }
 

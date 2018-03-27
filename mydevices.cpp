@@ -45,6 +45,7 @@ void MyDevices::SetDeviceNum(int start, int num)
     {
         int row = i/m_col ;
         int col = i%m_col;
+        widgets[i+start-1]->SetUnit(m_unit);
         widgets[i+start-1]->setGeometry(col*w,row*h,w,h);
         //qlayout->addWidget(widgets[i+start],row,col);
         widgets[i+start-1]->show();
@@ -72,6 +73,10 @@ void MyDevices::Timeout(int addr)
 void MyDevices::SetUnit(QString unit)
 {
     m_unit = unit;
+    for(int i = 0; i < widgets.size();i++)
+    {
+        widgets[i]->SetUnit(unit);
+    }
 }
 
 void MyDevices::DisplayWeight(int addr, int weight, quint16 state, quint16 dot)

@@ -39,10 +39,11 @@ bool PollerHandler::doWork()
                 qDebug() << "PollerHandler quit";
                 return true;
             }
+            this->msleep(10);
 
         }
 
-        this->msleep(100);
+        //this->msleep(100);
         return false;
     }
     return true;
