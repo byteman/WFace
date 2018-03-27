@@ -39,6 +39,8 @@ void MainWindow::initUI()
 
     pressed = false;
     m_select_addr = 1;
+    ui->lblunit->setText(cfg.Unit());
+    ui->edtUnit->setText(cfg.Unit());
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
 
     QSerialPortInfo port;
@@ -280,7 +282,7 @@ void MainWindow::onParaReadResult(Para _para)
         unit = "t";
         ui->lblunit->setText("t");
     }
-    ui->lblunit->setText(tr("N"));
+    ui->lblunit->setText(cfg.Unit());
     ui->edtZeroSpan->setText(QString("%1").arg(_para.zero_track_span));
     ui->edtStableSpan->setText(QString("%1").arg(_para.stable_span));
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
@@ -738,8 +740,8 @@ bool MainWindow::save_param()
     if(p.unit==-1) return false;
     p.zero_track_span = ui->edtZeroSpan->text().toInt(&ok);
     if(!ok) return false;
-    p.adRate = ui->cbxAdRate->currentIndex();
-    if(p.adRate==-1) return false;
+    p.adRate = 0;//ui->cbxAdRate->currentIndex();
+    //if(p.adRate==-1) return false;
 
 
     quint8 dot = p.dot;
@@ -760,6 +762,7 @@ void MainWindow::on_btnSave_clicked()
     {
         QMessageBox::information(this,tr("error"),tr(" format_err"));
     }
+    cfg.SaveUnit(ui->edtUnit->text());
 
 }
 
@@ -1177,6 +1180,7 @@ void MainWindow::on_btnSetAddr_clicked()
         poller->setTimeOut(timeout,cfg.m_read_timeout);
         poller->setAddrSpan(startAddr,count);
         devices->SetDeviceNum(startAddr,count);
+        devices->SetUnit(cfg.Unit());
         rtwaveWidget->SetChannel(startAddr,count);
         rtwaveWidget->Clear();
         m_time = QTime::currentTime();

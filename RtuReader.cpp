@@ -41,6 +41,10 @@ int RtuReader::read_registers(int reg_addr, int nb, quint16 *value)
 {
     return m_rtu.read_registers(reg_addr,nb,value);
 }
+void RtuReader::flush()
+{
+    return m_rtu.flush();
+}
 
 int RtuReader::read_input_registers(int reg_addr, int nb, quint16 *value)
 {

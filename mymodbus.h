@@ -18,7 +18,7 @@ public:
     void setDeviceAddr(int _addr);
     int  write_register(int reg_addr, int value);
     int  write_registers(int reg_addr, int nb,quint16* value);
-
+    void flush();
     int  read_registers(int reg_addr, int nb,quint16* value);
     int  read_input_registers(int reg_addr, int nb,quint16* value);
     QString port() const;

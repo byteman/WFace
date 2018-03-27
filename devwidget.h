@@ -16,13 +16,14 @@ public:
 
     ~DevWidget();
     void Timeout();
+    void SetUnit(QString unit);
     QString DisplayWeight(int weight, quint16 state, quint16 dot);
 private:
     void SetOnline(bool online);
     Ui::DevWidget *ui;
     int m_addr;
     int m_timeout;
-
+    QString m_unit;
     // QObject interface
     void clearState();
     void resetTimeout();

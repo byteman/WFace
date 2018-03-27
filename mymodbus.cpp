@@ -62,6 +62,11 @@ int  RTU_Modbus::write_registers(int reg_addr, int nb,quint16* value)
     return ret;
 }
 
+void RTU_Modbus::flush()
+{
+    modbus_flush(m_modbus);
+}
+
 
 int  RTU_Modbus::write_register(int reg_addr, int value)
 {

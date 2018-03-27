@@ -69,6 +69,11 @@ void MyDevices::Timeout(int addr)
     }
 }
 
+void MyDevices::SetUnit(QString unit)
+{
+    m_unit = unit;
+}
+
 void MyDevices::DisplayWeight(int addr, int weight, quint16 state, quint16 dot)
 {
     if(addr < widgets.size())

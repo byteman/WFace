@@ -28,6 +28,7 @@ public:
 
     bool open(QString port, int baud, char parity, char databit, char stopbit);
 
+    void flush();
 public slots:
     void doWork();
 private:

@@ -51,7 +51,9 @@ bool ScanHandler::doWork()
                     emit scanResult(SCAN_COMPLETE,m_addr);
                     return true;
                 }
+
             }
+            _rtu->flush();
         }
 
         m_addr++;

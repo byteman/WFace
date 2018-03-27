@@ -14,6 +14,7 @@ MyConfig::MyConfig()
     if(m_max_sample < 500) m_max_sample = 500;
     m_save_time_min       = config.value("/config/save_time_min",5).toInt();
     if(m_max_sample > 24*60 ) m_max_sample = 24*60;
+    m_unit       = config.value("/config/unit","N").toString();
 
 
 
@@ -24,5 +25,17 @@ void MyConfig::SetSaveTime(int value)
     m_save_time_min = value;
     QSettings config("wface.ini", QSettings::IniFormat);
     config.setValue("/config/save_time_min",value);
+}
+
+void MyConfig::SaveUnit(QString unit)
+{
+    m_unit = unit;
+    QSettings config("wface.ini", QSettings::IniFormat);
+    config.setValue("/config/unit",unit);
+}
+
+QString MyConfig::Unit()
+{
+    return m_unit;
 }
 

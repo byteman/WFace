@@ -17,6 +17,7 @@ public:
     void SetDeviceNum(int  start, int num);
     void SetMaxSampleNum(int max);
     void Timeout(int addr);
+    void SetUnit(QString unit);
     void DisplayWeight(int addr,int weight, quint16 state,quint16 dot);
     void SaveWave();
     void LoadWave(QString file,ChannelsData& datas);
@@ -40,6 +41,7 @@ private:
     int m_start;
     int m_end;
     int m_index;
+    QString m_unit;
     QString CreateDir(QString type);
     QString GetFileName();
     void AppendItem(QString &output, QString item);

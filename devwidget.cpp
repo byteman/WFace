@@ -36,6 +36,12 @@ void DevWidget::Timeout()
     }
 }
 
+void DevWidget::SetUnit(QString unit)
+{
+    m_unit = unit;
+    ui->lbl_unit->setText(unit);
+}
+
 void DevWidget::clearState()
 {
     ui->lbl_ng->clear();
