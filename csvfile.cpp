@@ -82,7 +82,7 @@ bool CSVFile::Append(int addr, QString value, int maxAddr,bool flush)
 {
 
     m_values[addr+1] = value;
-    if(addr >= maxAddr)
+    if((addr+1) >= maxAddr)
     {
         m_values[0] = QString("%1").arg(m_index++);
         m_values[1] = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");

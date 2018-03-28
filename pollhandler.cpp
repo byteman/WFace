@@ -5,45 +5,67 @@
 
 PollerHandler::PollerHandler(RtuReader *rtu):
     CmdHandler(rtu),
-    m_start(1),
+    m_start(0),
     m_end(0),
+    m_cur_addr(0),
     m_start_us(30000),
     m_stop_us(1000000),
+    m_read_delay_ms(10),
     m_quit(false)
 {
 
 }
+bool PollerHandler::canRead()
+{
+    qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if( (now - m_last_time ) < m_read_delay_ms)
+    {
 
+        return false;
+    }
+    m_last_time = now;
+    return true;
+
+}
 bool PollerHandler::doWork()
 {
-    qDebug() << "PollerHandler doWork";
+    //qDebug() << "PollerHandler doWork";
     if(_rtu)
     {
-        for(quint8 addr = m_start; addr <= m_end;  addr++)
+
+
+        if( m_cur_addr < m_end)
         {
             quint16 values[8];
-            _rtu->setDeviceAddr(addr);
+            if(!canRead())
+            {
+                msleep(1);
+                return false;
+            }
+            _rtu->setDeviceAddr(m_cur_addr);
 
             if(4 == _rtu->read_registers(0,4,values))
             {
-
-                emit weightResult(addr,values[0]+(values[1]<<16),values[2],values[3],values[4]+(values[5]<<16),values[6] +( values[7]<<16 ) );
+                emit weightResult(m_cur_addr,values[0]+(values[1]<<16),values[2],values[3],values[4]+(values[5]<<16),values[6] +( values[7]<<16 ) );
+                this->msleep(5);
             }
             else{
                 //超时.
-                qDebug() << "addr" << addr << " timeout";
-                emit timeout(addr);
+                qDebug() << "addr" << m_cur_addr << " timeout";
+                emit timeout(m_cur_addr);
             }
-            if(m_quit)
-            {
-                qDebug() << "PollerHandler quit";
-                return true;
-            }
-            this->msleep(10);
+            m_cur_addr++;
 
         }
-
-        //this->msleep(100);
+        if(m_cur_addr >= m_end)
+        {
+            m_cur_addr = m_start;
+        }
+        if(m_quit)
+        {
+            qDebug() << "PollerHandler quit";
+            return true;
+        }
         return false;
     }
     return true;
@@ -86,11 +108,17 @@ void PollerHandler::setTimeOut(int startUs, int stopUs)
     _rtu->set_response_timeout(startUs);
 }
 
+void PollerHandler::setReadInterval(int ms)
+{
+    m_read_delay_ms = ms;
+}
+
 //最大超时时间100ms,
 bool PollerHandler::startRun()
 {
     _rtu->set_response_timeout(m_start_us);
     m_quit = false;
+    m_last_time =QDateTime::currentMSecsSinceEpoch();
     return CmdHandler::startRun();
 }
 

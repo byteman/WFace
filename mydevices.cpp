@@ -11,16 +11,10 @@ MyDevices::MyDevices(int max,QGroupBox* parent):
 {
     for(int i = 0; i < max; i++ )
     {
-        DevWidget* widget = new DevWidget(i+1,parent);
+        DevWidget* widget = new DevWidget(i,parent);
         widgets.push_back(widget);
         widget->hide();
     }
-    //QGridLayout* layout = parent->layout();
-
-    //qlayout = new QGridLayout();
-
-    //parent->setLayout(qlayout);
-
 }
 
 
@@ -45,14 +39,14 @@ void MyDevices::SetDeviceNum(int start, int num)
     {
         int row = i/m_col ;
         int col = i%m_col;
-        widgets[i+start-1]->SetUnit(m_unit);
-        widgets[i+start-1]->setGeometry(col*w,row*h,w,h);
+        widgets[i+start]->SetUnit(m_unit);
+        widgets[i+start]->setGeometry(col*w,row*h,w,h);
         //qlayout->addWidget(widgets[i+start],row,col);
-        widgets[i+start-1]->show();
+        widgets[i+start]->show();
     }
     m_num = num;
     m_start = start;
-    m_end = start+num - 1;
+    m_end = start+num ;
     m_values.clear();
 }
 
@@ -65,7 +59,7 @@ void MyDevices::Timeout(int addr)
 {
     if(addr < widgets.size())
     {
-        widgets[addr-1]->Timeout();
+        widgets[addr]->Timeout();
         m_csv.Append(addr, "",m_end,false);
     }
 }
@@ -84,7 +78,7 @@ void MyDevices::DisplayWeight(int addr, int weight, quint16 state, quint16 dot)
     if(addr < widgets.size())
     {
 
-        QString str = widgets[addr-1]->DisplayWeight(weight,state,dot);
+        QString str = widgets[addr]->DisplayWeight(weight,state,dot);
         m_csv.Append(addr, str,m_end,false);
         AppendWave(addr, utils::int2float(weight,dot));
     }

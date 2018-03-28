@@ -983,7 +983,7 @@ void MainWindow::timerEvent(QTimerEvent *)
     if(ui->tabWidget->currentIndex() == 5)
     {
         int min = m_time.elapsed() / 60000;
-        qDebug() << "min=" << min << " save=" << cfg.m_save_time_min;
+        //qDebug() << "min=" << min << " save=" << cfg.m_save_time_min;
         if(cfg.m_save_time_min == 0)
         {
             m_time = QTime::currentTime();
@@ -1157,7 +1157,15 @@ void MainWindow::on_tblCalib_cellPressed(int row, int column)
 
     pressed = true;
 }
+void MainWindow::SetReadTimeout(int index,int count)
+{
 
+    if(index == 0) index = 1000/(count*10);
+    else if(index == 1) index = 1000/(count*5);
+    else index = 1000/(count);
+    poller->setReadInterval(index);
+
+}
 void MainWindow::on_btnSetAddr_clicked()
 {
     if(poller!=NULL){
@@ -1168,19 +1176,14 @@ void MainWindow::on_btnSetAddr_clicked()
         qint8 count = ui->edtAddrCount->text().toInt(&ok);
         if(!ok) return;
         if(count<0) count=0;
-        if( (startAddr+count) > 32)
+        if( (startAddr+count) > 33)
         {
             QMessageBox::information(this,tr("info"),tr("error addr span"));
             return;
         }
-        int index = ui->cbxAcqSpan->currentIndex();
-        if(index == 0) index = 10;
-        else if(index == 1) index = 5;
-        else index = 1;
 
-        int timeout = (1000000/index) / count;
-        if(timeout < 50000) timeout = 50000;
-        poller->setTimeOut(timeout,cfg.m_read_timeout);
+        poller->setTimeOut(100000,cfg.m_read_timeout);
+        SetReadTimeout(ui->cbxAcqSpan->currentIndex(),count);
         poller->setAddrSpan(startAddr,count);
         devices->SetDeviceNum(startAddr,count);
         devices->SetUnit(cfg.Unit());
@@ -1225,4 +1228,15 @@ void MainWindow::on_btnClear_clicked()
 void MainWindow::on_edtSaveTime_valueChanged(int arg1)
 {
     cfg.SetSaveTime(arg1);
+}
+
+void MainWindow::on_cbxAcqSpan_currentIndexChanged(int index)
+{
+    bool ok = false;
+    qint8 count = ui->edtAddrCount->text().toInt(&ok);
+    if(ok)
+    {
+        SetReadTimeout(index,count);
+    }
+
 }

@@ -14,7 +14,7 @@ MyConfig::MyConfig()
     if(m_max_sample < 500) m_max_sample = 500;
     m_save_time_min       = config.value("/config/save_time_min",5).toInt();
     if(m_max_sample > 24*60 ) m_max_sample = 24*60;
-    m_unit       = config.value("/config/unit","N").toString();
+    m_unit       = config.value("/config/unit","kg").toString();
 
 
 

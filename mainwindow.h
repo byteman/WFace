@@ -102,6 +102,8 @@ private slots:
 
     void on_edtSaveTime_valueChanged(int arg1);
 
+    void on_cbxAcqSpan_currentIndexChanged(int index);
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
@@ -146,6 +148,7 @@ private:
     QString float2string(float wf, int dot);
     QString formatfloat(float wf, int dot);
     int ReadWaveList();
+    void SetReadTimeout(int index, int count);
 protected:
     void timerEvent(QTimerEvent *);
 
