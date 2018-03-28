@@ -197,8 +197,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::onReadCalibParam(quint32 sensorMv, quint32 sensorFullSpan)
 {
-    ui->edtSensorFullSpan->setText(QString("%1").arg(sensorFullSpan));
-    ui->edtSensorMv->setText(QString("%1").arg(sensorMv));
+    //ui->edtSensorFullSpan->setText(QString("%1").arg(sensorFullSpan));
+    //ui->edtSensorMv->setText(QString("%1").arg(sensorMv));
 }
 
 void MainWindow::on_actionChagne_triggered()
@@ -650,8 +650,8 @@ void MainWindow::clearCalib()
                 item->setText("");
         }
     }
-    ui->edtSensorFullSpan->setText("");
-    ui->edtSensorMv->setText("");
+    //ui->edtSensorFullSpan->setText("");
+    //ui->edtSensorMv->setText("");
 
 }
 void MainWindow::on_tabWidget_currentChanged(int index)
@@ -959,10 +959,10 @@ void MainWindow::on_btnSensorWrite_clicked()
     quint32 sensor_full_span; // 传感器总量程（所有传感器量程和）
     quint32 sensor_mv;
 
-    sensor_full_span = ui->edtSensorFullSpan->text().toInt();
-    sensor_mv = ui->edtSensorMv->text().toInt();
+    //sensor_full_span = ui->edtSensorFullSpan->text().toInt();
+    //sensor_mv = ui->edtSensorMv->text().toInt();
 
-    calib->savePara(sensor_full_span,sensor_mv);
+    //calib->savePara(sensor_full_span,sensor_mv);
 
 }
 
