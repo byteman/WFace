@@ -149,6 +149,7 @@ private:
     QString formatfloat(float wf, int dot);
     int ReadWaveList();
     void SetReadTimeout(int index, int count);
+    void hideTabs();
 protected:
     void timerEvent(QTimerEvent *);
 

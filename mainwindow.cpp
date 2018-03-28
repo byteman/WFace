@@ -88,6 +88,7 @@ void MainWindow::initUI()
     connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),this,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
     connect(poller,SIGNAL(timeout(int)),this,SLOT(onPollTimeout(int)));
 
+
     //waveDlg = new DialogWave(this,1);
 //    connect(waveDlg,SIGNAL(accepted()),this,SLOT(onAccept()));
 //    connect(waveDlg,SIGNAL(finished(int)),this,SLOT(onFinished(int)));
@@ -96,6 +97,7 @@ void MainWindow::initUI()
 
     initAdList();
     clearState();
+    hideTabs();
     devices = new MyDevices(32,ui->gbDevices);
     devices->SetMaxSampleNum(cfg.m_max_sample);
     //connect(devices,SIGNAL(WaveFull()),this,SLOT(onSaveWave()));
@@ -105,6 +107,12 @@ void MainWindow::initUI()
     qDebug() << QDateTime::currentMSecsSinceEpoch();
     devices->SetUnit(cfg.Unit());
 #endif
+}
+void MainWindow::hideTabs()
+{
+     ui->tabWidget->setTabEnabled(3,false);
+     ui->tabWidget->setTabEnabled(4,false);
+     ui->tabWidget->setStyleSheet("QTabBar::tab:disabled {width: 0; color: transparent;}");
 }
 void MainWindow::initAdList()
 {

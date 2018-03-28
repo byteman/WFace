@@ -1717,7 +1717,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTabWidget" name="tabWidget_2">
+         <widget class="QTabWidget" name="tabWaveWidget">
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -1834,8 +1834,14 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionChagne">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>复位设备</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionRead_Parameter">
