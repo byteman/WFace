@@ -336,6 +336,10 @@ void MainWindow::onPollTimeout(int addr)
     if(devices!=NULL)
     {
         devices->Timeout(addr);
+        if(addr >= devices->GetEndAddr())
+        {
+            rtwaveWidget->DisplayAllChannel(true);
+        }
     }
 }
 
@@ -402,7 +406,11 @@ void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16
     if(devices!=NULL){
         devices->DisplayWeight(addr,weight,state,dot);
         rtwaveWidget->AppendData(addr,utils::int2float(weight,dot));
-        rtwaveWidget->DisplayAllChannel(true);
+        if(addr >= devices->GetEndAddr())
+        {
+            rtwaveWidget->DisplayAllChannel(true);
+        }
+        //rtwaveWidget->DisplayAllChannel(true);
     }
 }
 //标定过程....

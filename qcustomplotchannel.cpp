@@ -6,9 +6,14 @@ QCustomPlotChannel::QCustomPlotChannel(int index,QCPGraph* graph):
 {
 //    m_max = -10000;
 //    m_min = 10000;
-    QPen pen(colors[index]);
-    pen.setWidth(2);
-    graph->setPen(pen);
+    if(index < 8)
+    {
+        QPen pen(colors[index]);
+        pen.setWidth(2);
+        graph->setPen(pen);
+    }
+
+
     Clear();
 
 }

@@ -22,6 +22,7 @@ public:
     void SaveWave();
     void LoadWave(QString file,ChannelsData& datas);
     void GetNum(int &start,int &num);
+    int  GetEndAddr();
     void listWaveFiles(QStringList &files);
 signals:
     void WaveFull();

@@ -135,6 +135,11 @@ void MyDevices::GetNum(int &start, int &num)
     num = m_num;
 }
 
+int MyDevices::GetEndAddr()
+{
+    return m_end -1;
+}
+
 void MyDevices::listWaveFiles(QStringList &files)
 {
     QString dir = CreateDir("wave");
