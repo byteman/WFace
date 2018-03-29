@@ -72,7 +72,7 @@ bool CSVFile::Append(QMap<int, QString> &values, int maxAddr)
 
     }
     m_values[0] = QString("%1").arg(m_index++);
-    m_values[1] = QDateTime::currentDateTime().toString("%yyyy-MM-dd hh-mm-ss");
+    m_values[1] = QDateTime::currentDateTime().toString("%yyyy-MM-dd,hh:mm:ss");
 
     m_file.write(m_values.join(',').toLatin1());
     return true;
@@ -85,7 +85,7 @@ bool CSVFile::Append(int addr, QString value, int maxAddr,bool flush)
     if((addr+1) >= maxAddr)
     {
         m_values[0] = QString("%1").arg(m_index++);
-        m_values[1] = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        m_values[1] = QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss");
         QString out = m_values.join(',');
         if(flush)
         {

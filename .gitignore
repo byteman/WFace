@@ -8,3 +8,7 @@ Makefile.Release
 ui_mainwindow.h
 release
 output
+output-debug
+output-release
+*.wave
+*.csv

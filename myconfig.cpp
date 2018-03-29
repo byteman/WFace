@@ -15,8 +15,7 @@ MyConfig::MyConfig()
     m_save_time_min       = config.value("/config/save_time_min",5).toInt();
     if(m_max_sample > 24*60 ) m_max_sample = 24*60;
     m_unit       = config.value("/config/unit","kg").toString();
-
-
+    m_admin       = config.value("/config/admin",false).toBool();
 
 }
 
@@ -37,5 +36,10 @@ void MyConfig::SaveUnit(QString unit)
 QString MyConfig::Unit()
 {
     return m_unit;
+}
+
+bool MyConfig::isAdmin()
+{
+    return m_admin;
 }
 

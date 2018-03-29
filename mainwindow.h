@@ -104,6 +104,8 @@ private slots:
 
     void on_cbxAcqSpan_currentIndexChanged(int index);
 
+    void on_actionReset_triggered();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
@@ -149,7 +151,7 @@ private:
     QString formatfloat(float wf, int dot);
     int ReadWaveList();
     void SetReadTimeout(int index, int count);
-    void hideTabs();
+    void hideForGuest();
 protected:
     void timerEvent(QTimerEvent *);
 

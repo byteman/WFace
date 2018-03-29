@@ -89,15 +89,13 @@ void MainWindow::initUI()
     connect(poller,SIGNAL(timeout(int)),this,SLOT(onPollTimeout(int)));
 
 
-    //waveDlg = new DialogWave(this,1);
-//    connect(waveDlg,SIGNAL(accepted()),this,SLOT(onAccept()));
-//    connect(waveDlg,SIGNAL(finished(int)),this,SLOT(onFinished(int)));
-//    connect(waveDlg,SIGNAL(saveWave()),this,SLOT(onSaveWave()));
-
-
     initAdList();
     clearState();
-    hideTabs();
+    if(!cfg.isAdmin())
+    {
+        hideForGuest();
+    }
+
     devices = new MyDevices(32,ui->gbDevices);
     devices->SetMaxSampleNum(cfg.m_max_sample);
     //connect(devices,SIGNAL(WaveFull()),this,SLOT(onSaveWave()));
@@ -108,8 +106,9 @@ void MainWindow::initUI()
     devices->SetUnit(cfg.Unit());
 #endif
 }
-void MainWindow::hideTabs()
+void MainWindow::hideForGuest()
 {
+
      ui->tabWidget->setTabEnabled(3,false);
      ui->tabWidget->setTabEnabled(4,false);
      ui->tabWidget->setStyleSheet("QTabBar::tab:disabled {width: 0; color: transparent;}");
@@ -1170,7 +1169,9 @@ void MainWindow::SetReadTimeout(int index,int count)
 
     if(index == 0) index = 1000/(count*10);
     else if(index == 1) index = 1000/(count*5);
-    else index = 1000/(count);
+    else if(index == 2) index = 1000/(count);
+    else if(index == 3) index = 1000/(count*0.2);
+    else if(index == 4) index = 1000/(count*0.1);
     poller->setReadInterval(index);
 
 }
@@ -1246,5 +1247,10 @@ void MainWindow::on_cbxAcqSpan_currentIndexChanged(int index)
     {
         SetReadTimeout(index,count);
     }
+
+}
+
+void MainWindow::on_actionReset_triggered()
+{
 
 }
