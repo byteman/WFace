@@ -298,7 +298,7 @@ void MainWindow::onParaReadResult(Para _para)
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
 
     //ui->edtSlaveAddr->setText(QString("%1").arg(_para.slave_addr));
-    ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
+    //ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
     ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
     //ui->cbxAdRate->setCurrentIndex(_para.adRate);
 
@@ -742,8 +742,8 @@ bool MainWindow::save_param()
     if(p.dot==-1) return false;
     p.hand_zero_span = ui->edtHandZeroSpan->text().toInt(&ok);
     if(!ok) return false;
-    p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt(&ok);
-    if(!ok) return false;
+    p.pwr_zero_span  = 0;//ui->edtPwrZeroSpan->text().toInt(&ok);
+    //if(!ok) return false;
     p.stable_span = ui->edtStableSpan->text().toInt(&ok);
     if(!ok) return false;
     p.unit = 0;//ui->cbxUnit->currentIndex();
