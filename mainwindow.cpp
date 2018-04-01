@@ -108,10 +108,17 @@ void MainWindow::initUI()
 }
 void MainWindow::hideForGuest()
 {
+    ui->edtSerial->hide();
+    ui->label_15->hide();
+    ui->edtVersion->hide();
+    ui->label_16->hide();
 
-     ui->tabWidget->setTabEnabled(3,false);
-     ui->tabWidget->setTabEnabled(4,false);
-     ui->tabWidget->setStyleSheet("QTabBar::tab:disabled {width: 0; color: transparent;}");
+    ui->cbxDot->setEnabled(false);
+    ui->edtUnit->setEnabled(false);
+    ui->edtFullHigh->setEnabled(false);
+    ui->tabWidget->setTabEnabled(3,false);
+    ui->tabWidget->setTabEnabled(4,false);
+    ui->tabWidget->setStyleSheet("QTabBar::tab:disabled {width: 0; color: transparent;}");
 }
 void MainWindow::initAdList()
 {

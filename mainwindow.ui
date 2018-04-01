@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>膨胀力测试工装</string>
+   <string>膨胀力测试工装-V1.3.5</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1027,6 +1027,9 @@
            </item>
            <item row="3" column="6">
             <widget class="QComboBox" name="cbxDot">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <item>
               <property name="text">
                <string>000000</string>
@@ -1129,6 +1132,9 @@
            </item>
            <item row="5" column="3">
             <widget class="QLineEdit" name="edtUnit">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="text">
               <string>N</string>
              </property>
@@ -1796,7 +1802,7 @@
      <x>0</x>
      <y>0</y>
      <width>1343</width>
-     <height>23</height>
+     <height>30</height>
     </rect>
    </property>
   </widget>
