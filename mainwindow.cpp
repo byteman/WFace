@@ -104,6 +104,23 @@ void MainWindow::initUI()
     ui->edtSaveTime->setValue(cfg.m_save_time_min);
     qDebug() << QDateTime::currentMSecsSinceEpoch();
     devices->SetUnit(cfg.Unit());
+//    QLabel *permanent = new QLabel(this);
+//    QFont ft;
+//    ft.setPointSize(12);
+    //ft.setBold(true);
+//    permanent->setFont(ft);
+
+//    QPalette pa;
+//    pa.setColor(QPalette::WindowText,Qt::black);
+//    permanent->setPalette(pa);
+
+
+    //permanent->setFrameStyle(QFrame::Box | QFrame::Sunken);
+//    permanent->setText(tr("logo_title"));
+//    permanent->setTextFormat(Qt::RichText);
+//    permanent->setOpenExternalLinks(true);
+
+    //ui->statusBar->addPermanentWidget(permanent);
 #endif
 }
 void MainWindow::hideForGuest()
@@ -195,7 +212,7 @@ void MainWindow::changeHandler(QString name,bool start)
     }
     if(start)
     {
-        if(name != "dummy")
+        if(name != "dumy")
         {
            reader.setDeviceAddr(m_select_addr);
         }
