@@ -1,7 +1,7 @@
 #include "scanhandler.h"
 
 #include <qdebug.h>
-
+#include "Logger.h"
 ScanHandler::ScanHandler(RtuReader *rtu):
     CmdHandler(rtu),
     m_addr(1),
@@ -27,8 +27,19 @@ bool ScanHandler::init(int reg_addr,int reg_size,int min_addr,int max_addr,bool 
     _rtu->set_response_timeout(m_start_us);
     return true;
 }
+#include "command.h"
+bool ScanHandler::read_sensor_num()
+{
+    QByteArray data;
+    int size = _rtu->send_then_recv(CMD_CUSTOM_READ_PARAM,QByteArray(),data,0);
+    LOG_DEBUG() << "senosr id=" << data[0];
+    if(size > 3)
+    {
+        return true;
+    }
+    return false;
 
-
+}
 bool ScanHandler::doWork()
 {
     qDebug() << "scan thread-id:" << QThread::currentThreadId();
@@ -37,12 +48,9 @@ bool ScanHandler::doWork()
         emit scanResult(SCAN_PROGRASS,m_addr);
         if(_rtu)
         {
-            quint16 state;
 
             _rtu->setDeviceAddr(m_addr);
-            int len = _rtu->read_registers(m_reg_addr,m_reg_size,&state);
-            qDebug() << "addr=" << m_addr << " len=" << len;
-            if(len == m_reg_size)
+            if(read_sensor_num())
             {
                 emit scanResult(SCAN_FIND,m_addr);
                 if(m_findOnce)
@@ -51,13 +59,12 @@ bool ScanHandler::doWork()
                     emit scanResult(SCAN_COMPLETE,m_addr);
                     return true;
                 }
-
             }
             _rtu->flush();
         }
 
         m_addr++;
-        msleep(10);
+        msleep(100);
         //还没有扫描完毕
         return false;
     }

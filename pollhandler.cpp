@@ -2,7 +2,7 @@
 #include "modbus.h"
 #include "adc102.h"
 #include <qdebug.h>
-
+#include "command.h"
 PollerHandler::PollerHandler(RtuReader *rtu):
     CmdHandler(rtu),
     m_start(0),
@@ -11,6 +11,7 @@ PollerHandler::PollerHandler(RtuReader *rtu):
     m_start_us(30000),
     m_stop_us(1000000),
     m_read_delay_ms(10),
+    m_show_ad(false),
     m_quit(false)
 {
 
@@ -27,45 +28,66 @@ bool PollerHandler::canRead()
     return true;
 
 }
+
+bool PollerHandler::readWgt()
+{
+    QByteArray outArr;
+    quint8 cmd = m_show_ad?CMD_CUSTOM_READ_AD:CMD_READ_WGT;
+
+    int result = _rtu->send_then_recv(cmd,QByteArray(),outArr,0);
+    if(result > 0)
+    {
+        quint8 sensor_id = outArr[0];
+        quint8 sensor_num= outArr[1];
+
+        outArr.remove(0,2);
+        quint8 num = outArr.size() / 4;
+
+        for(int i= 0; i < num; i++)
+        {
+            quint8  addr   = outArr[i*4+0];
+            quint8  state  = outArr[i*4+1];
+            quint8 w1 = outArr[i*4+2];
+            quint8 w2 = outArr[i*4+3];
+
+            quint16 value  = (w1<<8) + w2;
+
+
+            emit weightResult(addr,value,state,0,0,0 );
+
+        }
+    }
+    else
+    {
+        emit timeout(0);
+    }
+
+    return true;
+}
 bool PollerHandler::doWork()
 {
     //qDebug() << "PollerHandler doWork";
     if(_rtu)
     {
 
-
-        if( m_cur_addr < m_end)
+        if(!canRead())
         {
-            quint16 values[8];
-            if(!canRead())
-            {
-                msleep(1);
-                return false;
-            }
-            _rtu->setDeviceAddr(m_cur_addr);
+            msleep(1);
+            return false;
+        }
+        _rtu->setDeviceAddr(0);
 
-            if(4 == _rtu->read_registers(0,4,values))
-            {
-                emit weightResult(m_cur_addr,values[0]+(values[1]<<16),values[2],values[3],values[4]+(values[5]<<16),values[6] +( values[7]<<16 ) );
-                this->msleep(5);
-            }
-            else{
-                //超时.
-                qDebug() << "addr" << m_cur_addr << " timeout";
-                emit timeout(m_cur_addr);
-            }
-            m_cur_addr++;
+        if(readWgt())
+        {
 
         }
-        if(m_cur_addr >= m_end)
-        {
-            m_cur_addr = m_start;
-        }
+
         if(m_quit)
         {
             qDebug() << "PollerHandler quit";
             return true;
         }
+        msleep(10);
         return false;
     }
     return true;
@@ -105,12 +127,17 @@ void PollerHandler::setTimeOut(int startUs, int stopUs)
 {
     m_start_us = startUs;
     m_stop_us = stopUs;
-    _rtu->set_response_timeout(startUs);
+    //_rtu->set_response_timeout(startUs);
 }
 
 void PollerHandler::setReadInterval(int ms)
 {
     m_read_delay_ms = ms;
+}
+
+void PollerHandler::showAD(bool en)
+{
+    m_show_ad = en;
 }
 
 //最大超时时间100ms,
@@ -126,6 +153,6 @@ bool PollerHandler::stop()
 {
     m_quit = true;
     CmdHandler::stop();
-    _rtu->set_response_timeout(m_stop_us);
+    //_rtu->set_response_timeout(m_stop_us);
     return true;
 }

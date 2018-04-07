@@ -1,5 +1,6 @@
 #include "parahandler.h"
-
+#include "command.h"
+#include "Logger.h"
 ParaHandler::ParaHandler(RtuReader *rtu):
     CmdHandler(rtu),
     m_write(false)
@@ -9,51 +10,21 @@ ParaHandler::ParaHandler(RtuReader *rtu):
 
 int ParaHandler::getDot()
 {
-    return m_para.dot;
+    return 0;
 }
 
 bool ParaHandler::_paraSave(Para &_para,int &reg)
 {
     if(_rtu)
     {
-        quint16 values[17];
-        values[0] = _para.dot;
-        values[1] = _para.div_high;
-        values[2] = _para.div_low;
-        values[3] = (_para.span_high&0xFFFF);
-        values[4] = (_para.span_high>>16)&0xFFFF;
-        values[5] = (_para.span_low&0xFFFF);
-        values[6] = (_para.span_low>>16)&0xFFFF;
-        values[7] = _para.unit;
-        values[8] = _para.pwr_zero_span;
-        values[9] = _para.hand_zero_span;
-        values[10] = _para.zero_track_span;
-        values[11] = _para.stable_span;
-        values[12] = _para.filter_level;
-        reg = 3;
-       if(1 == _rtu->write_registers(3,1,values))
-       {
-           reg = 8;
-           if(_rtu->write_registers(8,2,values+1) != 2)return false;
-           reg = 10;
-           if(_rtu->write_registers(10,2,values+3) != 2)return false;
-           reg = 12;
-           if(_rtu->write_registers(12,2,values+5) != 2)return false;
-           reg = 14;
-           if(_rtu->write_registers(14,6,values+7) != 6)return false;
+        QByteArray outArr;
 
-                reg = 96;
-               _rtu->write_registers(96,1,&_para.adRate);
-               _rtu->read_registers(96,1,values);
-               if(_para.adRate == values[0])
-               {
-                   reg = 0;
-                   return true;
-               }
-
-
-       }
-
+        int result = _rtu->send_then_recv(CMD_CUSTOM_WRITE_PARAM, _para.toByteArray(), outArr,0);
+        if(result <= 0){
+            return false;
+        }
+        reg = 0;
+        return true;
     }
     return false;
 }
@@ -66,41 +37,21 @@ bool ParaHandler::paraSave(Para _para)
 
 bool ParaHandler::paraRead(Para &_para)
 {
-    quint16 values[17];
-    if(17 == _rtu->read_registers(3,17,values))
-    {
 
-        //m_para.dot = values[0];
-        _para.dot = values[0];
-        _para.div_high = values[5];
-        _para.div_low = values[6];
-        _para.span_high = values[7]+(values[8]<<16);
-        _para.span_low = values[9]+(values[10]<<16);
-        _para.unit = values[11];
-        _para.pwr_zero_span = values[12];
-        _para.hand_zero_span = values[13];
-        _para.zero_track_span = values[14];
-        _para.stable_span = values[15];
-        _para.filter_level = values[16];
-        //memcpy(&m_para,&values[0],sizeof(values));
-        if(10 == _rtu->read_registers(26,10,values))
-        {
-            _para.sensor_full_span = values[0]+(values[1]<<16);
-            _para.sensor_mv = values[2]+(values[3]<<16);
-            _para.slave_addr = values[4];
-            _para.version = values[5];
-            _para.serial = values[8]+(values[9]<<16);
-            if(1 == _rtu->read_registers(96,1,&_para.adRate))
-            {
-                emit paraReadResult(_para);
-                return true;
-            }
-
-        }
-
+    QByteArray outArr;
+    int result = _rtu->send_then_recv(CMD_CUSTOM_READ_PARAM, QByteArray(), outArr,0);
+    if(result <= 0){
+        _para.result = 1;
+        return false;
     }
-    return false;
+    _para.sensor_num = (outArr[2]<<8)+outArr[3];
+    _para.read_time_out = (outArr[4]<<8)+outArr[5];
+    _para.limit = (outArr[6]<<8)+outArr[7];
+    _para.result = 0;
+    emit paraReadResult(_para);
+    return true;
 }
+
 
 bool ParaHandler::doWork()
 {
@@ -108,7 +59,11 @@ bool ParaHandler::doWork()
     {
        if(!bInit)
        {
-          bInit =  paraRead(m_para);
+          if(!paraRead(m_para))
+          {
+
+          }
+          bInit = true;
        }
        if(m_write)
        {
@@ -118,10 +73,86 @@ bool ParaHandler::doWork()
            emit paraWriteResult(reg);
        }
 
+
     }
     else
     {
         return true;
     }
     return false;
+}
+
+bool ParaHandler::queryErrorSensor(SensorErrInfoList &list)
+{
+    QByteArray outArr;
+    _rtu->setDeviceAddr(0);
+    int res = _rtu->send_then_recv(CMD_QUERY_ERROR_SENSOR,QByteArray(),outArr,0);
+    if(res <= 0){
+        return false;
+    }
+    quint8 sensor_id = outArr[0];
+    quint8 sensor_num = outArr[1];
+
+    outArr.remove(0,2);
+    int num = outArr.size() / 2;
+    if(sensor_num != num)
+    {
+        LOG_ERROR("sensor num=%d, get num = %d",sensor_num,num);
+        return false;
+    }
+    for(int i = 0; i < num ;i++)
+    {
+        SensorErrInfo info;
+        info.addr = outArr[i*2];
+        info.state.StateValue = outArr[i*2 + 1];
+        list.push_back(info);
+    }
+
+    return true;
+}
+
+bool ParaHandler::queryChangeSensor(SensorWgtInfoList &list)
+{
+    QByteArray outArr;
+    _rtu->setDeviceAddr(0);
+    int res = _rtu->send_then_recv(CMD_QUERY_CHANGE_SENSOR,QByteArray(),outArr,0);
+    if(res <= 0){
+        return false;
+    }
+    quint8 sensor_id = outArr[0];
+    quint8 sensor_num = outArr[1];
+
+    outArr.remove(0,2);
+    int num = outArr.size() / 2;
+    if(sensor_num != num)
+    {
+        LOG_ERROR("sensor num=%d, get num = %d",sensor_num,num);
+        return false;
+    }
+    for(int i = 0; i < num ;i++)
+    {
+        SensorWgtInfo info;
+        info.addr = outArr[i*2];
+        info.state.StateValue = outArr[i*2 + 1];
+        quint8 w1 = outArr[i*2+2];
+        quint8 w2 = outArr[i*2+3];
+
+        info.wgt =  (w1 << 8) +w2;
+        list.push_back(info);
+    }
+
+    return true;
+}
+
+bool ParaHandler::modifyAddr(quint8 addr)
+{
+    QByteArray outArr;
+    _rtu->setDeviceAddr(0);
+    QByteArray inArr;
+    inArr.append(addr);
+    int res = _rtu->send_then_recv(CMD_CUSTOM_WRITE_SENSOR_ADDR,inArr,outArr,0);
+    if(res <= 0){
+        return false;
+    }
+    return true;
 }

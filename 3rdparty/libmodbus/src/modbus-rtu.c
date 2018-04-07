@@ -216,7 +216,7 @@ static int win32_ser_select(struct win32_ser *ws, int max_len,
             msec = 1;
     }
 
-    sio_SetReadTimeouts(ws->port,msec,msec);
+    //sio_SetReadTimeouts(ws->port,msec,msec);
     /* Read some bytes */
     if ((max_len > PY_BUF_SIZE) || (max_len < 0)) {
         max_len = PY_BUF_SIZE;

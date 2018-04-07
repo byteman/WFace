@@ -79,8 +79,8 @@ void MyDevices::DisplayWeight(int addr, int weight, quint16 state, quint16 dot)
     {
 
         QString str = widgets[addr]->DisplayWeight(weight,state,dot);
-        m_csv.Append(addr, str,m_end,false);
-        AppendWave(addr, utils::int2float(weight,dot));
+        //m_csv.Append(addr, str,m_end,false);
+        //AppendWave(addr, utils::int2float(weight,dot));
     }
 }
 QString MyDevices::CreateDir(QString type)

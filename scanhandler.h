@@ -25,6 +25,7 @@ private:
     int m_start_us,m_stop_us;
     bool m_findOnce; //只搜索最先找到的第一个.
     // CmdHandler interface
+    bool read_sensor_num();
 public:
     virtual bool doWork();
     bool stop();

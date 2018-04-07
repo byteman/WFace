@@ -5,7 +5,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QMutex>
-#include "mymodbus.h"
+#include "dcschannel.h"
 
 
 class RtuReader : public QObject
@@ -23,6 +23,11 @@ public:
 
     int  read_registers(int reg_addr, int nb,quint16* value);
     int  read_input_registers(int reg_addr, int nb,quint16* value);
+
+
+
+    int send_then_recv(quint8 cmd, QByteArray &send_data, QByteArray &recv_data, int want);
+
     QString port() const;
     void get_rx_tx(int& rx, int &tx);
 
@@ -33,7 +38,7 @@ public slots:
     void doWork();
 private:
     QThread     m_thread;
-    RTU_Modbus  m_rtu;
+    DCS_Channel m_rtu;
     int         m_interval;
     bool        m_stop;
     bool        m_connect;

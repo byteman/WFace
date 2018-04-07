@@ -30,84 +30,59 @@ public:
     ~MainWindow();
 
 private slots:
-    void onReadCalibParam(quint32 sensorMv, quint32 sensorFullSpan);
+
     void on_actionChagne_triggered();
-    void calibrate_click(int id);
+
     void onParaReadResult(Para _para);
     void onScanResult(int type,int addr);
     void onPollTimeout(int addr);
-    void onWeightResult(int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
     void onPollWeightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
-    void onCalibProcessResult(int index, int result);
-    void onReadCalibPointResult(int index, int weight, int ad ,int dot);
+
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
-    void onRegOperResult(RegCmd cmd);
-    void onWeightParaRead(quint16 div_high,quint16 div_low, quint32 full_high, quint32 full_low, int dot);
+
+
     void on_btnSearch_clicked();
     void onParaWriteResult(int result);
     void on_tabWidget_currentChanged(int index);
-    void chanADReadResult(QList<float> chanAD);
-    void calibADReadResult(QList<float> chanAD);
-    void chanKReadResult(int sensor, QList<float> chanK);
-    void on_btnSave_clicked();
-    void onSaveWave();
-    void on_btnTare_clicked();
 
-    void on_actionEnglish_triggered();
 
-    void on_actionChinese_triggered();
 
     void on_btnAddr_clicked();
 
-    void on_btnGN_clicked();
 
 
-    void on_btnReset_clicked();
 
-    void on_btnZero_clicked();
-
-    void on_btnZoom10_clicked();
 
     void on_listWidget_itemClicked(QListWidgetItem *item);
 
-    void on_btnSensorWrite_clicked();
-
-    void on_btnStartCalib_clicked();
-    void on_btnReadK_clicked();
-
-    void on_btnReadSrs_clicked();
-
-    void on_btnSrsWrite_clicked();
-
-    void on_btnWriteK_clicked();
-
-    void on_btnStopCalib_clicked();
-
-    void on_tblCalib_cellEntered(int row, int column);
-
-    void on_tblCalib_cellChanged(int row, int column);
-
-    void on_tblCalib_cellPressed(int row, int column);
-
-    void on_btnSetAddr_clicked();
-
-    void on_btnOpen_clicked();
-    void on_listWave_itemClicked(QListWidgetItem *item);
-
-    void on_btnClearWave_clicked();
 
     void on_btnSaveWave_clicked();
-
+    void on_btnSetAddr_clicked();
+    void on_listWave_itemClicked(QListWidgetItem *item);
+    void on_btnClearWave_clicked();
     void on_btnClear_clicked();
-
     void on_edtSaveTime_valueChanged(int arg1);
-
     void on_cbxAcqSpan_currentIndexChanged(int index);
+    void on_btnZero_clicked();
 
-    void on_actionReset_triggered();
+    void on_btnRead_clicked();
+
+    void on_btnCalibZero_clicked();
+
+    void on_btnSave_clicked();
+
+    void on_btnCalibWgt_clicked();
+
+    void on_btnQueryError_clicked();
+
+    void on_btnQueryChange_clicked();
+
+    void on_btnModifyAddr_clicked();
+
+    void on_btnChange_clicked();
 
 private:
-    void initCalibPoints();
+
     Ui::MainWindow *ui;
     QList<QLabel*> adlist;
     QApplication &_app;
@@ -132,16 +107,7 @@ private:
     void clearCalib();
     void initUI();
     void changeHandler(QString name,bool start=true);
-    void initCornFixChan();
-    void clearCornCalib(bool clear);
-    void DisableAllCalibButton();
-    void EnableAllCalibButton(bool disable);
-    void EnableCalibButton(int index, bool disable);
-    void endCornCalib();
-    bool nextCalib(int index);
-    bool finishEndCalib();
-    void initAdList();
-    void clearState();
+
 
     QString formatValue(int value, int dot);
     void clear_cork_k();
@@ -151,12 +117,11 @@ private:
     QString formatfloat(float wf, int dot);
     int ReadWaveList();
     void SetReadTimeout(int index, int count);
-    void hideForGuest();
+
+    QString formatState(SensorState &state);
 protected:
     void timerEvent(QTimerEvent *);
 
-protected slots:
-    void corn_calibrate_click(int id);
 };
 
 #endif // MAINWINDOW_H

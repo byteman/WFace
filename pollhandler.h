@@ -7,6 +7,7 @@
 #include <QTime>
 
 
+
 class PollerHandler : public CmdHandler
 {
      Q_OBJECT
@@ -21,6 +22,7 @@ public:
     void  getAddrSpan(qint8 &startAddr, qint8& num);
     void  setTimeOut(int startUs, int stopUs);
     void  setReadInterval(int ms);
+    void  showAD(bool en);
 signals:
 
     void weightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
@@ -35,11 +37,16 @@ private:
     int m_read_delay_ms;
     int m_cur_addr;
     qint64 m_last_time;
+    bool m_show_ad;
     // CmdHandler interface
     bool canRead();
+    bool readWgt();
 public:
     bool startRun();
     bool stop();
+    bool queryErrorSensor();
+    bool queryChangeSensor();
+    bool querySensorWgt(quint8 addr);
 };
 
 #endif // WEIGHTHANDLER_H

@@ -12,6 +12,8 @@ TARGET = WFace
 TEMPLATE = app
 
 DEFINES += QCUSTOMPLOT_USE_OPENGL
+
+
 SOURCES += main.cpp\
         mainwindow.cpp \
         3rdparty/libmodbus/src/modbus.c \
@@ -40,7 +42,10 @@ SOURCES += main.cpp\
     wavewidget.cpp \
     dialogwave.cpp \
     myconfig.cpp \
-    csvfile.cpp
+    csvfile.cpp \
+    dcschannel.cpp \
+    mylog.cpp \
+    crc16.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -66,20 +71,32 @@ HEADERS  += mainwindow.h \
     wavewidget.h \
     dialogwave.h \
     myconfig.h \
-    csvfile.h
+    csvfile.h \
+    dcschannel.h \
+    mylog.h \
+    crc16.h \
+    command.h
+
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
-
 INCLUDEPATH += 3rdparty/poco/include
-win32:INCLUDEPATH += 3rdparty/poco/include\ 3rdparty/pcomm
+INCLUDEPATH += 3rdparty/CuteLogger/include
+INCLUDEPATH += 3rdparty/poco/include\ 3rdparty/pcomm
 
+win32 {
 
-win32:DEFINES += _TTY_WIN_  WINVER=0x0501
-win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
-win32:LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32
-win32:LIBS += -L./3rdparty/poco/lib
-LIBS += -lOpengl32 \
+    DEFINES += _TTY_WIN_  WINVER=0x0501
+    LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
+    LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32
+    LIBS += -L./3rdparty/poco/lib
+    LIBS += -lOpengl32 \
                 -lglu32
+    CONFIG(debug, debug|release) {
+        LIBS += -L3rdparty/CuteLogger/debug -lCuteLogger
+    }
+}
+
+
 FORMS    += mainwindow.ui \
     devwidget.ui \
     dialogwave.ui

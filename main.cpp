@@ -4,6 +4,11 @@
 #include <QTranslator>
 #include <QSettings>
 #include <QSplashScreen>
+#include "Logger.h"
+#include "ConsoleAppender.h"
+#include "FileAppender.h"
+#include "command.h"
+#include "PCOMM.H"
 void loadLang(QTranslator& translator)
 {
 
@@ -19,8 +24,26 @@ void loadLang(QTranslator& translator)
         translator.load(":/en.qm");
     }
 }
+void uart_test()
+{
+    char buf[1024];
+    if(SIO_OK == sio_open(1))
+    {
+        sio_SetReadTimeouts(1,3000,10);
+        int ret = sio_read(1,buf,1024);
+        LOG_ERROR("ret = %d",ret);
+    }
+}
 int main(int argc, char *argv[])
 {
+
+
+
+    ConsoleAppender* consoleAppender = new ConsoleAppender;
+    consoleAppender->setFormat("[%{type:-7}] <%{Function}> %{message}\n");
+    cuteLogger->registerAppender(consoleAppender);
+    cuteLogger->registerAppender(new FileAppender("wface.log"));
+    LOG_DEBUG("app start %s",__DATE__);
 
 
     QApplication a(argc, argv);

@@ -51,6 +51,13 @@ int RtuReader::read_input_registers(int reg_addr, int nb, quint16 *value)
     return m_rtu.read_input_registers(reg_addr,nb,value);
 }
 
+int RtuReader::send_then_recv(quint8 cmd, QByteArray &send_data, QByteArray &recv_data, int want)
+{
+    return m_rtu.send_then_recv(cmd,send_data,recv_data,want);
+}
+
+
+
 void RtuReader::get_rx_tx(int &rx, int &tx)
 {
     return m_rtu.get_rx_tx(rx,tx);

@@ -52,6 +52,7 @@ void DevWidget::resetTimeout()
 {
     m_timeout = MAX_TIMEOUT;
 }
+#include "command.h"
 QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
 {
     double wf = (double)weight;
@@ -60,55 +61,40 @@ QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
     QString wt = ws;
     resetTimeout();
     clearState();
-    if(state&1)
+    SensorState ss;
+    ss.StateValue = state;
+
+
+    if(ss.StateBit.still)
     {
         ui->lbl_still->setText(tr("stable"));
         //strState += " | " + tr("stable  ") ;
     }
-    if(state&2)
+    if(ss.StateBit.zero)
     {
         ui->lbl_zero->setText(tr("zero"));
        //strState += " | " +tr("zero  ");
     }
-    if(state&4)
+    if(ss.StateBit.overflow)
     {
-        ui->lbl_ng->setText(tr("net"));
+       ws = "------";
        //strState += " | " +tr("net ");
     }
-    if(state&8)
+    if(ss.StateBit.power_zero_overflow)
     {
-       // ui->lbl_upflow->setText(tr("upflow"));
-       //strState += " | " +tr("upflow ");
-       //ws = "------";
+       ui->lbl_zero->setText("PO");
     }
-    if(state&16)
+    if(ss.StateBit.soc_err)
     {
        //strState += " | " +tr("underflow");
        //  ui->lbl_underflow->setText(tr("underflow"));
-       ws = "------";
+       ui->lbl_zero->setText("SOC");
     }
-    if(state&32)
+    if(ss.StateBit.sensor_err)
     {
        // ui->lbl_highspan->setText(tr("highspan"));
-       //strState += " | " +tr("highspan ");
+       ui->lbl_zero->setText("S_ERR");
     }
-    if(state&64)
-    {
-       //strState += " | " +tr("zoom10x ");
-        //ui->lbl_zoom->setText(tr("zoom10x"));
-    }
-    if(state&128)
-    {
-        //ui->lbl_menucode->setText(tr("menumode"));
-       //strState += " | " +tr("menumode ");
-    }
-    //int unit= (state >>8)&0x7;
-
-//    if(strState.length() > 0)
-//    {
-//        strState += " | ";
-//        ui->lblstate->setText(strState);
-//    }
 
     ui->lbl_weight->setText(ws);
     return wt;

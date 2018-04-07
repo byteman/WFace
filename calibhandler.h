@@ -12,7 +12,13 @@ public:
     virtual bool doWork();
     bool init();
     bool readPara(int index=-1);
+    bool calibZero(quint8 addr);
+    bool calibWgt(quint8 addr);
     bool calibSet(int  index, float weight,qint32 ad);
+    bool clearZero(quint8 addr);
+    bool queryErrorSensor();
+    bool queryChangeSensor();
+    bool querySensorWgt(quint8 addr);
     bool savePara(quint32 full,quint32 mv);
     int getDot(){return m_dot;}
 signals:
@@ -26,5 +32,6 @@ private:
     bool paraRead();
     int m_dot;
     int m_sensor;
+
 };
 #endif // CALIBHANDLER_H
