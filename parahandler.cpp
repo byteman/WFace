@@ -34,7 +34,13 @@ bool ParaHandler::paraSave(Para _para)
     m_para = _para;
     return m_write;
 }
+quint16 ParaHandler::getU16(QByteArray &buf,int index)
+{
+    quint8 hi = buf[index];
+    quint8 lo = buf[index+1];
 
+    return (hi<<8) + lo;
+}
 bool ParaHandler::paraRead(Para &_para)
 {
 
@@ -44,9 +50,10 @@ bool ParaHandler::paraRead(Para &_para)
         _para.result = 1;
         return false;
     }
-    _para.sensor_num = (outArr[2]<<8)+outArr[3];
-    _para.read_time_out = (outArr[4]<<8)+outArr[5];
-    _para.limit = (outArr[6]<<8)+outArr[7];
+    if(outArr.size() < 8) return false;
+    _para.sensor_num = getU16(outArr,2);
+    _para.read_time_out = getU16(outArr,4);
+    _para.limit = getU16(outArr,6);
     _para.result = 0;
     emit paraReadResult(_para);
     return true;

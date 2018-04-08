@@ -98,9 +98,17 @@ int  DCS_Channel::send_then_recv(
     send(cmd,send_data);
     QByteArray all_data;
     int res = recv(all_data,want);
-    if(res <= 0) return 0;
+    if(res <= 0)
+    {
+        LOG_ERROR() << "err: recv result=" << res;
+        return 0;
+    }
 
-    qDebug() <<"recv----<" <<  all_data.toHex();
+    LOG_DEBUG() <<"recv----<" <<  all_data.toHex();
+    if(all_data.size() < 8){
+        LOG_ERROR() << "err: send_then_recv count=" << all_data.size();
+        return 0;
+    }
     quint8 head = all_data[0];
     if(head != quint8(0xBB)) {
         LOG_ERROR("header = %02x",all_data[0]);

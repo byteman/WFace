@@ -75,7 +75,7 @@ QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
         ui->lbl_zero->setText(tr("zero"));
        //strState += " | " +tr("zero  ");
     }
-    if(ss.StateBit.overflow)
+    if(ss.StateBit.overflow && !ss.StateBit.bit7)
     {
        ws = "------";
        //strState += " | " +tr("net ");
@@ -94,6 +94,9 @@ QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
     {
        // ui->lbl_highspan->setText(tr("highspan"));
        ui->lbl_zero->setText("S_ERR");
+    }
+    if(ss.StateBit.bit6){
+        ui->lbl_ng->setText("off");
     }
 
     ui->lbl_weight->setText(ws);

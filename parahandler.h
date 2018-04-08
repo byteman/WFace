@@ -49,6 +49,7 @@ private:
     bool _paraSave(Para &_para,int &reg);
     bool m_write;
     Para m_para;
+    quint16 getU16(QByteArray &buf, int index);
 };
 
 #endif // PARAHANDLER_H
