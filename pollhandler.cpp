@@ -53,9 +53,9 @@ bool PollerHandler::readWgt()
             quint16 value  = (w1<<8) + w2;
 
             if(m_show_ad){
-                state|=0x80;
+                state |= 0x80;
             }else{
-                state &= 0x80;
+                state &= 0x7F;
             }
             emit weightResult(addr,value,state,0,0,0 );
 
@@ -91,7 +91,7 @@ bool PollerHandler::doWork()
             qDebug() << "PollerHandler quit";
             return true;
         }
-        msleep(10);
+        msleep(500);
         return false;
     }
     return true;

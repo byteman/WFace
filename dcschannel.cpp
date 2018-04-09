@@ -94,9 +94,10 @@ int  DCS_Channel::send_then_recv(
                                  int want
                                  )
 {
-
+    sio_flush(m_port_num,2);
     send(cmd,send_data);
     QByteArray all_data;
+
     int res = recv(all_data,want);
     if(res <= 0)
     {
@@ -111,7 +112,7 @@ int  DCS_Channel::send_then_recv(
     }
     quint8 head = all_data[0];
     if(head != quint8(0xBB)) {
-        LOG_ERROR("header = %02x",all_data[0]);
+        LOG_ERROR("header = %02x",head);
         return -1;
 
     }
@@ -140,7 +141,7 @@ int  DCS_Channel::send_then_recv(
     return res;
 
 }
-
+#include <Windows.h>
 //接收want字节，最大间隔字节超时时间time_us。
 int  DCS_Channel::recv(QByteArray &data,quint32 want)
 {
@@ -149,6 +150,8 @@ int  DCS_Channel::recv(QByteArray &data,quint32 want)
         LOG_ERROR()<< "want " << want << "must less than 1024";
         return -1;
     }
+    //msleep(5);
+
     set_response_timeout(want*m_byte_timeout_ms);
     int res = sio_read(m_port_num,buffer,1024);
     if(res > 0){
