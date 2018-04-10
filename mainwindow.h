@@ -95,8 +95,8 @@ private:
     RtuReader reader;
     QMap<QString,CmdHandler*> handlers;
     MyDevices* devices;
-    WaveWidget*  waveWidget;
-    WaveWidget*  rtwaveWidget;
+    //WaveWidget*  waveWidget;
+    //WaveWidget*  rtwaveWidget;
     DialogWave * waveDlg;
     int m_select_addr;
     QTime m_time;

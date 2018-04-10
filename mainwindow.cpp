@@ -79,8 +79,8 @@ void MainWindow::initUI()
     devices->SetMaxSampleNum(cfg.m_max_sample);
     //connect(devices,SIGNAL(WaveFull()),this,SLOT(onSaveWave()));
     //waveWidget = new WaveWidget(ui->widget);
-    rtwaveWidget = new WaveWidget(ui->rtplot,1);
-    ui->edtSaveTime->setValue(cfg.m_save_time_min);
+    //rtwaveWidget = new WaveWidget(ui->rtplot,1);
+    //ui->edtSaveTime->setValue(cfg.m_save_time_min);
     qDebug() << QDateTime::currentMSecsSinceEpoch();
     devices->SetUnit(cfg.Unit());
 #endif
@@ -158,7 +158,7 @@ void MainWindow::onPollTimeout(int addr)
         devices->Timeout(addr);
         if(addr >= devices->GetEndAddr())
         {
-            rtwaveWidget->DisplayAllChannel(true);
+            //rtwaveWidget->DisplayAllChannel(true);
         }
     }
 }
@@ -279,7 +279,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     else if(index == 3)
     {
         changeHandler("dumy");
-        waveWidget->Clear();
+        //waveWidget->Clear();
         ReadWaveList();
     }
 }
@@ -371,12 +371,12 @@ void MainWindow::on_btnSetAddr_clicked()
         }
 
         poller->setTimeOut(100000,cfg.m_read_timeout);
-        SetReadTimeout(ui->cbxAcqSpan->currentIndex(),count);
+        //SetReadTimeout(ui->cbxAcqSpan->currentIndex(),count);
         poller->setAddrSpan(startAddr,count);
         devices->SetDeviceNum(startAddr,count);
         devices->SetUnit(cfg.Unit());
-        rtwaveWidget->SetChannel(startAddr,count);
-        rtwaveWidget->Clear();
+        //rtwaveWidget->SetChannel(startAddr,count);
+        //rtwaveWidget->Clear();
         m_time = QTime::currentTime();
     }
 }
@@ -387,25 +387,25 @@ void MainWindow::on_listWave_itemClicked(QListWidgetItem *item)
 {
     ChannelsData wvd;
     devices->LoadWave(item->text(),wvd);
-    waveWidget->SetData(wvd);
-    waveWidget->DisplayAllChannel(true);
+    //waveWidget->SetData(wvd);
+    //waveWidget->DisplayAllChannel(true);
 }
 
 void MainWindow::on_btnClearWave_clicked()
 {
-    waveWidget->Clear();
+    //waveWidget->Clear();
 }
 
 void MainWindow::on_btnSaveWave_clicked()
 {
     devices->SaveWave();
-    rtwaveWidget->Clear();
+    //rtwaveWidget->Clear();
     m_time = QTime::currentTime();
 }
 
 void MainWindow::on_btnClear_clicked()
 {
-    rtwaveWidget->Clear();
+    //rtwaveWidget->Clear();
 }
 
 void MainWindow::on_edtSaveTime_valueChanged(int arg1)

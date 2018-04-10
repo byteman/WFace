@@ -50,10 +50,11 @@ bool PollerHandler::readWgt()
             quint8 w1 = outArr[i*4+2];
             quint8 w2 = outArr[i*4+3];
 
-            quint16 value  = (w1<<8) + w2;
-
+            qint16 value  = (w1<<8) + w2;
+            quint16 ad = value;
             if(m_show_ad){
                 state |= 0x80;
+
             }else{
                 state &= 0x7F;
             }
@@ -91,7 +92,7 @@ bool PollerHandler::doWork()
             qDebug() << "PollerHandler quit";
             return true;
         }
-        msleep(500);
+        msleep(100);
         return false;
     }
     return true;
