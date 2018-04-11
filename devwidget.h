@@ -2,7 +2,7 @@
 #define DEVWIDGET_H
 
 #include <QWidget>
-
+#include <QTime>
 namespace Ui {
 class DevWidget;
 }
@@ -23,6 +23,8 @@ private:
     Ui::DevWidget *ui;
     int m_addr;
     int m_timeout;
+    bool m_last_still;
+    QTime m_still_time;
     QString m_unit;
     // QObject interface
     void clearState();

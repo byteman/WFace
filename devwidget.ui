@@ -21,7 +21,7 @@ QWidget {
 	border:1px solid red
 }</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,3,1">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,3,1">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -53,6 +53,16 @@ QWidget {
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lbl_still_time">
+     <property name="text">
+      <string>0</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>

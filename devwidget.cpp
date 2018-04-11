@@ -6,7 +6,8 @@ DevWidget::DevWidget(int addr, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DevWidget),
     m_addr(addr),
-    m_timeout(MAX_TIMEOUT)
+    m_timeout(MAX_TIMEOUT),
+    m_last_still(false)
 {
     ui->setupUi(this);
     ui->lbl_addr->setText(tr("Address") + ":" + QString("%1").arg(addr));
@@ -60,11 +61,28 @@ QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
     QString wt = ws;
     resetTimeout();
     clearState();
+
+
     if(state&1)
     {
         ui->lbl_still->setText(tr("stable"));
+        if(!m_last_still){
+
+           ui->lbl_still_time->setText(QString("稳定时间:%1ms").arg(m_still_time.elapsed())) ;
+        }
         //strState += " | " + tr("stable  ") ;
     }
+    else
+    {
+        //从稳定到不稳定(从新计算时间)
+        if(m_last_still){
+            m_still_time = QTime::currentTime();
+
+        }
+
+    }
+    m_last_still = state&1?true:false;
+
     if(state&2)
     {
         ui->lbl_zero->setText(tr("zero"));
