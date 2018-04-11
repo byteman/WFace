@@ -70,20 +70,20 @@ QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
     {
         ui->lbl_still->setText(tr("stable"));
         //从不稳定到稳定，显示时间
-        if(!m_last_still){
+//        if(!m_last_still){
 
-           ui->lbl_still_time->setText(QString("稳定时间:%1ms").arg(m_still_time.elapsed())) ;
-        }
+//           ui->lbl_still_time->setText(QString("稳定时间:%1ms").arg(m_still_time.elapsed())) ;
+//        }
 
         //strState += " | " + tr("stable  ") ;
     }
     else
     {
         //从稳定到不稳定(从新计算时间)
-        if(m_last_still){
-            m_still_time = QTime::currentTime();
+//        if(m_last_still){
+//            m_still_time = QTime::currentTime();
 
-        }
+//        }
 
     }
     m_last_still = ss.StateBit.still?true:false;
