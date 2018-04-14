@@ -45,6 +45,7 @@ bool ParaHandler::paraRead(Para &_para)
 {
 
     QByteArray outArr;
+    _rtu->flush();
     int result = _rtu->send_then_recv(CMD_CUSTOM_READ_PARAM, QByteArray(), outArr,0);
     if(result <= 0){
         _para.result = 1;

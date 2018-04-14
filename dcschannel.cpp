@@ -94,7 +94,7 @@ int  DCS_Channel::send_then_recv(
                                  int want
                                  )
 {
-    sio_flush(m_port_num,2);
+    //sio_flush(m_port_num,0);
     send(cmd,send_data);
     QByteArray all_data;
 
@@ -153,10 +153,12 @@ int  DCS_Channel::recv(QByteArray &data,quint32 want)
     //msleep(5);
 
     set_response_timeout(want*m_byte_timeout_ms);
-    int res = sio_read(m_port_num,buffer,1024);
+    int res = sio_read(m_port_num,buffer,want<=0?1024:want);
     if(res > 0){
 
         data.append(buffer, res);
+    }else{
+        sio_flush(m_port_num,2);
     }
 
     return res;
