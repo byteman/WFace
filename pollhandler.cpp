@@ -54,11 +54,13 @@ bool PollerHandler::readWgt()
             quint16 ad = value;
             if(m_show_ad){
                 state |= 0x80;
+                emit weightResult(addr,ad,state,0,0,0 );
 
             }else{
                 state &= 0x7F;
+                emit weightResult(addr,value,state,0,0,0 );
             }
-            emit weightResult(addr,value,state,0,0,0 );
+
 
         }
     }
