@@ -131,7 +131,7 @@ bool ParaHandler::queryChangeSensor(SensorWgtInfoList &list)
     quint8 sensor_num = outArr[1];
 
     outArr.remove(0,2);
-    int num = outArr.size() / 2;
+    int num = outArr.size() / 4;
     if(sensor_num != num)
     {
         LOG_ERROR("sensor num=%d, get num = %d",sensor_num,num);

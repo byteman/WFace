@@ -39,7 +39,7 @@ bool DCS_Channel::open(const char* port, int baud, char parity, char databit, ch
         LOG_ERROR() << "sio_ioctl failed";
         return false;
     }
-    m_byte_timeout_ms = 20*1000/2400; // 20个字符的超时时间.
+    m_byte_timeout_ms = 50;//200*1000/2400; // 20个字符的超时时间.
     return true;
 }
 
@@ -60,7 +60,9 @@ bool DCS_Channel::set_response_timeout(int us)
     int ms = us / 1000;
     ms = (ms <=0)?1000:ms;
 
-    return (sio_SetReadTimeouts(m_port_num,ms,m_byte_timeout_ms) == SIO_OK);
+    //LOG_DEBUG() <<  "total timeout=" << ms << " bytes timeout=" << m_byte_timeout_ms;
+
+    return (sio_SetReadTimeouts(m_port_num,1000,m_byte_timeout_ms) == SIO_OK);
 
 }
 
@@ -94,7 +96,7 @@ int  DCS_Channel::send_then_recv(
                                  int want
                                  )
 {
-    //sio_flush(m_port_num,0);
+    sio_flush(m_port_num,0);
     send(cmd,send_data);
     QByteArray all_data;
 
@@ -152,13 +154,16 @@ int  DCS_Channel::recv(QByteArray &data,quint32 want)
     }
     //msleep(5);
 
-    set_response_timeout(want*m_byte_timeout_ms);
+    set_response_timeout(want*m_byte_timeout_ms*1000);
+    QTime ts = QTime::currentTime();
+    //LOG_DEBUG() << "read " << want << " bytes";
     int res = sio_read(m_port_num,buffer,want<=0?1024:want);
+    //LOG_DEBUG() << "ts=" << ts.elapsed();
     if(res > 0){
 
         data.append(buffer, res);
     }else{
-        sio_flush(m_port_num,2);
+        //sio_flush(m_port_num,2);
     }
 
     return res;
