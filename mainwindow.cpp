@@ -513,9 +513,9 @@ void MainWindow::on_btnQueryChange_clicked()
         for(int i = 0; i < list.size(); i++)
         {
             QString str;
-            str += QString("地址%1").arg(list[i].addr);
-            str += formatState(list[i].state);
-            str += QString("重量%1").arg(list[i].wgt);
+            str += QString("地址%1->").arg(list[i].addr);
+            str += " 状态:"+formatState(list[i].state);
+            str += QString("重量:%1").arg(list[i].wgt);
             ui->listResults->addItem(str);
         }
     }

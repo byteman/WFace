@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     ConsoleAppender* consoleAppender = new ConsoleAppender;
     consoleAppender->setFormat("[%{type:-7}] <%{Function}> %{message}\n");
     cuteLogger->registerAppender(consoleAppender);
-    //cuteLogger->registerAppender(new FileAppender("wface.log"));
+    cuteLogger->registerAppender(new FileAppender("wface.log"));
     LOG_DEBUG("app start %s",__DATE__);
 
 

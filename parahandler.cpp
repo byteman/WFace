@@ -140,10 +140,10 @@ bool ParaHandler::queryChangeSensor(SensorWgtInfoList &list)
     for(int i = 0; i < num ;i++)
     {
         SensorWgtInfo info;
-        info.addr = outArr[i*2];
-        info.state.StateValue = outArr[i*2 + 1];
-        quint8 w1 = outArr[i*2+2];
-        quint8 w2 = outArr[i*2+3];
+        info.addr = outArr[i*4+0];
+        info.state.StateValue = outArr[i*4 + 1];
+        quint8 w1 = outArr[i*4+2];
+        quint8 w2 = outArr[i*4+3];
 
         info.wgt =  (w1 << 8) +w2;
         list.push_back(info);
