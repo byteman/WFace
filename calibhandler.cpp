@@ -90,7 +90,7 @@ bool CalibHandler::setWeight(quint8 addr, qint16 weight)
     QByteArray outArr;
     QByteArray inArr;
     inArr.append(addr);
-    inArr.append(0);
+    inArr.append('0');
     inArr.append((char*)&weight,2);
     int res = _rtu->send_then_recv(CMD_SET_WGT,inArr,outArr,0);
     return res > 0;
