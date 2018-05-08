@@ -8,6 +8,7 @@ enum Command{
     CMD_READ_WGT = 1, //查询单个或者全部称台的重量和状态
     CMD_QUERY_CHANGE_SENSOR, //查询重量有更改的称台
     CMD_QUERY_ERROR_SENSOR, //查询有故障的传感器.
+    CMD_SET_WGT, //设置称台重量
     CMD_CUSTOM_READ_AD=105, //读取AD值
     CMD_CUSTOM_CALIB_ZERO, //标定零点
     CMD_CUSTOM_CALIB_WGT, //标定重量

@@ -545,3 +545,23 @@ void MainWindow::on_btnChange_clicked()
          ui->btnChange->setText("显示AD");
     }
 }
+
+void MainWindow::on_btnSet_clicked()
+{
+    bool ok = false;
+    quint8 addr = ui->sbAddr->value();
+    qint16 weight = ui->edtSWet->text().toInt(&ok);
+    if(ok){
+        if(calib->setWeight(addr,weight)){
+            QMessageBox::information(this,"提示","修改成功");
+        }
+        else
+        {
+            QMessageBox::information(this,"错误","修改失败");
+        }
+    }else{
+        QMessageBox::information(this,"错误","没有填写重量");
+    }
+
+
+}
