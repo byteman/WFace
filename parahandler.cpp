@@ -131,7 +131,7 @@ bool ParaHandler::queryChangeSensor(SensorWgtInfoList &list)
     quint8 sensor_num = outArr[1];
 
     outArr.remove(0,2);
-    int num = outArr.size() / 2;
+    int num = outArr.size() / 4;
     if(sensor_num != num)
     {
         LOG_ERROR("sensor num=%d, get num = %d",sensor_num,num);
@@ -140,10 +140,10 @@ bool ParaHandler::queryChangeSensor(SensorWgtInfoList &list)
     for(int i = 0; i < num ;i++)
     {
         SensorWgtInfo info;
-        info.addr = outArr[i*2];
-        info.state.StateValue = outArr[i*2 + 1];
-        quint8 w1 = outArr[i*2+2];
-        quint8 w2 = outArr[i*2+3];
+        info.addr = outArr[i*4+0];
+        info.state.StateValue = outArr[i*4 + 1];
+        quint8 w1 = outArr[i*4+2];
+        quint8 w2 = outArr[i*4+3];
 
         info.wgt =  (w1 << 8) +w2;
         list.push_back(info);

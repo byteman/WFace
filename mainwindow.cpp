@@ -462,22 +462,28 @@ QString MainWindow::formatState(SensorState& state)
 {
     QString str;
     if(state.StateBit.zero){
-        str+="零位,";
+        //str+="零位,";
+        str += tr("zero");
     }
     if(state.StateBit.still){
-        str+="稳定,";
+        //str+="稳定,";
+        str += tr("still");
     }
     if(state.StateBit.soc_err){
-        str+="芯片错误,";
+        //str+="芯片错误,";
+         str += tr("soc");
     }
     if(state.StateBit.overflow){
-        str+="溢出,";
+        //str+="溢出,";
+         str += tr("overflow");
     }
     if(state.StateBit.power_zero_overflow){
-        str+="开机零点溢出,";
+        //str+="开机零点溢出" + ",";
+         str += tr("power overflow");
     }
     if(state.StateBit.sensor_err){
-        str+="传感器故障,";
+        //str+="传感器故障"+",";
+         str += tr("sensor");
     }
     return str;
 
@@ -507,9 +513,9 @@ void MainWindow::on_btnQueryChange_clicked()
         for(int i = 0; i < list.size(); i++)
         {
             QString str;
-            str += QString("地址%1").arg(list[i].addr);
-            str += formatState(list[i].state);
-            str += QString("重量%1").arg(list[i].wgt);
+            str += QString("地址%1->").arg(list[i].addr);
+            str += " 状态:"+formatState(list[i].state);
+            str += QString("重量:%1").arg(list[i].wgt);
             ui->listResults->addItem(str);
         }
     }

@@ -42,7 +42,7 @@ typedef QVector<SensorErrInfo> SensorErrInfoList;
 struct SensorWgtInfo{
     quint8 addr;
     SensorState state;
-    quint16 wgt;
+    qint16 wgt;
 };
 typedef QVector<SensorWgtInfo> SensorWgtInfoList;
 
