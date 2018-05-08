@@ -514,8 +514,8 @@ void MainWindow::on_btnQueryChange_clicked()
         {
             QString str;
             str += QString("地址%1->").arg(list[i].addr);
-            str += " 状态:"+formatState(list[i].state);
-            str += QString("重量:%1").arg(list[i].wgt);
+            str += " "+formatState(list[i].state);
+            str += QString("重量%1").arg(list[i].wgt);
             ui->listResults->addItem(str);
         }
     }
