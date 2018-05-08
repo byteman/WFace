@@ -539,3 +539,8 @@ void MainWindow::on_btnChange_clicked()
          ui->btnChange->setText("显示AD");
     }
 }
+
+void MainWindow::on_btnSet_clicked()
+{
+
+}

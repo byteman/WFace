@@ -81,6 +81,8 @@ private slots:
 
     void on_btnChange_clicked();
 
+    void on_btnSet_clicked();
+
 private:
 
     Ui::MainWindow *ui;

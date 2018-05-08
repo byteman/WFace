@@ -20,6 +20,7 @@ public:
     bool queryChangeSensor();
     bool querySensorWgt(quint8 addr);
     bool savePara(quint32 full,quint32 mv);
+    bool setWeight(quint8 addr,qint16 weight);
     int getDot(){return m_dot;}
 signals:
     void calibReadResult(int index, qint32 weight,qint32 ad,int dot);
