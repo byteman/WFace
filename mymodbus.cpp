@@ -25,12 +25,31 @@ bool RTU_Modbus::open(const char* port, int baud, char parity, char databit, cha
     if(m_modbus == NULL) return false;
     if( modbus_connect( m_modbus ) == -1 )
     {
+        modbus_free(m_modbus);
+        m_modbus = NULL;
         return false;
     }
     m_port = port;
     return true;
 }
-
+bool RTU_Modbus::open(const char* host,int port)
+{
+    if(m_modbus)
+    {
+        modbus_close( m_modbus );
+        modbus_free( m_modbus );
+        m_modbus = NULL;
+    }
+    m_modbus = modbus_new_tcp(host,
+            port);
+    if(m_modbus == NULL) return false;
+    if( modbus_connect(m_modbus) == -1 )
+    {
+        return false;
+    }
+    m_port = port;
+    return true;
+}
 bool RTU_Modbus::close()
 {
     modbus_close(m_modbus);

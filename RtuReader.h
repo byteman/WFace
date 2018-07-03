@@ -25,9 +25,10 @@ public:
     int  read_input_registers(int reg_addr, int nb,quint16* value);
     QString port() const;
     void get_rx_tx(int& rx, int &tx);
-
+    bool isConnectd();
     bool open(QString port, int baud, char parity, char databit, char stopbit);
-
+    bool open(QString host, QString port);
+    bool close();
 public slots:
     void doWork();
 private:
@@ -37,6 +38,7 @@ private:
     bool        m_stop;
     bool        m_connect;
     QMutex      m_mutex;
+
 
     int m_slaveAddr;
 };

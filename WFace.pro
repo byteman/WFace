@@ -40,7 +40,9 @@ SOURCES += main.cpp\
     wavewidget.cpp \
     dialogwave.cpp \
     myconfig.cpp \
-    csvfile.cpp
+    csvfile.cpp \
+    ModbusRtu.cpp \
+    ModbusTcp.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -66,7 +68,9 @@ HEADERS  += mainwindow.h \
     wavewidget.h \
     dialogwave.h \
     myconfig.h \
-    csvfile.h
+    csvfile.h \
+    ModbusRtu.h \
+    ModbusTcp.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 

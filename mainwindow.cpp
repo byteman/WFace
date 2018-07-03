@@ -546,6 +546,11 @@ void MainWindow::on_btnSearch_clicked()
             QMessageBox::information(this,tr("error"),tr("uart open failed"));
             return ;
         }
+        if(!reader.open("127.0.0.1","502"))
+        {
+            QMessageBox::information(this,tr("error"),tr("uart open failed"));
+            return ;
+        }
         scaner->init(3,1,1,33,!ui->cbxFindAll->isChecked());
         scaner->start();
         ui->btnSearch->setText(tr("StopSearch"));
@@ -647,30 +652,34 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     }
     else if(index == 1)
     {
-        changeHandler("weight");
+        changeHandler("scan",false);
     }
     else if(index == 2)
+    {
+        changeHandler("weight");
+    }
+    else if(index == 3)
     {
         traversalControl(ui->grpParas->children());
         changeHandler("para");
     }
-    else if(index == 3)
+    else if(index == 4)
     {
         clearCalib();
         changeHandler("calib");
 
     }
-    else if(index == 4)
+    else if(index == 5)
     {
         clearCornCalib();
         changeHandler("corn");
     }
-    else if(index == 5)
+    else if(index == 6)
     {
 
         changeHandler("poll");
     }
-    else if(index == 6)
+    else if(index == 7)
     {
         changeHandler("dumy");
         ReadWaveList();
@@ -1159,4 +1168,24 @@ void MainWindow::on_btnSaveWave_clicked()
 void MainWindow::on_btnClear_clicked()
 {
     rtwaveWidget->Clear();
+}
+
+void MainWindow::on_btnNetConn_clicked()
+{
+    if(!reader.isConnectd())
+    {
+        //QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
+
+        if(!reader.open(ui->edtHost->text(),ui->edtPort->text()))
+        {
+            QMessageBox::information(this,tr("error"),tr("uart open failed"));
+            return ;
+        }
+        ui->btnNetConn->setText(tr("Disconnect"));
+    }
+    else
+    {
+        reader.close();
+        ui->btnNetConn->setText(tr("Connect"));
+    }
 }

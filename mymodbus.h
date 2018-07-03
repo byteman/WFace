@@ -24,6 +24,7 @@ public:
     QString port() const;
     void get_rx_tx(int& rx, int &tx);
 
+    bool open(const char* host,int port);
 private:
     modbus_t * m_modbus;
     int m_slave_addr;

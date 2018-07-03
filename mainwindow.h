@@ -100,6 +100,8 @@ private slots:
 
     void on_btnClear_clicked();
 
+    void on_btnNetConn_clicked();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;
