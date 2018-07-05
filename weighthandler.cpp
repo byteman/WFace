@@ -14,12 +14,14 @@ bool WeightHandler::paraRead()
     if(6 == _rtu->read_registers(REG_DIV_HIGH,6,values))
     {
 
+        //msleep(300);
         quint16 div_high = values[0];
         quint16 div_low = values[1];
         quint32 span_high = values[2]+(values[3]<<16);
         quint32 span_low = values[4]+(values[5]<<16);
         if(1 == _rtu->read_registers(REG_DOT,1,values))
         {
+            //msleep(300);
             m_dot = values[0];
             emit weightParaReadResult(div_high,div_low, span_high,span_low,m_dot);
             return true;

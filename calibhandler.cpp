@@ -24,12 +24,15 @@ bool CalibHandler::paraRead(void)
     if(1 == _rtu->read_registers(REG_2B_SENSOR_NUM,1,values))
     {
 
+
         m_sensor = (values[0] > 8)?4:values[0];
         if(4 == _rtu->read_registers(REG_FULL_SPAN,4,values))
         {
+
             quint32 sensor_full_span = values[0]+(values[1]<<16);
             quint32 sensor_mv = values[2]+(values[3]<<16);
             emit calibParaResult(sensor_mv, sensor_full_span);
+
             if(1 == _rtu->read_registers(REG_DOT,1,values))
             {
                 m_dot = values[0];
@@ -58,6 +61,7 @@ bool CalibHandler::doWork()
                 quint16 result = i;
                 if(1 == _rtu->read_registers(21,1,&result))
                 {
+
                     if(result <= 0)
                     {
                         //calib complete
@@ -71,9 +75,11 @@ bool CalibHandler::doWork()
                 quint16 index = i;
                 if(_rtu->write_registers(20,1,&index) == 1)
                 {
+
                     quint16 values[4];
                     if(_rtu->read_registers(22,4,values) == 4)
                     {
+
                         int weight = values[0] + (values[1] << 16);
                         int ad = values[2] + (values[3] << 16);
                         emit calibReadResult(index, weight,ad,m_dot);

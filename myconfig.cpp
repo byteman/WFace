@@ -13,7 +13,22 @@ MyConfig::MyConfig()
     m_max_sample       = config.value("/config/max_save_sample",5000).toInt();
     if(m_max_sample < 500) m_max_sample = 500;
 
+    m_delay_ms       = config.value("/config/delay_ms",200).toInt();
+    if(m_delay_ms < 0) m_delay_ms = 200;
 
+    m_ipaddr       = config.value("/config/ipaddr","127.0.0.1").toString();
+    if(m_ipaddr.length() == 0) m_ipaddr = "127.0.0.1";
+    m_port       = config.value("/config/port",502).toInt();
+    if(m_port < 0) m_port = 502;
 
+}
+
+bool MyConfig::SaveNetParam(QString ip, int port)
+{
+    QSettings config("wface.ini", QSettings::IniFormat);
+
+    config.setValue("/config/ipaddr",ip);
+    config.setValue("/config/port",port);
+    return true;
 }
 

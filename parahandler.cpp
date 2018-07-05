@@ -31,20 +31,27 @@ bool ParaHandler::_paraSave(Para &_para,int &reg)
         values[11] = _para.stable_span;
         values[12] = _para.filter_level;
         reg = 3;
+        //msleep(300);
        if(1 == _rtu->write_registers(3,1,values))
        {
            reg = 8;
+           //msleep(300);
            if(_rtu->write_registers(8,2,values+1) != 2)return false;
+           //msleep(300);
            reg = 10;
            if(_rtu->write_registers(10,2,values+3) != 2)return false;
+           //msleep(300);
            reg = 12;
            if(_rtu->write_registers(12,2,values+5) != 2)return false;
+           //msleep(300);
            reg = 14;
            if(_rtu->write_registers(14,6,values+7) != 6)return false;
-
+                //msleep(300);
                 reg = 96;
                _rtu->write_registers(96,1,&_para.adRate);
+               //msleep(300);
                _rtu->read_registers(96,1,values);
+               //msleep(300);
                if(_para.adRate == values[0])
                {
                    reg = 0;
@@ -82,6 +89,7 @@ bool ParaHandler::paraRead(Para &_para)
         _para.zero_track_span = values[14];
         _para.stable_span = values[15];
         _para.filter_level = values[16];
+        //msleep(300);
         //memcpy(&m_para,&values[0],sizeof(values));
         if(10 == _rtu->read_registers(26,10,values))
         {
@@ -90,6 +98,7 @@ bool ParaHandler::paraRead(Para &_para)
             _para.slave_addr = values[4];
             _para.version = values[5];
             _para.serial = values[8]+(values[9]<<16);
+            //msleep(300);
             if(1 == _rtu->read_registers(96,1,&_para.adRate))
             {
                 emit paraReadResult(_para);
