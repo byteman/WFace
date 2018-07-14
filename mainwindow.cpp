@@ -427,6 +427,9 @@ void MainWindow::on_cbxAcqSpan_currentIndexChanged(int index)
 
 void MainWindow::on_btnZero_clicked()
 {
+    if(!confirm()){
+        return;
+    }
     int addr = ui->sbAddr->value();
     calib->clearZero(addr);
 }
@@ -438,6 +441,9 @@ void MainWindow::on_btnRead_clicked()
 
 void MainWindow::on_btnCalibZero_clicked()
 {
+    if(!confirm()){
+        return;
+    }
     quint8 addr = ui->sbAddr->value();
     calib->calibZero(addr);
 }
@@ -455,6 +461,9 @@ void MainWindow::on_btnSave_clicked()
 
 void MainWindow::on_btnCalibWgt_clicked()
 {
+    if(!confirm()){
+        return;
+    }
     quint8 addr = ui->sbAddr->value();
     calib->calibWgt(addr);
 }
@@ -524,6 +533,9 @@ void MainWindow::on_btnQueryChange_clicked()
 
 void MainWindow::on_btnModifyAddr_clicked()
 {
+    if(!confirm()){
+        return;
+    }
     quint8 addr = ui->sbAddr->value();
     if(para->modifyAddr(addr)){
         QMessageBox::information(this,"提示","修改成功");
@@ -533,7 +545,11 @@ void MainWindow::on_btnModifyAddr_clicked()
         QMessageBox::information(this,"错误","修改失败");
     }
 }
+bool MainWindow::confirm()
+{
+    return (QMessageBox::Yes == QMessageBox::question(this,"提示","确认操作",QMessageBox::Yes|QMessageBox::No,QMessageBox::No));
 
+}
 void MainWindow::on_btnChange_clicked()
 {
     if(ui->btnChange->text()=="显示AD"){
@@ -549,6 +565,9 @@ void MainWindow::on_btnChange_clicked()
 void MainWindow::on_btnSet_clicked()
 {
     bool ok = false;
+    if(!confirm()){
+        return;
+    }
     quint8 addr = ui->sbAddr->value();
     qint16 weight = ui->edtSWet->text().toInt(&ok);
     if(ok){
@@ -565,3 +584,5 @@ void MainWindow::on_btnSet_clicked()
 
 
 }
+
+

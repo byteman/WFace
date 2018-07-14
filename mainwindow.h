@@ -121,6 +121,7 @@ private:
     void SetReadTimeout(int index, int count);
 
     QString formatState(SensorState &state);
+    bool confirm();
 protected:
     void timerEvent(QTimerEvent *);
 
