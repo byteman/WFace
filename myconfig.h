@@ -18,6 +18,7 @@ public:
     int m_save_time_min;
     bool m_admin;
     QString m_unit;
+    QString m_title;
 };
 
 #endif // MYCONFIG_H

@@ -1,5 +1,6 @@
 #include "myconfig.h"
 #include <QSettings>
+#include <QDebug>
 MyConfig::MyConfig()
 {
     QSettings config("wface.ini", QSettings::IniFormat);
@@ -16,7 +17,8 @@ MyConfig::MyConfig()
     if(m_max_sample > 24*60 ) m_max_sample = 24*60;
     m_unit       = config.value("/config/unit","kg").toString();
     m_admin       = config.value("/config/admin",false).toBool();
-
+    m_title       = config.value("/config/title","Measure").toString();
+    qDebug() << "title =" << m_title;
 }
 
 void MyConfig::SetSaveTime(int value)

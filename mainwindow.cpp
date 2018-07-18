@@ -49,7 +49,7 @@ void MainWindow::initUI()
     }
     ui->cbxBaud->setCurrentIndex(1);
     ui->scanPb->hide();
-
+    this->setWindowTitle(cfg.m_title);
     initCalibPoints();
     initCornFixChan();
     reader.start(100);
@@ -1268,7 +1268,10 @@ void MainWindow::on_btnClear_clicked()
 
 void MainWindow::on_edtSaveTime_valueChanged(int arg1)
 {
-    cfg.SetSaveTime(arg1);
+    if(arg1 != cfg.m_save_time_min){
+      cfg.SetSaveTime(arg1);
+    }
+
 }
 
 void MainWindow::on_cbxAcqSpan_currentIndexChanged(int index)
