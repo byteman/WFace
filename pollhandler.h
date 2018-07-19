@@ -37,6 +37,7 @@ private:
     qint64 m_last_time;
     // CmdHandler interface
     bool canRead();
+    void calcFps();
 public:
     bool startRun();
     bool stop();

@@ -18,7 +18,13 @@ MyConfig::MyConfig()
     m_unit       = config.value("/config/unit","kg").toString();
     m_admin       = config.value("/config/admin",false).toBool();
     m_title       = config.value("/config/title","Measure").toString();
+    m_alarm_index       = config.value("/alarm/condition",0).toInt();
+    if(m_alarm_index > 1) m_alarm_index = 0;
+    m_alarm_value = config.value("/alarm/value",100.0).toDouble();
+    if(m_max_sample > 24*60 ) m_max_sample = 24*60;
+
     qDebug() << "title =" << m_title;
+    qDebug() << "unit = " << m_unit;
 }
 
 void MyConfig::SetSaveTime(int value)
@@ -33,6 +39,15 @@ void MyConfig::SaveUnit(QString unit)
     m_unit = unit;
     QSettings config("wface.ini", QSettings::IniFormat);
     config.setValue("/config/unit",unit);
+}
+
+void MyConfig::SaveAlarmSetting(int alarmIndex, double alarmValue)
+{
+    m_alarm_index = alarmIndex;
+    m_alarm_value = alarmValue;
+    QSettings config("wface.ini", QSettings::IniFormat);
+    config.setValue("/alarm/condition",m_alarm_index);
+    config.setValue("/alarm/value",m_alarm_value);
 }
 
 QString MyConfig::Unit()

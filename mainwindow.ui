@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1131,24 +1131,45 @@
             </widget>
            </item>
            <item row="6" column="4">
-            <widget class="QComboBox" name="cbxAlarmSetting"/>
+            <widget class="QComboBox" name="cbxAlarmSetting">
+             <item>
+              <property name="text">
+               <string>小于等于设定值</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>大于设定值</string>
+              </property>
+             </item>
+            </widget>
            </item>
            <item row="6" column="0">
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>AlarmSetting</string>
+              <string>报警设定</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
            <item row="6" column="6">
             <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>AlarmValue</string>
+              <string>设定值</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
            <item row="6" column="7">
-            <widget class="QLineEdit" name="edtAlarmValue"/>
+            <widget class="QLineEdit" name="edtAlarmValue">
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
            </item>
            <item row="5" column="0">
             <widget class="QLabel" name="label_17">
@@ -1736,7 +1757,7 @@
         <item>
          <widget class="QTabWidget" name="tabWaveWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_6">
            <attribute name="title">

@@ -28,10 +28,15 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     this->startTimer(500);
     initUI();
 }
+void MainWindow::loadLocalParam()
+{
+    ui->edtUnit->setText(cfg.m_unit);
+    ui->edtAlarmValue->setText(QString("%1").arg(cfg.m_alarm_value));
+    ui->cbxAlarmSetting->setCurrentIndex(cfg.m_alarm_index);
+}
 void MainWindow::initUI()
 {
-    //QFile file(":/mystyle.txt");
-    //file.open(QFile::ReadOnly);
+
     qDebug() << QDateTime::currentMSecsSinceEpoch();
 #if 1
     qDebug() << "mainwindow thread-id:" << QThread::currentThreadId();
@@ -95,32 +100,16 @@ void MainWindow::initUI()
     {
         hideForGuest();
     }
-
-    devices = new MyDevices(32,ui->gbDevices);
+    loadLocalParam();
+    devices = new MyDevices(36,ui->gbDevices);
     devices->SetMaxSampleNum(cfg.m_max_sample);
-    //connect(devices,SIGNAL(WaveFull()),this,SLOT(onSaveWave()));
+
     waveWidget = new WaveWidget(ui->widget);
     rtwaveWidget = new WaveWidget(ui->rtplot,1);
-    ui->edtSaveTime->setValue(cfg.m_save_time_min);
+
     qDebug() << QDateTime::currentMSecsSinceEpoch();
     devices->SetUnit(cfg.Unit());
-//    QLabel *permanent = new QLabel(this);
-//    QFont ft;
-//    ft.setPointSize(12);
-    //ft.setBold(true);
-//    permanent->setFont(ft);
 
-//    QPalette pa;
-//    pa.setColor(QPalette::WindowText,Qt::black);
-//    permanent->setPalette(pa);
-
-
-    //permanent->setFrameStyle(QFrame::Box | QFrame::Sunken);
-//    permanent->setText(tr("logo_title"));
-//    permanent->setTextFormat(Qt::RichText);
-//    permanent->setOpenExternalLinks(true);
-
-    //ui->statusBar->addPermanentWidget(permanent);
 #endif
 }
 void MainWindow::hideForGuest()
@@ -717,6 +706,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     else if(index == 2)
     {
         traversalControl(ui->grpParas->children());
+        loadLocalParam();
         changeHandler("para");
     }
     else if(index == 3)
@@ -804,6 +794,10 @@ void MainWindow::on_btnSave_clicked()
         QMessageBox::information(this,tr("error"),tr(" format_err"));
     }
     cfg.SaveUnit(ui->edtUnit->text());
+    bool ok = false;
+    cfg.SaveAlarmSetting(ui->cbxAlarmSetting->currentIndex(), ui->edtAlarmValue->text().toDouble(&ok));
+
+    devices->SetAlarmSetting(cfg.m_alarm_index,cfg.m_alarm_value);
     devices->SetUnit(cfg.Unit());
 
 }
@@ -1228,6 +1222,7 @@ void MainWindow::on_btnSetAddr_clicked()
         poller->setAddrSpan(startAddr,count);
         devices->SetDeviceNum(startAddr,count);
         devices->SetUnit(cfg.Unit());
+        devices->SetAlarmSetting(cfg.m_alarm_index,cfg.m_alarm_value);
         rtwaveWidget->SetChannel(startAddr,count);
         rtwaveWidget->Clear();
         m_time = QTime::currentTime();

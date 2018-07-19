@@ -152,6 +152,7 @@ private:
     int ReadWaveList();
     void SetReadTimeout(int index, int count);
     void hideForGuest();
+    void loadLocalParam();
 protected:
     void timerEvent(QTimerEvent *);
 

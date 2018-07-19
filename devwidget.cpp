@@ -30,7 +30,7 @@ void DevWidget::Timeout()
         m_timeout--;
         SetOnline(true);
     }
-    if(m_timeout<=0){
+    if(m_timeout <= 0){
         clearState();
         ui->lbl_weight->setText("");
         SetOnline(false);
@@ -41,6 +41,12 @@ void DevWidget::SetUnit(QString unit)
 {
     m_unit = unit;
     ui->lbl_unit->setText(unit);
+}
+
+void DevWidget::SetAlarmSetting(int setting, double value)
+{
+    m_alarm_index = setting;
+    m_alarm_value = value;
 }
 
 void DevWidget::clearState()
@@ -62,6 +68,20 @@ QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
     resetTimeout();
     clearState();
 
+    double wti = utils::int2float(weight,dot);
+    if(m_alarm_index == 0){
+        if(wti <= m_alarm_value){
+            SetOnline(false);
+        }else if(!m_online){
+            SetOnline(true);
+        }
+    }else{
+        if(wti > m_alarm_value){
+            SetOnline(false);
+        }else if(!m_online){
+            SetOnline(true);
+        }
+    }
 
     if(state&1)
     {
@@ -140,4 +160,5 @@ void DevWidget::SetOnline(bool online)
     }else{
         ui->lbl_addr->setStyleSheet("background-color: red;");
     }
+    m_online = online;
 }

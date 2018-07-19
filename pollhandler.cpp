@@ -15,6 +15,20 @@ PollerHandler::PollerHandler(RtuReader *rtu):
 {
 
 }
+void PollerHandler::calcFps(void)
+{
+    static int total = 0;
+    static qint64 start = 0;
+    if(total == 0){
+
+        start = QDateTime::currentMSecsSinceEpoch();
+
+    }
+    total++;
+    //int fps = (QDateTime::currentMSecsSinceEpoch() - start) / total;
+    qDebug() << "total = " <<  total;
+
+}
 bool PollerHandler::canRead()
 {
     qint64 now = QDateTime::currentMSecsSinceEpoch();
@@ -60,6 +74,7 @@ bool PollerHandler::doWork()
         if(m_cur_addr >= m_end)
         {
             m_cur_addr = m_start;
+            calcFps();
         }
         if(m_quit)
         {

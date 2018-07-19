@@ -18,6 +18,7 @@ public:
     void SetMaxSampleNum(int max);
     void Timeout(int addr);
     void SetUnit(QString unit);
+    void SetAlarmSetting(int alarmSetting, double value);
     void DisplayWeight(int addr,int weight, quint16 state,quint16 dot);
     void SaveWave();
     void LoadWave(QString file,ChannelsData& datas);
