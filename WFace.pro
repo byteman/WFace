@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     wavewidget.cpp \
     dialogwave.cpp \
     myconfig.cpp \
-    csvfile.cpp
+    csvfile.cpp \
+    QComSettingWidget.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -66,7 +67,8 @@ HEADERS  += mainwindow.h \
     wavewidget.h \
     dialogwave.h \
     myconfig.h \
-    csvfile.h
+    csvfile.h \
+    QComSettingWidget.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
@@ -82,7 +84,8 @@ LIBS += -lOpengl32 \
                 -lglu32
 FORMS    += mainwindow.ui \
     devwidget.ui \
-    dialogwave.ui
+    dialogwave.ui \
+    QComSettingWidget.ui
 
 RESOURCES += \
     myrc.qrc

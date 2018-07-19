@@ -28,26 +28,43 @@ public:
     CmdHandler(RtuReader* rtu,QObject* parent=NULL):
         QThread(parent),
         _rtu(rtu),
+        m_reader_index(0),
         bInit(false)
     {
 
+    }
+    CmdHandler(QList<RtuReader*> rtuList,QObject* parent=NULL):
+        QThread(parent),
+        _rtuList(rtuList),
+        _rtu(NULL),
+        m_reader_index(0),
+        bInit(false)
+    {
+        if(rtuList.count() > 0){
+            _rtu = rtuList.at(0);
+        }
     }
     void processCmds();
     bool postCmd(RegCmd cmd);
     bool postWriteRegs(int reg_addr, int reg_num, quint16* values);
     bool postReadRegs(int reg_addr, int reg_num);
     bool reInit();
+
+    RtuReader* ChangeCurrentReader(int &curIndex);
     virtual bool startRun();
     virtual bool stop();
     virtual void run();
     virtual bool doWork();
     virtual bool init();
 
+    void SetReaderList(QList<RtuReader *> rtuList);
 signals:
     void OperationResult(RegCmd value);
 protected:
     bool bInit;
+    int   m_reader_index;
     RtuReader* _rtu;
+    QList<RtuReader*> _rtuList;
     QList<RegCmd> cmdlist;
 };
 

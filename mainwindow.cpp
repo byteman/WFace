@@ -37,6 +37,31 @@ void MainWindow::initUI()
     qDebug() << "mainwindow thread-id:" << QThread::currentThreadId();
     //QByteArray res = file.readAll();
 
+
+    int num = 0;
+    QString portname = "";
+    if(num++ <  cfg.m_max_channel)
+    {
+        if(cfg.m_port_names.size() > 0) portname=cfg.m_port_names[0];
+        comSettings.push_back(new QComSettingWidget(ui->grpChan1,portname));
+    }
+    if(num++ <  cfg.m_max_channel)
+    {
+        if(cfg.m_port_names.size() > 1) portname=cfg.m_port_names[1];
+        comSettings.push_back(new QComSettingWidget(ui->grpChan2,portname));
+    }
+    if(num++ <  cfg.m_max_channel)
+    {
+        if(cfg.m_port_names.size() > 2) portname=cfg.m_port_names[2];
+        comSettings.push_back(new QComSettingWidget(ui->grpChan3,portname));
+    }
+    if(num++ <  cfg.m_max_channel)
+    {
+        if(cfg.m_port_names.size() > 3) portname=cfg.m_port_names[3];
+        comSettings.push_back(new QComSettingWidget(ui->grpChan4,portname));
+    }
+
+
     pressed = false;
     m_select_addr = 1;
     ui->lblunit->setText(cfg.Unit());
@@ -59,7 +84,13 @@ void MainWindow::initUI()
     calib = new CalibHandler(&reader);
     para = new ParaHandler(&reader);
     corn = new CornHandler(&reader);
-    poller = new PollerHandler(&reader);
+
+    QList<RtuReader*> readers;
+    for(int i = 0; i < comSettings.size(); i++)
+    {
+        readers.push_back(comSettings[i]->GetRtuReader());
+    }
+    poller = new PollerHandler(readers);
     poller->setTimeOut(cfg.m_poll_timeout,cfg.m_read_timeout);
     handlers["scan"] = scaner;
     handlers["weight"] = weight;
@@ -96,6 +127,14 @@ void MainWindow::initUI()
 
     initAdList();
     clearState();
+
+    //QVBoxLayout *vbox = new QVBoxLayout(ui->grpChan1);
+    //vbox->addWidget(new QComSettingWidget);
+
+    //ui->grpChan1->setLayout(vbox);
+
+
+
     devices = new MyDevices(32,ui->gbDevices);
     devices->SetMaxSampleNum(cfg.m_max_sample);
     //connect(devices,SIGNAL(WaveFull()),this,SLOT(onSaveWave()));
@@ -392,10 +431,13 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
 
 void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16 dot, qint32 gross, qint32 tare)
 {
+    static int i = 0;
     if(devices!=NULL){
+        qDebug() << i++;
         devices->DisplayWeight(addr,weight,state,dot);
         rtwaveWidget->AppendData(addr,utils::int2float(weight,dot));
-        rtwaveWidget->DisplayAllChannel(true);
+        if(addr == 3)
+            rtwaveWidget->DisplayAllChannel(true);
     }
 }
 //标定过程....
@@ -669,35 +711,39 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
     if(index == 0)
     {
+        changeHandler("dumy");
+    }
+    if(index == 1)
+    {
         changeHandler("scan",false);
     }
-    else if(index == 1)
+    else if(index == 2)
     {
         changeHandler("weight");
     }
-    else if(index == 2)
+    else if(index == 3)
     {
         traversalControl(ui->grpParas->children());
         changeHandler("para");
     }
-    else if(index == 3)
+    else if(index == 4)
     {
         clearCalib();
         changeHandler("calib");
 
     }
-    else if(index == 4)
+    else if(index == 5)
     {
         clearCornCalib(true);
         changeHandler("corn");
     }
-    else if(index == 5)
+    else if(index == 6)
     {
 
         changeHandler("poll");
 
     }
-    else if(index == 6)
+    else if(index == 7)
     {
         changeHandler("dumy");
         waveWidget->Clear();

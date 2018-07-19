@@ -1,5 +1,6 @@
 #include "myconfig.h"
 #include <QSettings>
+#include <QDebug>
 MyConfig::MyConfig()
 {
     QSettings config("wface.ini", QSettings::IniFormat);
@@ -16,6 +17,12 @@ MyConfig::MyConfig()
     if(m_max_sample > 24*60 ) m_max_sample = 24*60;
     m_unit       = config.value("/config/unit","kg").toString();
 
+    QString port = config.value("/config/port","").toString();
+    m_port_names       = port.split(",",QString::SkipEmptyParts);
+    qDebug() << port << "--------------" << m_port_names;
+    int baud = config.value("/config/baud",115200).toInt();
+    qDebug() << baud;
+    m_max_channel = m_port_names.count();
 
 
 }

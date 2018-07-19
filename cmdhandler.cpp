@@ -93,6 +93,23 @@ bool CmdHandler::reInit()
     return true;
 }
 
+void CmdHandler::SetReaderList(QList<RtuReader *> rtuList)
+{
+    _rtuList.clear();
+    _rtuList = rtuList;
+}
+
+
+RtuReader *CmdHandler::ChangeCurrentReader(int &curIndex)
+{
+    int index =(m_reader_index)%(_rtuList.size());
+    m_reader_index=index+1;
+    curIndex = index+1;
+    //last = (m_reader_index==_rtuList.size());
+    return _rtuList.at(index);
+
+}
+
 bool CmdHandler::startRun()
 {
     bInit = false;

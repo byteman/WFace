@@ -16,6 +16,7 @@
 #include "mydevices.h"
 #include "dialogwave.h"
 #include "myconfig.h"
+#include "QComSettingWidget.h"
 #include <QMap>
 namespace Ui {
 class MainWindow;
@@ -115,6 +116,7 @@ private:
     ParaHandler* para;
     CornHandler* corn;
     PollerHandler *poller;
+    QList<QComSettingWidget*> comSettings;
     RtuReader reader;
     QMap<QString,CmdHandler*> handlers;
     MyDevices* devices;

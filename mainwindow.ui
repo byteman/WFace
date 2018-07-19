@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1343</width>
-    <height>681</height>
+    <width>1348</width>
+    <height>731</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -44,8 +44,43 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>6</number>
       </property>
+      <widget class="QWidget" name="tab_8">
+       <attribute name="title">
+        <string>采集卡配置</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="grpChan1">
+          <property name="title">
+           <string>通道1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QGroupBox" name="grpChan2">
+          <property name="title">
+           <string>通道2</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QGroupBox" name="grpChan3">
+          <property name="title">
+           <string>通道3</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QGroupBox" name="grpChan4">
+          <property name="title">
+           <string>通道4</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="tab">
        <attribute name="title">
         <string>Communication</string>
@@ -110,16 +145,22 @@
               </property>
               <item>
                <widget class="QGroupBox" name="groupBox_2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
-                  <width>161</width>
-                  <height>220</height>
+                  <width>200</width>
+                  <height>0</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
                   <width>161</width>
-                  <height>250</height>
+                  <height>2000</height>
                  </size>
                 </property>
                 <property name="font">
@@ -134,24 +175,27 @@
                  <string notr="true"/>
                 </property>
                 <property name="title">
-                 <string>COM-Port</string>
+                 <string>通讯参数</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_2" stretch="2,2,2,1">
+                <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,2,2,2,1,0,0">
                  <property name="leftMargin">
                   <number>10</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>5</number>
                  </property>
                  <property name="rightMargin">
                   <number>20</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>5</number>
                  </property>
+                 <item>
+                  <widget class="QComboBox" name="comboBox"/>
+                 </item>
                  <item>
                   <widget class="QComboBox" name="cbxPort"/>
                  </item>
@@ -214,61 +258,74 @@
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QProgressBar" name="scanPb">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>161</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximum">
+                    <number>32</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="textVisible">
+                    <bool>false</bool>
+                   </property>
+                   <property name="invertedAppearance">
+                    <bool>false</bool>
+                   </property>
+                   <property name="textDirection">
+                    <enum>QProgressBar::TopToBottom</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnSearch">
+                   <property name="minimumSize">
+                    <size>
+                     <width>161</width>
+                     <height>32</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>161</width>
+                     <height>32</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true"/>
+                   </property>
+                   <property name="text">
+                    <string>BusScan</string>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
               <item>
-               <widget class="QProgressBar" name="scanPb">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
                 </property>
-                <property name="minimumSize">
+                <property name="sizeHint" stdset="0">
                  <size>
-                  <width>161</width>
-                  <height>0</height>
+                  <width>20</width>
+                  <height>99</height>
                  </size>
                 </property>
-                <property name="maximum">
-                 <number>32</number>
-                </property>
-                <property name="value">
-                 <number>0</number>
-                </property>
-                <property name="textVisible">
-                 <bool>false</bool>
-                </property>
-                <property name="invertedAppearance">
-                 <bool>false</bool>
-                </property>
-                <property name="textDirection">
-                 <enum>QProgressBar::TopToBottom</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnSearch">
-                <property name="minimumSize">
-                 <size>
-                  <width>161</width>
-                  <height>32</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>161</width>
-                  <height>32</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string>BusScan</string>
-                </property>
-               </widget>
+               </spacer>
               </item>
               <item>
                <widget class="QGroupBox" name="groupBox_3">
@@ -330,19 +387,6 @@
                  </item>
                 </layout>
                </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>99</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
              </layout>
             </widget>
@@ -1719,7 +1763,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget_2">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_6">
            <attribute name="title">
@@ -1804,8 +1848,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1343</width>
-     <height>23</height>
+     <width>1348</width>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuChange">

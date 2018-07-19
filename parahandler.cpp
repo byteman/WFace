@@ -14,6 +14,7 @@ int ParaHandler::getDot()
 
 bool ParaHandler::_paraSave(Para &_para,int &reg)
 {
+    //_rtu = GetCurrentReader();
     if(_rtu)
     {
         quint16 values[17];

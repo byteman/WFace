@@ -15,7 +15,8 @@ public:
     int m_read_timeout;
     int m_max_sample;
     int m_save_time_min;
-
+    int m_max_channel;
+    QStringList m_port_names;
     QString m_unit;
 };
 
