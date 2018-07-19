@@ -14,6 +14,7 @@ public:
     bool open(const char* port, int baud, char parity, char databit, char stopbit);
     bool close();
     bool setByteTimeout(int ms);
+    bool setDelay(int ms);
     bool set_response_timeout(int ms);
     void setDeviceAddr(int _addr);
     int  write_register(int reg_addr, int value);
@@ -24,12 +25,16 @@ public:
     QString port() const;
     void get_rx_tx(int& rx, int &tx);
 
+    bool open(const char* host,int port);
 private:
     modbus_t * m_modbus;
     int m_slave_addr;
     QString m_port;
     int m_tx_cout;
     int m_rx_cout;
+    int m_delay_ms;
+    bool m_modbus_tcp;
+    void sleep();
 };
 
 class Modbus_Factory

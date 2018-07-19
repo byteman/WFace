@@ -101,6 +101,7 @@ private slots:
     void on_btnClear_clicked();
 
     void on_edtSaveTime_valueChanged(int arg1);
+	void on_btnNetConn_clicked();
 
     void on_cbxAcqSpan_currentIndexChanged(int index);
 

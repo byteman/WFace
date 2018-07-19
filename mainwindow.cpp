@@ -1284,3 +1284,25 @@ void MainWindow::on_actionReset_triggered()
 {
 
 }
+void MainWindow::on_btnNetConn_clicked()
+{
+#if 0
+    if(!reader.isConnectd())
+    {
+        //QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
+
+        if(!reader.open(ui->edtHost->text(),ui->edtPort->text()))
+        {
+            QMessageBox::information(this,tr("error"),tr("设备连接失败"));
+            return ;
+        }
+        cfg.SaveNetParam(ui->edtHost->text(),ui->edtPort->text().toInt());
+        ui->btnNetConn->setText(tr("断开"));
+    }
+    else
+    {
+        reader.close();
+        ui->btnNetConn->setText(tr("连接"));
+    }
+#endif
+}
