@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QSettings>
 class AlarmInfo{
 public:
     AlarmInfo():
@@ -55,6 +56,8 @@ public:
     //AlarmInfoMap m_info_map;
     QString m_unit;
     QString m_title;
+private:
+    QSettings *config;
 };
 
 #endif // MYCONFIG_H

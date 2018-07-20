@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "QFile"
 #include <QMessageBox>
@@ -41,6 +41,10 @@ void MainWindow::loadLocalParam()
     }
 
 }
+/**
+ * @brief QStringLiteral("我的祖国我") 这样来显示中文.
+ * 编码方式要选择utf-8 bom
+ */
 void MainWindow::initUI()
 {
 
@@ -125,6 +129,8 @@ void MainWindow::initUI()
 
     qDebug() << QDateTime::currentMSecsSinceEpoch();
     devices->SetUnit(cfg.Unit());
+    //qDebug() << QStringLiteral("我的祖国和我");
+    //QMessageBox::information(this,QStringLiteral("我的祖国我"),QStringLiteral("我哎我的祖"));
 
 #endif
 }
