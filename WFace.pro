@@ -77,6 +77,7 @@ INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 INCLUDEPATH += 3rdparty/poco/include
 win32:INCLUDEPATH += 3rdparty/poco/include\ 3rdparty/pcomm
 
+msvc:QMAKE_CXXFLAGS += -source-charset:utf-8
 
 win32:DEFINES += _TTY_WIN_  WINVER=0x0501
 win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM

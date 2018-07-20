@@ -11,7 +11,7 @@
 #include <QFile>
 #include <cstdio>
 #include "utils.h"
-
+//#pragma execution_character_set("utf-8")
 static QString unit="g";
 static bool scan = false;
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
@@ -130,7 +130,7 @@ void MainWindow::initUI()
     qDebug() << QDateTime::currentMSecsSinceEpoch();
     devices->SetUnit(cfg.Unit());
     //qDebug() << QStringLiteral("我的祖国和我");
-    //QMessageBox::information(this,QStringLiteral("我的祖国我"),QStringLiteral("我哎我的祖"));
+    QMessageBox::information(this,"我的祖国我",QStringLiteral("我哎我的祖"));
 
 #endif
 }
