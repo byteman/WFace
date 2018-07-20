@@ -7,6 +7,7 @@ namespace Ui {
 class QComSettingWidget;
 }
 
+
 class QComSettingWidget : public QWidget
 {
     Q_OBJECT

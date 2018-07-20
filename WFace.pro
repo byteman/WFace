@@ -42,7 +42,9 @@ SOURCES += main.cpp\
     myconfig.cpp \
     csvfile.cpp \
     ModbusRtu.cpp \
-    ModbusTcp.cpp
+    ModbusTcp.cpp \
+    UartCfgWidget.cpp \
+    QComSettingWidget.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -70,7 +72,9 @@ HEADERS  += mainwindow.h \
     myconfig.h \
     csvfile.h \
     ModbusRtu.h \
-    ModbusTcp.h
+    ModbusTcp.h \
+    UartCfgWidget.h \
+    QComSettingWidget.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
@@ -86,7 +90,9 @@ LIBS += -lOpengl32 \
                 -lglu32
 FORMS    += mainwindow.ui \
     devwidget.ui \
-    dialogwave.ui
+    dialogwave.ui \
+    UartCfgWidget.ui \
+    QComSettingWidget.ui
 
 RESOURCES += \
     myrc.qrc
