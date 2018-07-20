@@ -72,6 +72,14 @@ void MainWindow::initUI()
     para = new ParaHandler(&reader);
     corn = new CornHandler(&reader);
     poller = new PollerHandler(&reader);
+#if 0
+    QList<RtuReader*> readers;
+    for(int i = 0; i < comSettings.size(); i++)
+    {
+        readers.push_back(comSettings[i]->GetRtuReader());
+    }
+    poller = new PollerHandler(readers);
+#endif
     poller->setTimeOut(cfg.m_poll_timeout,cfg.m_read_timeout);
     ui->edtSaveTime->setValue(cfg.m_save_time_min);
     handlers["scan"] = scaner;

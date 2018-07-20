@@ -13,6 +13,7 @@ class PollerHandler : public CmdHandler
 public:
     PollerHandler(RtuReader*  rtu);
 
+    PollerHandler(QList<RtuReader*> rtuList);
 
     virtual bool doWork();
 

@@ -15,6 +15,18 @@ PollerHandler::PollerHandler(RtuReader *rtu):
 {
 
 }
+PollerHandler::PollerHandler(QList<RtuReader*> rtuList):
+    CmdHandler(rtuList),
+    m_start(0),
+    m_end(0),
+    m_cur_addr(0),
+    m_start_us(30000),
+    m_stop_us(1000000),
+    m_read_delay_ms(10),
+    m_quit(false)
+{
+
+}
 void PollerHandler::calcFps(void)
 {
     static int total = 0;
@@ -85,6 +97,39 @@ bool PollerHandler::doWork()
     }
     return true;
 }
+#if 0
+bool PollerHandler::doWork2()
+{
+
+    _rtu = ChangeCurrentReader(m_cur_addr);
+    if(_rtu)
+    {
+        quint16 values[8];
+        if(!canRead())
+        {
+            msleep(1);
+            return false;
+        }
+        if(4 == _rtu->read_registers(0,4,values))
+        {
+            emit weightResult(m_cur_addr,values[0]+(values[1]<<16),values[2],values[3],values[4]+(values[5]<<16),values[6] +( values[7]<<16 ) );
+            this->msleep(5);
+        }
+        else{
+            //超时.
+            qDebug() << "poll addr" << m_cur_addr << " timeout";
+            emit timeout(m_cur_addr);
+        }
+        if(m_quit)
+        {
+            qDebug() << "PollerHandler quit";
+            return true;
+        }
+        return false;
+    }
+    return true;
+}
+#endif
 bool PollerHandler::WriteCtrlCmd(int reg, quint8 value)
 {
 
@@ -120,9 +165,10 @@ void PollerHandler::setTimeOut(int startUs, int stopUs)
 {
     m_start_us = startUs;
     m_stop_us = stopUs;
-    _rtu->set_response_timeout(startUs);
+    if(_rtu){
+        _rtu->set_response_timeout(startUs);
+    }
 }
-
 void PollerHandler::setReadInterval(int ms)
 {
     m_read_delay_ms = ms;
@@ -131,7 +177,9 @@ void PollerHandler::setReadInterval(int ms)
 //最大超时时间100ms,
 bool PollerHandler::startRun()
 {
-    _rtu->set_response_timeout(m_start_us);
+    if(_rtu){
+        _rtu->set_response_timeout(m_start_us);
+    }
     m_quit = false;
     m_last_time =QDateTime::currentMSecsSinceEpoch();
     return CmdHandler::startRun();
@@ -141,6 +189,8 @@ bool PollerHandler::stop()
 {
     m_quit = true;
     CmdHandler::stop();
+    if(_rtu){
     _rtu->set_response_timeout(m_stop_us);
+    }
     return true;
 }

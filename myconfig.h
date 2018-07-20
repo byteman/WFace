@@ -49,8 +49,8 @@ public:
     int m_read_timeout;
     int m_max_sample;
     int m_save_time_min;
-    //quint8 m_alarm_index; //0 小于等于设定值 1 大于设定值
-    //float m_alarm_value; //报警值.
+    int m_max_channel;
+    QStringList m_port_names;
     bool m_admin;
     //AlarmInfoMap m_info_map;
     QString m_unit;

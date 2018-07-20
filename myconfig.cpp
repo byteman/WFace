@@ -23,7 +23,13 @@ MyConfig::MyConfig()
 //    m_alarm_value = config.value("/alarm/value",100.0).toDouble();
     if(m_max_sample > 24*60 ) m_max_sample = 24*60;
 
- 
+    QString port = config.value("/config/port","").toString();
+    m_port_names       = port.split(",",QString::SkipEmptyParts);
+    qDebug() << port << "--------------" << m_port_names;
+    int baud = config.value("/config/baud",115200).toInt();
+    qDebug() << baud;
+    m_max_channel = m_port_names.count();
+
     qDebug() << "title =" << m_title;
     qDebug() << "unit = " << m_unit;
 }
