@@ -16,6 +16,7 @@ public:
     bool start(int interval=500);
     bool hasConnected(){return m_connect;}
     bool setDeviceAddr(int addr);
+    int  getCurrentDeviceAddr(void);
     bool setDelay(int ms);
     bool set_response_timeout(int us);
 

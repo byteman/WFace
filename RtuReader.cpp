@@ -22,6 +22,11 @@ bool RtuReader::setDeviceAddr(int addr)
     return m_connect;
 }
 
+int RtuReader::getCurrentDeviceAddr()
+{
+    return m_slaveAddr;
+}
+
 bool RtuReader::set_response_timeout(int us)
 {
     return m_rtu.set_response_timeout(us);

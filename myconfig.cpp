@@ -18,11 +18,12 @@ MyConfig::MyConfig()
     m_unit       = config.value("/config/unit","kg").toString();
     m_admin       = config.value("/config/admin",false).toBool();
     m_title       = config.value("/config/title","Measure").toString();
-    m_alarm_index       = config.value("/alarm/condition",0).toInt();
-    if(m_alarm_index > 1) m_alarm_index = 0;
-    m_alarm_value = config.value("/alarm/value",100.0).toDouble();
+//    m_alarm_index       = config.value("/alarm/condition",0).toInt();
+//    if(m_alarm_index > 1) m_alarm_index = 0;
+//    m_alarm_value = config.value("/alarm/value",100.0).toDouble();
     if(m_max_sample > 24*60 ) m_max_sample = 24*60;
 
+ 
     qDebug() << "title =" << m_title;
     qDebug() << "unit = " << m_unit;
 }
@@ -40,7 +41,7 @@ void MyConfig::SaveUnit(QString unit)
     QSettings config("wface.ini", QSettings::IniFormat);
     config.setValue("/config/unit",unit);
 }
-
+#if 0
 void MyConfig::SaveAlarmSetting(int alarmIndex, double alarmValue)
 {
     m_alarm_index = alarmIndex;
@@ -48,6 +49,28 @@ void MyConfig::SaveAlarmSetting(int alarmIndex, double alarmValue)
     QSettings config("wface.ini", QSettings::IniFormat);
     config.setValue("/alarm/condition",m_alarm_index);
     config.setValue("/alarm/value",m_alarm_value);
+}
+#endif
+//保存某个地址的配置.
+void MyConfig::SaveAlarmSetting(int addr, int alarmIndex, double alarmValue)
+{
+    //AlarmInfo info;
+    //info.create(addr,alarmIndex,alarmValue);
+    //m_info_map[addr] = info;
+    QSettings config("wface.ini", QSettings::IniFormat);
+    config.setValue(QString("/alarm/cond%1").arg(addr), alarmIndex);
+    config.setValue(QString("/alarm/value%1").arg(addr),alarmValue);
+
+}
+//读取某个地址的报警配置
+bool MyConfig::GetAlarmSetting(int addr, AlarmInfo &aif)
+{
+    QSettings config("wface.ini", QSettings::IniFormat);
+    int index        = config.value(QString("/alarm/cond%1").arg(addr),1).toInt();
+    double value     = config.value(QString("/alarm/value%1").arg(addr),10000).toDouble();
+    aif.create(addr,index,value);
+    return true;
+
 }
 
 QString MyConfig::Unit()

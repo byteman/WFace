@@ -107,6 +107,10 @@ private slots:
 
     void on_actionReset_triggered();
 
+    void on_edtSaveTime_editingFinished();
+
+    void on_edtSaveTime_valueChanged(const QString &arg1);
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;

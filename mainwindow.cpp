@@ -31,8 +31,15 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
 void MainWindow::loadLocalParam()
 {
     ui->edtUnit->setText(cfg.m_unit);
-    ui->edtAlarmValue->setText(QString("%1").arg(cfg.m_alarm_value));
-    ui->cbxAlarmSetting->setCurrentIndex(cfg.m_alarm_index);
+
+    AlarmInfo aif;
+    int addr = reader.getCurrentDeviceAddr();
+    if(addr != -1){
+        cfg.GetAlarmSetting(addr,aif);
+        ui->cbxAlarmSetting->setCurrentIndex(aif.index);
+        ui->edtAlarmValue->setText(QString("%1").arg(aif.value));
+    }
+
 }
 void MainWindow::initUI()
 {
@@ -66,6 +73,7 @@ void MainWindow::initUI()
     corn = new CornHandler(&reader);
     poller = new PollerHandler(&reader);
     poller->setTimeOut(cfg.m_poll_timeout,cfg.m_read_timeout);
+    ui->edtSaveTime->setValue(cfg.m_save_time_min);
     handlers["scan"] = scaner;
     handlers["weight"] = weight;
     handlers["calib"] = calib;
@@ -795,9 +803,23 @@ void MainWindow::on_btnSave_clicked()
     }
     cfg.SaveUnit(ui->edtUnit->text());
     bool ok = false;
-    cfg.SaveAlarmSetting(ui->cbxAlarmSetting->currentIndex(), ui->edtAlarmValue->text().toDouble(&ok));
 
-    devices->SetAlarmSetting(cfg.m_alarm_index,cfg.m_alarm_value);
+
+
+    int addr = reader.getCurrentDeviceAddr();
+    int index = ui->cbxAlarmSetting->currentIndex();
+    double value = ui->edtAlarmValue->text().toDouble(&ok);
+
+    if(addr == -1){
+        qDebug() << "on_btnSave_clicked invalid address";
+        return;
+    }
+    if(!ok){
+        qDebug() << "on_btnSave_clicked can not get value";
+        return;
+    }
+    cfg.SaveAlarmSetting(addr, index, value);
+    devices->SetAlarmSetting(addr,index,value);
     devices->SetUnit(cfg.Unit());
 
 }
@@ -1005,7 +1027,7 @@ void MainWindow::timerEvent(QTimerEvent *)
     int rx = 0,tx = 0;
     //adc102.getRXTX(rx,tx);
     reader.get_rx_tx(rx,tx);
-    QString msg = QString("TX:%1|RX:%2 ").arg(tx).arg(rx);
+    QString msg = QString("Addr:%1 TX:%2|RX:%3 ").arg(reader.getCurrentDeviceAddr()).arg(tx).arg(rx);
 //    if(devices!=NULL){
 //        devices->DisplayWeight(2,1000,0,0);
 //        rtwaveWidget->AppendData(2,1000);
@@ -1222,7 +1244,12 @@ void MainWindow::on_btnSetAddr_clicked()
         poller->setAddrSpan(startAddr,count);
         devices->SetDeviceNum(startAddr,count);
         devices->SetUnit(cfg.Unit());
-        devices->SetAlarmSetting(cfg.m_alarm_index,cfg.m_alarm_value);
+        for(int i  = 0; i <  count; i++){
+            AlarmInfo aif;
+            cfg.GetAlarmSetting(i+startAddr, aif);
+            devices->SetAlarmSetting(i+startAddr,aif.index,aif.value);
+        }
+
         rtwaveWidget->SetChannel(startAddr,count);
         rtwaveWidget->Clear();
         m_time = QTime::currentTime();
@@ -1305,4 +1332,14 @@ void MainWindow::on_btnNetConn_clicked()
         ui->btnNetConn->setText(tr("连接"));
     }
 #endif
+}
+
+void MainWindow::on_edtSaveTime_editingFinished()
+{
+
+}
+
+void MainWindow::on_edtSaveTime_valueChanged(const QString &arg1)
+{
+
 }

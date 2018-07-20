@@ -73,12 +73,16 @@ void MyDevices::SetUnit(QString unit)
     }
 }
 
-void MyDevices::SetAlarmSetting(int alarmSetting, double value)
+void MyDevices::SetAlarmSetting(int addr,int alarmSetting, double value)
 {
-    for(int i = 0; i < widgets.size();i++)
+    //for(int i = 0; i < widgets.size();i++)
+    //{
+    if(addr < widgets.size() && addr >= 0)
     {
-        widgets[i]->SetAlarmSetting(alarmSetting,value);
+        widgets[addr]->SetAlarmSetting(alarmSetting,value);
     }
+
+    //}
 }
 
 void MyDevices::DisplayWeight(int addr, int weight, quint16 state, quint16 dot)

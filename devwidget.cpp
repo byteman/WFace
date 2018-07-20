@@ -1,6 +1,7 @@
 #include "devwidget.h"
 #include "ui_devwidget.h"
 #include "utils.h"
+#include <QDebug>
 #define MAX_TIMEOUT 3
 DevWidget::DevWidget(int addr, QWidget *parent) :
     QWidget(parent),
@@ -69,6 +70,7 @@ QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
     clearState();
 
     double wti = utils::int2float(weight,dot);
+    //qDebug() << "addr" << m_addr << " wti=" <<wti << " value= " << m_alarm_value << " index=" << m_alarm_index;
     if(m_alarm_index == 0){
         if(wti <= m_alarm_value){
             SetOnline(false);
