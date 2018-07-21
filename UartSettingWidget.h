@@ -2,21 +2,23 @@
 #define UARTCFGWIDGET_H
 
 #include <QWidget>
-
+#include "readerwidget.h"
 namespace Ui {
 class UartCfgWidget;
 }
 
-class UartCfgWidget : public QWidget
+class UartSettingWidget : public IReaderWidget
 {
     Q_OBJECT
 
 public:
-    explicit UartCfgWidget(QWidget *parent = 0);
-    ~UartCfgWidget();
+    explicit UartSettingWidget(QWidget *parent = 0);
+    ~UartSettingWidget();
 
 private:
     Ui::UartCfgWidget *ui;
+
+
 };
 
 #endif // UARTCFGWIDGET_H

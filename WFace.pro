@@ -43,8 +43,10 @@ SOURCES += main.cpp\
     csvfile.cpp \
     ModbusRtu.cpp \
     ModbusTcp.cpp \
-    UartCfgWidget.cpp \
-    QComSettingWidget.cpp
+    QComSettingWidget.cpp \
+    readerwidget.cpp \
+    TcpSettingWidget.cpp \
+    UartSettingWidget.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -73,14 +75,17 @@ HEADERS  += mainwindow.h \
     csvfile.h \
     ModbusRtu.h \
     ModbusTcp.h \
-    UartCfgWidget.h \
-    QComSettingWidget.h
+    UartSettingWidget.h \
+    QComSettingWidget.h \
+    readerwidget.h \
+    TcpSettingWidget.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
 INCLUDEPATH += 3rdparty/poco/include
 win32:INCLUDEPATH += 3rdparty/poco/include\ 3rdparty/pcomm
 
+msvc:QMAKE_CXXFLAGS += -source-charset:utf-8
 
 win32:DEFINES += _TTY_WIN_  WINVER=0x0501
 win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
@@ -91,9 +96,9 @@ LIBS += -lOpengl32 \
 FORMS    += mainwindow.ui \
     devwidget.ui \
     dialogwave.ui \
-    UartCfgWidget.ui \
-    QComSettingWidget.ui
-
+    QComSettingWidget.ui \
+    TcpSettingWidget.ui \
+    UartSettingWidget.ui
 RESOURCES += \
     myrc.qrc
 TRANSLATIONS+=cn.ts en.ts

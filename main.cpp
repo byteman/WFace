@@ -4,11 +4,13 @@
 #include <QTranslator>
 #include <QSettings>
 #include <QSplashScreen>
+#include <QTextCodec>
 void loadLang(QTranslator& translator)
 {
 
     QSettings config("wface.ini", QSettings::IniFormat);
-
+//注意在程序中必须都设置为一样的编码方式，否则还是会出现乱码.
+    config.setIniCodec("utf-8");
     QString lang       = config.value("/config/lang","zh").toString();
     if(lang == "zh")
     {
@@ -24,6 +26,7 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 //    QPixmap pixmap("splash.jpg");
 //    QSplashScreen splash(pixmap);
 //    splash.show();

@@ -11,7 +11,7 @@
 #include <QFile>
 #include <cstdio>
 #include "utils.h"
-
+//#pragma execution_character_set("utf-8")
 static QString unit="g";
 static bool scan = false;
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
@@ -41,6 +41,10 @@ void MainWindow::loadLocalParam()
     }
 
 }
+/**
+ * @brief QStringLiteral("我的祖国我") 这样来显示中文.
+ * 编码方式要选择utf-8 bom
+ */
 void MainWindow::initUI()
 {
 

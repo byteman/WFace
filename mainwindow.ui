@@ -109,6 +109,32 @@
                <number>5</number>
               </property>
               <item>
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>通讯方式</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox">
+                <item>
+                 <property name="text">
+                  <string>RS232/RS485</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>MultiRs232</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>TCP/IP</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
                <widget class="QGroupBox" name="groupBox_2">
                 <property name="minimumSize">
                  <size>
@@ -134,12 +160,12 @@
                  <string notr="true"/>
                 </property>
                 <property name="title">
-                 <string>COM-Port</string>
+                 <string/>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_2" stretch="2,2,2,1">
+                <layout class="QVBoxLayout" name="verticalLayout_2" stretch="">
                  <property name="leftMargin">
                   <number>10</number>
                  </property>
@@ -152,122 +178,7 @@
                  <property name="bottomMargin">
                   <number>0</number>
                  </property>
-                 <item>
-                  <widget class="QComboBox" name="cbxPort"/>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="cbxBaud">
-                   <item>
-                    <property name="text">
-                     <string>4800</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>9600</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>19200</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>38400</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>115200</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="cbxParity">
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <item>
-                    <property name="text">
-                     <string>none</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>even</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QCheckBox" name="cbxFindAll">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>ADR 1..32</string>
-                   </property>
-                  </widget>
-                 </item>
                 </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QProgressBar" name="scanPb">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>161</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximum">
-                 <number>32</number>
-                </property>
-                <property name="value">
-                 <number>0</number>
-                </property>
-                <property name="textVisible">
-                 <bool>false</bool>
-                </property>
-                <property name="invertedAppearance">
-                 <bool>false</bool>
-                </property>
-                <property name="textDirection">
-                 <enum>QProgressBar::TopToBottom</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnSearch">
-                <property name="minimumSize">
-                 <size>
-                  <width>161</width>
-                  <height>32</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>161</width>
-                  <height>32</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true"/>
-                </property>
-                <property name="text">
-                 <string>BusScan</string>
-                </property>
                </widget>
               </item>
               <item>

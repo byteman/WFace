@@ -5,7 +5,7 @@
 #include <QDebug>
 
 QComSettingWidget::QComSettingWidget(QWidget *parent,QString pname) :
-    QWidget(parent),
+    IReaderWidget(parent),
     m_port(pname),
     ui(new Ui::QComSettingWidget)
 {
@@ -26,7 +26,7 @@ QComSettingWidget::QComSettingWidget(QWidget *parent,QString pname) :
     }
 
     ui->cbxBaud->setCurrentIndex(1);
-    ui->lblState->setText("");
+    //ui->lblState->setText("");
     ui->btnComOpera->setText("Open");
 }
 
@@ -35,10 +35,6 @@ QComSettingWidget::~QComSettingWidget()
     delete ui;
 }
 
-RtuReader *QComSettingWidget::GetRtuReader()
-{
-    return &m_reader;
-}
 
 void QComSettingWidget::on_btnComOpera_clicked()
 {
@@ -47,15 +43,16 @@ void QComSettingWidget::on_btnComOpera_clicked()
         QString port = ui->cbxPort->currentText();
         if(!m_reader.open(port,ui->cbxBaud->currentText().toInt(),'N',8,1))
         {
-            ui->lblState->setText("failed");
+            //ui->lblState->setText("failed");
             QMessageBox::information(this,tr("error"),tr("uart open failed"));
 
             return ;
         }else{
-            ui->lblState->setText("open");
+            //ui->lblState->setText("open");
             ui->btnComOpera->setText("Close");
             QMessageBox::information(this,tr("info"),tr("uart open success"));
             m_reader.setDeviceAddr(1);
         }
     //}
 }
+
