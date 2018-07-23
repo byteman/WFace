@@ -13,6 +13,9 @@ public:
     static QString UTF82GBK(const QString &inStr);
     static std::string gbk2utf8(const QString &inStr);
     static QString utf82gbk(const std::string &inStr);
+    static QString format2(int value, int dot);
+    static QString formatValue(int value, int dot);
+    static int toInt(QString txt, int dot, bool *ok);
 };
 
 #endif // UTILS_H

@@ -7,6 +7,45 @@ utils::utils()
 
 #include <QTextCodec>
 
+int utils::toInt(QString txt,int dot,bool *ok)
+{
+    float tmp = txt.toFloat(ok);
+    if(!ok) return false;
+
+
+    return tmp*pow(10,dot);
+
+}
+
+QString utils::format2(int value, int dot)
+{
+
+    QString svalue = QString("%1").arg(value);
+    if((svalue.size() > dot) )
+    {
+        if(dot > 0)
+        {
+            int index = svalue.size() - dot;
+            svalue.insert(index,".");
+        }
+
+    }
+    else
+    {
+        int n =  dot - svalue.size();
+        QString s = QString("0.%1").arg(QString().fill('0',n));
+        svalue.prepend(s);
+    }
+    return svalue;
+}
+
+QString utils::formatValue(int value, int dot)
+{
+    QString str;
+    str = format2(value,dot);
+
+    return str;
+}
 QString utils::GBK2UTF8(const QString &inStr)
 {
     QTextCodec *gbk = QTextCodec::codecForName("GBK");

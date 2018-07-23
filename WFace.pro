@@ -46,7 +46,15 @@ SOURCES += main.cpp\
     QComSettingWidget.cpp \
     readerwidget.cpp \
     TcpSettingWidget.cpp \
-    UartSettingWidget.cpp
+    UartSettingWidget.cpp \
+    WeightWidget.cpp \
+    CalibWidget.cpp \
+    ParamWidget.cpp \
+    CornFixWidget.cpp \
+    PollerWidget.cpp \
+    WaveAnalysisWidget.cpp \
+    BaseWidget.cpp \
+    WorkerWidgetManager.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -78,7 +86,15 @@ HEADERS  += mainwindow.h \
     UartSettingWidget.h \
     QComSettingWidget.h \
     readerwidget.h \
-    TcpSettingWidget.h
+    TcpSettingWidget.h \
+    WeightWidget.h \
+    CalibWidget.h \
+    ParamWidget.h \
+    CornFixWidget.h \
+    PollerWidget.h \
+    WaveAnalysisWidget.h \
+    BaseWidget.h \
+    WorkerWidgetManager.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
@@ -98,7 +114,13 @@ FORMS    += mainwindow.ui \
     dialogwave.ui \
     QComSettingWidget.ui \
     TcpSettingWidget.ui \
-    UartSettingWidget.ui
+    UartSettingWidget.ui \
+    WeightWidget.ui \
+    CalibWidget.ui \
+    ParamWidget.ui \
+    CornFixWidget.ui \
+    PollerWidget.ui \
+    WaveAnalysisWidget.ui
 RESOURCES += \
     myrc.qrc
 TRANSLATIONS+=cn.ts en.ts
