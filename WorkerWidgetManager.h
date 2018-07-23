@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QTabWidget>
 #include <QMap>
+#include <QGroupBox>
 #include "BaseWidget.h"
 #include "readerwidget.h"
 #include "mydevices.h"
@@ -18,7 +19,8 @@ class WorkerWidgetManager : public QObject
 public:
     explicit WorkerWidgetManager(QObject *parent = 0);
     void changeWidget(QString name,bool start);
-    void selectBus(QString name);
+    void setChannelUI(QGroupBox* gbox);
+    void selectBus(int index);
     RtuReader* getReader();
     static WorkerWidgetManager* get();
 signals:
@@ -30,6 +32,8 @@ private:
     QMap<QString,BaseWidget*> m_widgets;
     IReaderWidget* m_reader;
     QTabWidget* m_container;
+    QMap<QString,IReaderWidget*> m_channels;
+    QGroupBox *m_grp;
     //MyDevices* devices;
 
 };

@@ -10,7 +10,7 @@
 #include <QFileDialog>
 #include <QFile>
 #include <cstdio>
-#include "utils.h"
+#include "WorkerWidgetManager.h"
 //#pragma execution_character_set("utf-8")
 static QString unit="g";
 static bool scan = false;
@@ -27,7 +27,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    WorkerWidgetManager::get()->setChannelUI(ui->grpChannel);
     RegisterSlotPara();
     this->startTimer(500);
     initUI();
@@ -48,32 +48,8 @@ void MainWindow::initUI()
 
     this->setWindowTitle(cfg.m_title);
 
-    //reader.start(100);
-    scaner = new ScanHandler(&reader);
-    scaner->setTimeOut(cfg.m_scan_timeout,cfg.m_read_timeout);
-    weight = new WeightHandler(&reader);
-    calib = new CalibHandler(&reader);
-    para = new ParaHandler(&reader);
-    corn = new CornHandler(&reader);
-    poller = new PollerHandler(&reader);
-#if 0
-    QList<RtuReader*> readers;
-    for(int i = 0; i < comSettings.size(); i++)
-    {
-        readers.push_back(comSettings[i]->GetRtuReader());
-    }
-    poller = new PollerHandler(readers);
-#endif
-    poller->setTimeOut(cfg.m_poll_timeout,cfg.m_read_timeout);
 
-    handlers["scan"] = scaner;
-    handlers["weight"] = weight;
-    handlers["calib"] = calib;
-    handlers["para"] = para;
-    handlers["corn"] = corn;
-
-    handlers["poll"] = poller;
-
+    on_comboBox_currentIndexChanged(0);
     if(!cfg.isAdmin())
     {
         hideForGuest();
@@ -325,3 +301,8 @@ void MainWindow::on_btnNetConn_clicked()
 #endif
 }
 
+
+void MainWindow::on_comboBox_currentIndexChanged(int index)
+{
+    WorkerWidgetManager::get()->selectBus(index);
+}

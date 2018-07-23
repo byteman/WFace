@@ -1,18 +1,11 @@
 #include "WorkerWidgetManager.h"
 #include "WeightWidget.h"
-
-WorkerWidgetManager::WorkerWidgetManager(QObject *parent) : QObject(parent)
+#include "UartSettingWidget.h"
+#include "TcpSettingWidget.h"
+#include "QComSettingWidget.h"
+WorkerWidgetManager::WorkerWidgetManager(QObject *parent) : QObject(parent),
+    m_reader(NULL)
 {
-    //new WeightHandler(&reader);
-    //Reader 是通讯配置后，创建的.
-    //m_widgets["weight"] = scaner;
-
-//    weight = new WeightWidget(&reader);
-
-//    calib = new CalibHandler(&reader);
-//    para = new ParaHandler(&reader);
-//    corn = new CornHandler(&reader);
-//    poller = new PollerHandler(&reader);
 
 }
 
@@ -21,8 +14,32 @@ void WorkerWidgetManager::changeWidget(QString name, bool start)
 
 }
 
-void WorkerWidgetManager::selectBus(QString name)
+void WorkerWidgetManager::setChannelUI(QGroupBox *gbox)
 {
+    m_grp = gbox;
+}
+
+void WorkerWidgetManager::selectBus(int index)
+{
+
+
+    if(m_reader != NULL){
+        m_grp->layout()->removeWidget(m_reader);
+        m_reader->deleteLater();
+    }
+    if(index == 0){
+        m_reader = new UartSettingWidget();
+        m_grp->layout()->addWidget(m_reader);
+
+
+    }else  if(index == 2){
+        m_reader = new TcpSettingWidget();
+        m_grp->layout()->addWidget(m_reader);
+
+    }else if(index == 1){
+        m_reader = new QComSettingWidget();
+        m_grp->layout()->addWidget(m_reader);
+    }
 
 }
 
