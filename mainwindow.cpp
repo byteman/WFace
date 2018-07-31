@@ -130,7 +130,7 @@ void MainWindow::initUI()
     qDebug() << QDateTime::currentMSecsSinceEpoch();
     devices->SetUnit(cfg.Unit());
     //qDebug() << QStringLiteral("我的祖国和我");
-    QMessageBox::information(this,"我的祖国我",QStringLiteral("我哎我的祖"));
+    //QMessageBox::information(this,"我的祖国我",QStringLiteral("我哎我的祖"));
 
 #endif
 }
