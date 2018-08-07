@@ -116,6 +116,7 @@ void MainWindow::initUI()
 
     initAdList();
     clearState();
+    hideForCustom();
     if(!cfg.isAdmin())
     {
         hideForGuest();
@@ -134,12 +135,16 @@ void MainWindow::initUI()
 
 #endif
 }
-void MainWindow::hideForGuest()
+void MainWindow::hideForCustom()
 {
     ui->edtSerial->hide();
     ui->label_15->hide();
     ui->edtVersion->hide();
     ui->label_16->hide();
+}
+void MainWindow::hideForGuest()
+{
+
 
     ui->cbxDot->setEnabled(false);
     ui->edtUnit->setEnabled(false);

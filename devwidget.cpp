@@ -15,6 +15,7 @@ DevWidget::DevWidget(int addr, QWidget *parent) :
     clearState();
     SetOnline(true);
     ui->lbl_weight->setText("");
+    ui->lbl_still_time->hide();
 }
 
 
@@ -90,7 +91,7 @@ QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
         ui->lbl_still->setText(tr("stable"));
         if(!m_last_still){
 
-           //ui->lbl_still_time->setText(QString("稳定时间:%1ms").arg(m_still_time.elapsed())) ;
+           //ui->lbl_still_time->setText(QString("稳定时间:%1").arg(m_still_time.elapsed())) ;
         }
         //strState += " | " + tr("stable  ") ;
     }

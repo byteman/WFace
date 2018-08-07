@@ -1757,7 +1757,7 @@
         <item>
          <widget class="QTabWidget" name="tabWaveWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_6">
            <attribute name="title">

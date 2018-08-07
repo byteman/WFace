@@ -160,6 +160,7 @@ private:
     void SetReadTimeout(int index, int count);
     void hideForGuest();
     void loadLocalParam();
+    void hideForCustom();
 protected:
     void timerEvent(QTimerEvent *);
 
