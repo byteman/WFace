@@ -113,7 +113,7 @@ int  DCS_Channel::send_then_recv(
         return 0;
     }
     quint8 head = all_data[0];
-    if(head != quint8(0xBB)) {
+    if(head != quint8(0x7F)) {
         LOG_ERROR("header = %02x",head);
         return -1;
 
@@ -171,7 +171,7 @@ int  DCS_Channel::recv(QByteArray &data,quint32 want)
 int  DCS_Channel::send(quint8 cmd,QByteArray &data)
 {
     QByteArray buf;
-    buf.append(0xAA);
+    buf.append(0xFE);
     //buf.append(0x0);
     //buf.append(0x0);
     buf.append(cmd);

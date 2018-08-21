@@ -91,9 +91,9 @@ win32 {
     LIBS += -L./3rdparty/poco/lib
     LIBS += -lOpengl32 \
                 -lglu32
-    CONFIG(debug, debug|release) {
-        LIBS += -L3rdparty/CuteLogger/debug -lCuteLogger
-    }
+
+    LIBS += -L3rdparty/CuteLogger/debug -lCuteLogger
+
 }
 
 
