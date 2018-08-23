@@ -78,7 +78,7 @@ INCLUDEPATH += 3rdparty/poco/include
 win32:INCLUDEPATH += 3rdparty/poco/include\ 3rdparty/pcomm
 
 msvc:QMAKE_CXXFLAGS += -source-charset:utf-8
-
+QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01
 win32:DEFINES += _TTY_WIN_  WINVER=0x0501
 win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
 win32:LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32
