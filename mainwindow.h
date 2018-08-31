@@ -112,6 +112,10 @@ private slots:
 
     void on_edtSaveTime_valueChanged(const QString &arg1);
 
+    void on_pushButton_clicked();
+
+    void on_btnConnect_clicked();
+
 private:
     void initCalibPoints();
     Ui::MainWindow *ui;

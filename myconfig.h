@@ -42,6 +42,8 @@ public:
     //void SaveAlarmSetting(int alarmIndex, double alarmValue);
     void SaveAlarmSetting(int addr, int alarmIndex, double alarmValue);
     bool GetAlarmSetting(int addr, AlarmInfo& aif);
+    bool SaveHostInfo(QString host, int port);
+    bool SetModbusType(bool rtu);
     QString Unit();
     bool isAdmin();
 public:
@@ -51,6 +53,10 @@ public:
     int m_max_sample;
     int m_save_time_min;
     int m_max_channel;
+    int m_delay_ms;
+    int m_port;
+    bool m_isRTU;
+    QString m_host;
     QStringList m_port_names;
     bool m_admin;
     //AlarmInfoMap m_info_map;

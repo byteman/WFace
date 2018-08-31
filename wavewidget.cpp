@@ -58,6 +58,9 @@ void WaveWidget::AppendData(int addr, float value)
 {
     if(m_start == 0) return;
     int chan = addr - m_start;
+    if(chan < 0){
+        return;
+    }
     m_chart->AppendData(chan,value);
 }
 

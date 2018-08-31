@@ -21,17 +21,14 @@ MyConfig::MyConfig():
     m_unit       = config->value("/config/unit","kg").toString();
     m_admin       = config->value("/config/admin",false).toBool();
     m_title       = config->value("/config/title","Measure").toString();
-//    m_alarm_index       = config->value("/alarm/condition",0).toInt();
-//    if(m_alarm_index > 1) m_alarm_index = 0;
-//    m_alarm_value = config->value("/alarm/value",100.0).toDouble();
+    m_delay_ms     = config->value("/config/delay_ms",30).toInt();
+
+    m_isRTU = config->value("/config/rtu",true).toBool();
+
     if(m_max_sample > 24*60 ) m_max_sample = 24*60;
 
-    QString port = config->value("/config/port","").toString();
-    m_port_names       = port.split(",",QString::SkipEmptyParts);
-    qDebug() << port << "--------------" << m_port_names;
-    int baud = config->value("/config/baud",115200).toInt();
-    qDebug() << baud;
-    m_max_channel = m_port_names.count();
+    m_port = config->value("/config/port",501).toInt();
+    m_host = config->value("/config/ipaddr","127.0.0.1").toString();
 
     qDebug() << "title =" << m_title;
     qDebug() << "unit = " << m_unit;
@@ -80,6 +77,19 @@ bool MyConfig::GetAlarmSetting(int addr, AlarmInfo &aif)
     aif.create(addr,index,value);
     return true;
 
+}
+
+bool MyConfig::SaveHostInfo(QString host, int port)
+{
+    config->setValue("/config/ipaddr", host);
+    config->setValue("/config/port",port);
+    return true;
+}
+
+bool MyConfig::SetModbusType(bool rtu)
+{
+    config->setValue("/config/rtu", rtu);
+    return true;
 }
 
 QString MyConfig::Unit()

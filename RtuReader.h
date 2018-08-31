@@ -29,7 +29,7 @@ public:
     void get_rx_tx(int& rx, int &tx);
     bool isConnectd();
     bool open(QString port, int baud, char parity, char databit, char stopbit);
-    bool open(QString host, QString port);
+    bool open(QString host, int port);
     bool close();
     void flush();
 public slots:

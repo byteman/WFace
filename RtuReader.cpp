@@ -27,6 +27,11 @@ int RtuReader::getCurrentDeviceAddr()
     return m_slaveAddr;
 }
 
+bool RtuReader::setDelay(int ms)
+{
+    return m_rtu.setDelay(ms);
+}
+
 bool RtuReader::set_response_timeout(int us)
 {
     return m_rtu.set_response_timeout(us);
@@ -86,9 +91,9 @@ bool RtuReader::open(QString port, int baud, char parity, char databit, char sto
     //m_rtu.set_response_timeout(100000);
     return true;
 }
-bool RtuReader::open(QString host,QString port)
+bool RtuReader::open(QString host,int port)
 {
-    if(!m_rtu.open(host.toStdString().c_str(),port.toInt()))
+    if(!m_rtu.open(host.toStdString().c_str(),port))
     {
 
         return false;

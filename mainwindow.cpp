@@ -57,6 +57,8 @@ void MainWindow::initUI()
     m_select_addr = 1;
     ui->lblunit->setText(cfg.Unit());
     ui->edtUnit->setText(cfg.Unit());
+    ui->edtIp->setText(cfg.m_host);
+    ui->edtHostPort->setText(QString("%1").arg(cfg.m_port));
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
 
     QSerialPortInfo port;
@@ -65,9 +67,18 @@ void MainWindow::initUI()
     }
     ui->cbxBaud->setCurrentIndex(1);
     ui->scanPb->hide();
+    if(cfg.m_isRTU){
+        ui->rbRTU->setChecked(true);
+        ui->rbTCP->setChecked(false);
+
+    }else{
+        ui->rbRTU->setChecked(false);
+        ui->rbTCP->setChecked(true);
+    }
     this->setWindowTitle(cfg.m_title);
     initCalibPoints();
     initCornFixChan();
+    reader.setDelay(cfg.m_delay_ms);
     reader.start(100);
     scaner = new ScanHandler(&reader);
     scaner->setTimeOut(cfg.m_scan_timeout,cfg.m_read_timeout);
@@ -360,6 +371,7 @@ void MainWindow::onScanResult(int type,int addr)
     {
         ui->btnSearch->setEnabled(true);
         ui->btnSearch->setText(tr("BusScan"));
+        //ui->btnConnect->setText(tr("BusScan"));
         ui->listWidget->setEnabled(true);
         scan = false;
         ui->scanPb->hide();
@@ -443,6 +455,7 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
 
 void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16 dot, qint32 gross, qint32 tare)
 {
+
     if(devices!=NULL){
         devices->DisplayWeight(addr,weight,state,dot);
         rtwaveWidget->AppendData(addr,utils::int2float(weight,dot));
@@ -450,7 +463,6 @@ void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16
         {
             rtwaveWidget->DisplayAllChannel(true);
         }
-        //rtwaveWidget->DisplayAllChannel(true);
     }
 }
 //标定过程....
@@ -620,12 +632,30 @@ void MainWindow::on_btnSearch_clicked()
 {
     if(!scan)
     {
-        QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
-        if(!reader.open(port,ui->cbxBaud->currentText().toInt(),'N',8,1))
+        if(ui->rbRTU->isChecked())
         {
-            QMessageBox::information(this,tr("error"),tr("uart open failed"));
-            return ;
+            QString port = ui->cbxPort->currentText();
+            if(!reader.open(port,ui->cbxBaud->currentText().toInt(),'N',8,1))
+            {
+                QMessageBox::information(this,tr("error"),tr("uart open failed"));
+                return ;
+            }
         }
+        else
+        {
+            QString ip = ui->edtIp->text();
+            int port = ui->edtHostPort->text().toInt();
+            if(!reader.open(ip,port))
+            {
+                QMessageBox::information(this,tr("error"),tr("tcp open failed"));
+                return ;
+            }
+            cfg.SaveHostInfo(ip,port);
+        }
+        if(ui->rbRTU->isChecked() != cfg.m_isRTU){
+            cfg.SetModbusType(ui->rbRTU->isChecked());
+        }
+
         scaner->init(3,1,1,33,!ui->cbxFindAll->isChecked());
         scaner->start();
         ui->btnSearch->setText(tr("StopSearch"));
@@ -1360,5 +1390,30 @@ void MainWindow::on_edtSaveTime_editingFinished()
 
 void MainWindow::on_edtSaveTime_valueChanged(const QString &arg1)
 {
+
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+
+}
+
+void MainWindow::on_btnConnect_clicked()
+{
+    if(!scan)
+    {
+
+        scaner->init(3,1,1,33,!ui->cbxFindAll->isChecked());
+        scaner->start();
+        //ui->btnConnect->setText(tr("StopSearch"));
+        ui->listWidget->setEnabled(false);
+        ui->listWidget->clear();
+        ui->listWidget->setIconSize(QSize(64,64));
+        scan = true;
+    }
+    else
+    {
+        scaner->stop();
+    }
 
 }

@@ -26,6 +26,7 @@ bool RTU_Modbus::open(const char* port, int baud, char parity, char databit, cha
     if(m_modbus == NULL) return false;
     if( modbus_connect( m_modbus ) == -1 )
     {
+
         modbus_free(m_modbus);
         m_modbus = NULL;
         return false;
@@ -47,6 +48,7 @@ bool RTU_Modbus::open(const char* host,int port)
     if(m_modbus == NULL) return false;
     if( modbus_connect(m_modbus) == -1 )
     {
+        modbus_free(m_modbus);
         return false;
     }
     m_port = port;
