@@ -8,7 +8,7 @@ class CalibHandler : public CmdHandler
 {
      Q_OBJECT
 public:
-    CalibHandler(RtuReader*  rtu);
+    CalibHandler(ModbusReader*  rtu);
     virtual bool doWork();
     bool init();
     bool readPara(int index=-1);

@@ -92,6 +92,12 @@ bool MyConfig::SetModbusType(bool rtu)
     return true;
 }
 
+bool MyConfig::SaveUartsInfo(QStringList &ports)
+{
+   config->setValue("uart/com", ports.join(","));
+   return true;
+}
+
 QString MyConfig::Unit()
 {
     return m_unit;

@@ -33,12 +33,40 @@ void MainWindow::loadLocalParam()
     ui->edtUnit->setText(cfg.m_unit);
 
     AlarmInfo aif;
-    int addr = reader.getCurrentDeviceAddr();
+    int addr = reader->getCurrentDeviceAddr();
     if(addr != -1){
         cfg.GetAlarmSetting(addr,aif);
         ui->cbxAlarmSetting->setCurrentIndex(aif.index);
         ui->edtAlarmValue->setText(QString("%1").arg(aif.value));
     }
+
+}
+void MainWindow::initUarts()
+{
+    QStringList coms = factory.GetRtuNr();
+
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+
+    QSerialPortInfo port;
+    for(int i = 0; i < coms.size(); i++)
+    {
+        QComboBox* pbox = new QComboBox(ui->grpUart);
+        foreach(port,ports){
+            pbox->addItem(port.portName());
+        }
+        ui->grpUart->layout()->addWidget(pbox);
+
+        int index = pbox->findText(coms[i],Qt::MatchExactly);
+        if(index >= 0){
+            pbox->setCurrentIndex(index);
+        }else{
+            pbox->setCurrentIndex(0);
+        }
+
+        pboxs.push_back(pbox);
+    }
+    ui->cbxBaud->setCurrentIndex(1);
+
 
 }
 /**
@@ -59,13 +87,7 @@ void MainWindow::initUI()
     ui->edtUnit->setText(cfg.Unit());
     ui->edtIp->setText(cfg.m_host);
     ui->edtHostPort->setText(QString("%1").arg(cfg.m_port));
-    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
-
-    QSerialPortInfo port;
-    foreach(port,ports){
-        ui->cbxPort->addItem(port.portName());
-    }
-    ui->cbxBaud->setCurrentIndex(1);
+    initUarts();
     ui->scanPb->hide();
     if(cfg.m_isRTU){
         ui->rbRTU->setChecked(true);
@@ -78,24 +100,17 @@ void MainWindow::initUI()
     this->setWindowTitle(cfg.m_title);
     initCalibPoints();
     initCornFixChan();
-    reader.setDelay(cfg.m_delay_ms);
-    reader.start(100);
-    scaner = new ScanHandler(&reader);
-    scaner->setTimeOut(cfg.m_scan_timeout,cfg.m_read_timeout);
-    weight = new WeightHandler(&reader);
-    calib = new CalibHandler(&reader);
-    para = new ParaHandler(&reader);
-    corn = new CornHandler(&reader);
-    poller = new PollerHandler(&reader);
-#if 0
-    QList<RtuReader*> readers;
-    for(int i = 0; i < comSettings.size(); i++)
-    {
-        readers.push_back(comSettings[i]->GetRtuReader());
-    }
-    poller = new PollerHandler(readers);
-#endif
-    poller->setTimeOut(cfg.m_poll_timeout,cfg.m_read_timeout);
+    factory.start(100);
+    reader = factory.GetReader("single");
+
+    scaner = new ScanHandler(reader);
+    weight = new WeightHandler(reader);
+    calib = new CalibHandler(reader);
+    para = new ParaHandler(reader);
+    corn = new CornHandler(reader);
+    poller = new PollerHandler(reader);
+
+
     ui->edtSaveTime->setValue(cfg.m_save_time_min);
     handlers["scan"] = scaner;
     handlers["weight"] = weight;
@@ -141,10 +156,21 @@ void MainWindow::initUI()
 
     qDebug() << QDateTime::currentMSecsSinceEpoch();
     devices->SetUnit(cfg.Unit());
-    //qDebug() << QStringLiteral("我的祖国和我");
-    //QMessageBox::information(this,"我的祖国我",QStringLiteral("我哎我的祖"));
 
 #endif
+}
+void MainWindow::ChangeReader(ModbusReader* reader)
+{
+    scaner->setTimeOut(cfg.m_scan_timeout,cfg.m_read_timeout);
+    reader->setDelay(cfg.m_delay_ms);
+    poller->setTimeOut(cfg.m_poll_timeout,cfg.m_read_timeout);
+    scaner->ChangeCurrentReader(reader);
+    weight->ChangeCurrentReader(reader);
+    calib->ChangeCurrentReader(reader);
+    para->ChangeCurrentReader(reader);
+    corn->ChangeCurrentReader(reader);
+    poller->ChangeCurrentReader(reader);
+    this->reader = reader;
 }
 void MainWindow::hideForCustom()
 {
@@ -241,7 +267,7 @@ void MainWindow::changeHandler(QString name,bool start)
     {
         if(name != "dumy")
         {
-           reader.setDeviceAddr(m_select_addr);
+           reader->setDeviceAddr(m_select_addr);
         }
         if(handlers.contains(name))
             handlers[name]->startRun();
@@ -261,7 +287,7 @@ void MainWindow::onReadCalibParam(quint32 sensorMv, quint32 sensorFullSpan)
 
 void MainWindow::on_actionChagne_triggered()
 {
-     reader.write_register(2,99);
+     reader->write_register(2,99);
 }
 
 void MainWindow::calibrate_click(int id)
@@ -501,7 +527,7 @@ void MainWindow::onReadCalibPointResult(int index, int weight, int ad ,int dot)
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
     m_select_addr = item->text().toInt();
-    reader.setDeviceAddr(m_select_addr);
+    reader->setDeviceAddr(m_select_addr);
     ui->tabWidget->setCurrentIndex(1);
 }
 //继续下一步标定
@@ -630,33 +656,63 @@ void MainWindow::onWeightParaRead(quint16 div_high, quint16 div_low, quint32 ful
 
 void MainWindow::on_btnSearch_clicked()
 {
+    int min_addr = 1;
+    int max_addr = 33;
     if(!scan)
     {
         if(ui->rbRTU->isChecked())
         {
-            QString port = ui->cbxPort->currentText();
-            if(!reader.open(port,ui->cbxBaud->currentText().toInt(),'N',8,1))
+            if(pboxs.size() <= 0)
             {
-                QMessageBox::information(this,tr("error"),tr("uart open failed"));
-                return ;
+                return;
             }
+           QStringList ports;
+           for(int i = 0; i < pboxs.size(); i++)
+           {
+               QString port = pboxs.at(i)->currentText();
+               if(!factory.GetRtuChannel(i)->open(port.toStdString().c_str(),ui->cbxBaud->currentText().toInt(),'N',8,1))
+               {
+                   QMessageBox::information(this,tr("error"),tr("uart open failed"));
+                   return ;
+               }
+               ports.push_back(port);
+           }
+           if(pboxs.size() == 1){
+               factory.GetSingleReader()->setChannel(factory.GetRtuChannel(0));
+               ChangeReader(factory.GetSingleReader());
+           }else{
+               factory.GetMultiReader()->clearChannel();
+               for(int i = 0; i < pboxs.size(); i++)
+               {
+                   factory.GetMultiReader()->pushChannel(factory.GetRtuChannel(i),1);
+               }
+               ChangeReader(factory.GetMultiReader());
+               max_addr = pboxs.size()+1;
+               cfg.SaveUartsInfo(ports);
+           }
+
+
         }
         else
         {
             QString ip = ui->edtIp->text();
             int port = ui->edtHostPort->text().toInt();
-            if(!reader.open(ip,port))
+            if(!factory.GetTcpChannel()->open(ip.toStdString().c_str(),port))
             {
                 QMessageBox::information(this,tr("error"),tr("tcp open failed"));
                 return ;
             }
+//factory.GetSingleReader()
+            factory.GetSingleReader()->setChannel(factory.GetTcpChannel());
+            ChangeReader(factory.GetSingleReader());
+
             cfg.SaveHostInfo(ip,port);
         }
         if(ui->rbRTU->isChecked() != cfg.m_isRTU){
             cfg.SetModbusType(ui->rbRTU->isChecked());
         }
 
-        scaner->init(3,1,1,33,!ui->cbxFindAll->isChecked());
+        scaner->init(3,1,1,max_addr,!ui->cbxFindAll->isChecked());
         scaner->start();
         ui->btnSearch->setText(tr("StopSearch"));
         ui->listWidget->setEnabled(false);
@@ -741,7 +797,7 @@ void MainWindow::clearCalib()
 }
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    if(!reader.hasConnected() && index != 6)
+    if(!reader->hasConnected() && index != 6)
     {
         if(index != 0)
         {
@@ -855,7 +911,7 @@ void MainWindow::on_btnSave_clicked()
 
 
 
-    int addr = reader.getCurrentDeviceAddr();
+    int addr = reader->getCurrentDeviceAddr();
     int index = ui->cbxAlarmSetting->currentIndex();
     double value = ui->edtAlarmValue->text().toDouble(&ok);
 
@@ -1007,10 +1063,10 @@ void MainWindow::on_btnAddr_clicked()
        QMessageBox::information(this,tr("info"),tr("address must in 1-32"));
        return;
    }
-   reader.setDeviceAddr(oldAddr);
-   reader.write_register(REG_ADDR,newAddr);
-   reader.setDeviceAddr(newAddr);
-   if(1==reader.read_registers(REG_ADDR,1,&oldAddr))
+   reader->setDeviceAddr(oldAddr);
+   reader->write_register(REG_ADDR,newAddr);
+   reader->setDeviceAddr(newAddr);
+   if(1==reader->read_registers(REG_ADDR,1,&oldAddr))
    {
        QMessageBox::information(this,tr("info"),tr("modify address successful"));
    }
@@ -1075,8 +1131,8 @@ void MainWindow::timerEvent(QTimerEvent *)
 {
     int rx = 0,tx = 0;
     //adc102.getRXTX(rx,tx);
-    reader.get_rx_tx(rx,tx);
-    QString msg = QString("Addr:%1 TX:%2|RX:%3 ").arg(reader.getCurrentDeviceAddr()).arg(tx).arg(rx);
+    reader->get_rx_tx(rx,tx);
+    QString msg = QString("Addr:%1 TX:%2|RX:%3 ").arg(reader->getCurrentDeviceAddr()).arg(tx).arg(rx);
 //    if(devices!=NULL){
 //        devices->DisplayWeight(2,1000,0,0);
 //        rtwaveWidget->AppendData(2,1000);
@@ -1363,11 +1419,11 @@ void MainWindow::on_actionReset_triggered()
 void MainWindow::on_btnNetConn_clicked()
 {
 #if 0
-    if(!reader.isConnectd())
+    if(!reader->isConnectd())
     {
         //QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
 
-        if(!reader.open(ui->edtHost->text(),ui->edtPort->text()))
+        if(!reader->open(ui->edtHost->text(),ui->edtPort->text()))
         {
             QMessageBox::information(this,tr("error"),tr("设备连接失败"));
             return ;
@@ -1377,7 +1433,7 @@ void MainWindow::on_btnNetConn_clicked()
     }
     else
     {
-        reader.close();
+        reader->close();
         ui->btnNetConn->setText(tr("连接"));
     }
 #endif

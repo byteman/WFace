@@ -18,13 +18,11 @@ SOURCES += main.cpp\
         3rdparty/libmodbus/src/modbus-data.c \
         3rdparty/libmodbus/src/modbus-rtu.c \
         3rdparty/libmodbus/src/modbus-tcp.c \
-    mymodbus.cpp \
     cmdhandler.cpp \
     scanhandler.cpp \
     weighthandler.cpp \
     parahandler.cpp \
     calibhandler.cpp \
-    RtuReader.cpp \
     cornhandler.cpp \
     pollhandler.cpp \
     mydevices.cpp \
@@ -42,7 +40,12 @@ SOURCES += main.cpp\
     myconfig.cpp \
     csvfile.cpp \
     ModbusRtu.cpp \
-    ModbusTcp.cpp
+    ModbusTcp.cpp \
+    ModbusChannel.cpp \
+    ModbusReader.cpp \
+    SingleModbusReader.cpp \
+    MultiModbusReader.cpp \
+    ModbusReaderFactory.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -52,7 +55,6 @@ HEADERS  += mainwindow.h \
     weighthandler.h \
     parahandler.h \
     calibhandler.h \
-    RtuReader.h \
     cornhandler.h \
     pollhandler.h \
     mydevices.h \
@@ -70,7 +72,12 @@ HEADERS  += mainwindow.h \
     myconfig.h \
     csvfile.h \
     ModbusRtu.h \
-    ModbusTcp.h
+    ModbusTcp.h \
+    ModbusChannel.h \
+    ModbusReader.h \
+    SingleModbusReader.h \
+    MultiModbusReader.h \
+    ModbusReaderFactory.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 

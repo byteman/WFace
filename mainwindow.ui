@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1319</width>
-    <height>800</height>
+    <width>1318</width>
+    <height>900</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Maximum">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>800</height>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -112,9 +112,9 @@
                <number>5</number>
               </property>
               <item>
-               <widget class="QGroupBox" name="groupBox_2">
+               <widget class="QGroupBox" name="grpUart">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -148,7 +148,7 @@
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_2" stretch="2,2">
+                <layout class="QVBoxLayout" name="verticalLayout_2" stretch="2">
                  <property name="leftMargin">
                   <number>10</number>
                  </property>
@@ -161,16 +161,6 @@
                  <property name="bottomMargin">
                   <number>10</number>
                  </property>
-                 <item>
-                  <widget class="QComboBox" name="cbxPort">
-                   <property name="font">
-                    <font>
-                     <family>微软雅黑</family>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                  </widget>
-                 </item>
                  <item>
                   <widget class="QComboBox" name="cbxBaud">
                    <property name="font">
@@ -210,9 +200,9 @@
                </widget>
               </item>
               <item>
-               <widget class="QGroupBox" name="groupBox_7">
+               <widget class="QGroupBox" name="grpNet">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -266,7 +256,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QGroupBox" name="groupBox_11">
+               <widget class="QGroupBox" name="grpType">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -384,7 +374,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QGroupBox" name="groupBox_3">
+               <widget class="QGroupBox" name="grpAddr">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1966,7 +1956,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1319</width>
+     <width>1318</width>
      <height>30</height>
     </rect>
    </property>

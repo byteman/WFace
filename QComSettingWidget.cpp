@@ -35,7 +35,7 @@ QComSettingWidget::~QComSettingWidget()
     delete ui;
 }
 
-RtuReader *QComSettingWidget::GetRtuReader()
+ModbusReader *QComSettingWidget::GetRtuReader()
 {
     return &m_reader;
 }

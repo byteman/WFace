@@ -3,7 +3,7 @@
 #include "adc102.h"
 #include <qdebug.h>
 
-PollerHandler::PollerHandler(RtuReader *rtu):
+PollerHandler::PollerHandler(ModbusReader *rtu):
     CmdHandler(rtu),
     m_start(0),
     m_end(0),
@@ -15,18 +15,18 @@ PollerHandler::PollerHandler(RtuReader *rtu):
 {
 
 }
-PollerHandler::PollerHandler(QList<RtuReader*> rtuList):
-    CmdHandler(rtuList),
-    m_start(0),
-    m_end(0),
-    m_cur_addr(1),
-    m_start_us(30000),
-    m_stop_us(1000000),
-    m_read_delay_ms(10),
-    m_quit(false)
-{
+//PollerHandler::PollerHandler(QList<RtuReader*> rtuList):
+//    CmdHandler(rtuList),
+//    m_start(0),
+//    m_end(0),
+//    m_cur_addr(1),
+//    m_start_us(30000),
+//    m_stop_us(1000000),
+//    m_read_delay_ms(10),
+//    m_quit(false)
+//{
 
-}
+//}
 void PollerHandler::calcFps(void)
 {
     static int total = 0;

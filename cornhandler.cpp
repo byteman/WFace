@@ -5,7 +5,7 @@
 #include <qdebug.h>
 
 
-CornHandler::CornHandler(RtuReader *rtu):
+CornHandler::CornHandler(ModbusReader *rtu):
     CmdHandler(rtu),
     m_sensor(0)
 {

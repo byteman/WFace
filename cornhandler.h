@@ -8,7 +8,7 @@ class CornHandler : public CmdHandler
 {
      Q_OBJECT
 public:
-    CornHandler(RtuReader*  rtu);
+    CornHandler(ModbusReader*  rtu);
     virtual bool doWork();
     bool init();
     bool startCalib();

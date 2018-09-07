@@ -5,7 +5,7 @@
 #include <qdebug.h>
 
 
-CalibHandler::CalibHandler(RtuReader *rtu):
+CalibHandler::CalibHandler(ModbusReader *rtu):
     CmdHandler(rtu),
     m_dot(0),
     m_sensor(0)

@@ -4,7 +4,7 @@
 #include "QString"
 #include "cmdhandler.h"
 #include <QException>
-#include "mymodbus.h"
+#include "ModbusChannel.h"
 class MyException : public QException
 {
 public:
@@ -23,7 +23,7 @@ private:
 {
      Q_OBJECT
 public:
-    UpdateHandler(RTU_Modbus*  rtu);
+    UpdateHandler(ModbusChannel*  rtu);
     bool dorun();
     bool startUpdate(QString file);
     bool stop();
@@ -34,7 +34,7 @@ private:
     void run();
     int m_port;
     int m_state;
-    RTU_Modbus *_rtu;
+    ModbusChannel *_rtu;
     QString m_file;
 };
 

@@ -11,7 +11,7 @@ class WeightHandler : public CmdHandler
 {
      Q_OBJECT
 public:
-    WeightHandler(RtuReader*  rtu);
+    WeightHandler(ModbusReader*  rtu);
 
 
     virtual bool doWork();

@@ -3,7 +3,7 @@
 #include "adc102.h"
 #include <qdebug.h>
 
-WeightHandler::WeightHandler(RtuReader *rtu):
+WeightHandler::WeightHandler(ModbusReader *rtu):
     CmdHandler(rtu)
 {
 

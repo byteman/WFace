@@ -2,7 +2,7 @@
 
 #include <qdebug.h>
 
-ScanHandler::ScanHandler(RtuReader *rtu):
+ScanHandler::ScanHandler(ModbusReader *rtu):
     CmdHandler(rtu),
     m_addr(1),
     m_start_us(100000),

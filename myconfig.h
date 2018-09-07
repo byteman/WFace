@@ -44,6 +44,7 @@ public:
     bool GetAlarmSetting(int addr, AlarmInfo& aif);
     bool SaveHostInfo(QString host, int port);
     bool SetModbusType(bool rtu);
+    bool SaveUartsInfo(QStringList &ports);
     QString Unit();
     bool isAdmin();
 public:

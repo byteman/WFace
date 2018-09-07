@@ -2,14 +2,14 @@
 #define ADC102_H
 
 #include <QObject>
-#include "mymodbus.h"
+#include "ModbusChannel.h"
 #include <QTimer>
 #include "cmdhandler.h"
 #include "parahandler.h"
 #include <QList>
 #include "updatehandler.h"
 #include "timerworker.h"
-#include "RtuReader.h"
+#include "ModbusReader.h"
 
 enum ADC102_REGS{
 

@@ -27,7 +27,7 @@ class ParaHandler : public CmdHandler
 {
      Q_OBJECT
 public:
-    ParaHandler(RtuReader*  rtu);
+    ParaHandler(ModbusReader*  rtu);
     int getDot();
 
 signals:

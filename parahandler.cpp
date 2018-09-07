@@ -1,6 +1,6 @@
 #include "parahandler.h"
 
-ParaHandler::ParaHandler(RtuReader *rtu):
+ParaHandler::ParaHandler(ModbusReader *rtu):
     CmdHandler(rtu),
     m_write(false)
 {

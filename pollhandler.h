@@ -11,9 +11,9 @@ class PollerHandler : public CmdHandler
 {
      Q_OBJECT
 public:
-    PollerHandler(RtuReader*  rtu);
+    PollerHandler(ModbusReader*  rtu);
 
-    PollerHandler(QList<RtuReader*> rtuList);
+    //PollerHandler(QList<RtuReader*> rtuList);
 
     virtual bool doWork();
 

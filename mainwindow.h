@@ -5,7 +5,7 @@
 #include <QListWidgetItem>
 #include <QLabel>
 #include <bitset>
-#include "RtuReader.h"
+#include "ModbusReader.h"
 #include "scanhandler.h"
 #include "weighthandler.h"
 #include "calibhandler.h"
@@ -18,6 +18,8 @@
 #include "myconfig.h"
 #include "QComSettingWidget.h"
 #include <QMap>
+#include "ModbusReaderFactory.h"
+#include <QComboBox>
 namespace Ui {
 class MainWindow;
 }
@@ -29,6 +31,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QApplication& app,QWidget *parent = 0);
     ~MainWindow();
+
 
 private slots:
     void onReadCalibParam(quint32 sensorMv, quint32 sensorFullSpan);
@@ -118,8 +121,10 @@ private slots:
 
 private:
     void initCalibPoints();
+    void ChangeReader(ModbusReader *reader);
     Ui::MainWindow *ui;
     QList<QLabel*> adlist;
+
     QApplication &_app;
     ScanHandler *scaner;
     WeightHandler *weight;
@@ -128,12 +133,14 @@ private:
     CornHandler* corn;
     PollerHandler *poller;
     QList<QComSettingWidget*> comSettings;
-    RtuReader reader;
+    ModbusReader *reader;
+    ModbusReaderFactory factory;
     QMap<QString,CmdHandler*> handlers;
     MyDevices* devices;
     WaveWidget*  waveWidget;
     WaveWidget*  rtwaveWidget;
     DialogWave * waveDlg;
+    QVector<QComboBox*> pboxs;
     int m_select_addr;
     QTime m_time;
     MyConfig cfg;
@@ -165,6 +172,7 @@ private:
     void hideForGuest();
     void loadLocalParam();
     void hideForCustom();
+    void initUarts();
 protected:
     void timerEvent(QTimerEvent *);
 
