@@ -32,6 +32,12 @@ public:
     int  addr;
     double value;
 };
+enum CommuType{
+    COMMU_ALL=0,
+    COMMU_RTU,
+    COMMU_TCP,
+    COMMU_MAX
+};
 typedef QMap<int, AlarmInfo> AlarmInfoMap;
 class MyConfig
 {
@@ -56,7 +62,8 @@ public:
     int m_max_channel;
     int m_delay_ms;
     int m_port;
-    bool m_isRTU;
+    int m_commu_type; //通訊方式.
+    //bool m_isRTU;
     QString m_host;
     QStringList m_port_names;
     bool m_admin;

@@ -69,6 +69,7 @@ void MainWindow::initUarts()
 
 
 }
+#include <QAbstractButton>
 /**
  * @brief QStringLiteral("我的祖国我") 这样来显示中文.
  * 编码方式要选择utf-8 bom
@@ -89,14 +90,26 @@ void MainWindow::initUI()
     ui->edtHostPort->setText(QString("%1").arg(cfg.m_port));
     initUarts();
     ui->scanPb->hide();
-    if(cfg.m_isRTU){
+    if(cfg.m_commu_type == COMMU_ALL)
+    {
+        //都显示出来，然用户选择
         ui->rbRTU->setChecked(true);
         ui->rbTCP->setChecked(false);
-
-    }else{
-        ui->rbRTU->setChecked(false);
-        ui->rbTCP->setChecked(true);
+        on_rbRTU_clicked();
     }
+    else{
+        //根据配置隐藏
+        if(cfg.m_commu_type == COMMU_RTU)
+        {
+            ui->grpNet->hide();
+        }else{
+            ui->grpUart->hide();
+
+        }
+        ui->rbRTU->hide();
+        ui->rbTCP->hide();
+    }
+
     this->setWindowTitle(cfg.m_title);
     initCalibPoints();
     initCornFixChan();
@@ -201,7 +214,28 @@ void MainWindow::initAdList()
         adlist[i]->clear();
     }
 }
+void MainWindow::DisableGroupChildRen(QGroupBox* gbox,bool enable)
+{
+    QObjectList q = gbox->children();
+    foreach(QObject* obj,q)
+    {
+           QString class_name=obj->metaObject()->className();
 
+           if(class_name=="QLineEdit")
+           {
+               QLineEdit* le=(QLineEdit*)obj;
+
+               le->setEnabled(enable);
+           }
+           else if(class_name=="QComboBox")
+           {
+               QComboBox* cbx=(QComboBox*)obj;
+
+               cbx->setEnabled(enable);
+           }
+    }
+
+}
 void MainWindow::clearState()
 {
     ui->lbl_stable->clear();
@@ -708,9 +742,9 @@ void MainWindow::on_btnSearch_clicked()
 
             cfg.SaveHostInfo(ip,port);
         }
-        if(ui->rbRTU->isChecked() != cfg.m_isRTU){
-            cfg.SetModbusType(ui->rbRTU->isChecked());
-        }
+//        if(ui->rbRTU->isChecked() != cfg.m_isRTU){
+//            cfg.SetModbusType(ui->rbRTU->isChecked());
+//        }
 
         scaner->init(3,1,1,max_addr,!ui->cbxFindAll->isChecked());
         scaner->start();
@@ -1471,5 +1505,19 @@ void MainWindow::on_btnConnect_clicked()
     {
         scaner->stop();
     }
+
+}
+
+void MainWindow::on_rbRTU_clicked()
+{
+    DisableGroupChildRen(ui->grpNet,false);
+    DisableGroupChildRen(ui->grpUart,true);
+
+}
+
+void MainWindow::on_rbTCP_clicked()
+{
+    DisableGroupChildRen(ui->grpNet,true);
+    DisableGroupChildRen(ui->grpUart,false);
 
 }

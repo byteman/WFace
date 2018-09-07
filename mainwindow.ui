@@ -143,10 +143,16 @@
                  <string notr="true"/>
                 </property>
                 <property name="title">
-                 <string>串口配置</string>
+                 <string>串口通讯配置</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                </property>
+                <property name="flat">
+                 <bool>false</bool>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_2" stretch="2">
                  <property name="leftMargin">
@@ -213,7 +219,7 @@
                  </font>
                 </property>
                 <property name="title">
-                 <string>网络地址</string>
+                 <string>网络通讯配置</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_16">
                  <item>
@@ -258,7 +264,7 @@
               <item>
                <widget class="QGroupBox" name="grpType">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -268,18 +274,18 @@
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_17">
                  <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_8">
+                  <layout class="QHBoxLayout" name="layoutType">
                    <item>
                     <widget class="QRadioButton" name="rbRTU">
                      <property name="text">
-                      <string>RTU</string>
+                      <string>串口</string>
                      </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QRadioButton" name="rbTCP">
                      <property name="text">
-                      <string>TCP</string>
+                      <string>网络</string>
                      </property>
                     </widget>
                    </item>
@@ -359,19 +365,6 @@
                  </item>
                 </layout>
                </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_4">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
               <item>
                <widget class="QGroupBox" name="grpAddr">

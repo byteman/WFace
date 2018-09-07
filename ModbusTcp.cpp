@@ -23,6 +23,7 @@ bool ModbusTcp::open(const char* host,int port)
     if( modbus_connect(m_modbus) == -1 )
     {
         modbus_free(m_modbus);
+        m_modbus = NULL;
         return false;
     }
     m_port = port;

@@ -23,12 +23,14 @@ MyConfig::MyConfig():
     m_title       = config->value("/config/title","Measure").toString();
     m_delay_ms     = config->value("/config/delay_ms",30).toInt();
 
-    m_isRTU = config->value("/config/rtu",true).toBool();
-
+    m_commu_type = config->value("/config/commu",0).toInt();
+    if( (m_commu_type < 0) || (m_commu_type >= COMMU_MAX)){
+        m_commu_type = COMMU_RTU;
+    }
     if(m_max_sample > 24*60 ) m_max_sample = 24*60;
 
-    m_port = config->value("/config/port",501).toInt();
-    m_host = config->value("/config/ipaddr","127.0.0.1").toString();
+    m_port = config->value("/tcp/port",501).toInt();
+    m_host = config->value("/tcp/ipaddr","127.0.0.1").toString();
 
     qDebug() << "title =" << m_title;
     qDebug() << "unit = " << m_unit;
@@ -81,8 +83,8 @@ bool MyConfig::GetAlarmSetting(int addr, AlarmInfo &aif)
 
 bool MyConfig::SaveHostInfo(QString host, int port)
 {
-    config->setValue("/config/ipaddr", host);
-    config->setValue("/config/port",port);
+    config->setValue("/tcp/ipaddr", host);
+    config->setValue("/tcp/port",port);
     return true;
 }
 

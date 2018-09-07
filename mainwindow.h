@@ -119,6 +119,10 @@ private slots:
 
     void on_btnConnect_clicked();
 
+    void on_rbRTU_clicked();
+
+    void on_rbTCP_clicked();
+
 private:
     void initCalibPoints();
     void ChangeReader(ModbusReader *reader);
@@ -173,6 +177,7 @@ private:
     void loadLocalParam();
     void hideForCustom();
     void initUarts();
+    void DisableGroupChildRen(QGroupBox *gbox,bool enable);
 protected:
     void timerEvent(QTimerEvent *);
 
