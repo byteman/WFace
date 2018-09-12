@@ -45,7 +45,8 @@ SOURCES += main.cpp\
     ModbusReader.cpp \
     SingleModbusReader.cpp \
     MultiModbusReader.cpp \
-    ModbusReaderFactory.cpp
+    ModbusReaderFactory.cpp \
+    MbServer.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -77,7 +78,8 @@ HEADERS  += mainwindow.h \
     ModbusReader.h \
     SingleModbusReader.h \
     MultiModbusReader.h \
-    ModbusReaderFactory.h
+    ModbusReaderFactory.h \
+    MbServer.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 

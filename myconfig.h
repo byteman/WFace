@@ -62,6 +62,7 @@ public:
     int m_max_channel;
     int m_delay_ms;
     int m_port;
+    int m_server_port;
     int m_commu_type; //通訊方式.
     //bool m_isRTU;
     QString m_host;

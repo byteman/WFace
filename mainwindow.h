@@ -20,6 +20,7 @@
 #include <QMap>
 #include "ModbusReaderFactory.h"
 #include <QComboBox>
+#include "MbServer.h"
 namespace Ui {
 class MainWindow;
 }
@@ -128,7 +129,7 @@ private:
     void ChangeReader(ModbusReader *reader);
     Ui::MainWindow *ui;
     QList<QLabel*> adlist;
-
+    MbServer mbserver;
     QApplication &_app;
     ScanHandler *scaner;
     WeightHandler *weight;

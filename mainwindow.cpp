@@ -169,6 +169,10 @@ void MainWindow::initUI()
 
     qDebug() << QDateTime::currentMSecsSinceEpoch();
     devices->SetUnit(cfg.Unit());
+    if(!mbserver.StartServer(cfg.m_server_port)){
+       QMessageBox::information(this,"error","start server failed");
+
+    }
 
 #endif
 }
