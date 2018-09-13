@@ -750,7 +750,7 @@ void MainWindow::on_btnSearch_clicked()
 //            cfg.SetModbusType(ui->rbRTU->isChecked());
 //        }
 
-        scaner->init(3,1,1,max_addr,!ui->cbxFindAll->isChecked());
+        scaner->init(REG_ADDR,1,1,max_addr,!ui->cbxFindAll->isChecked());
         scaner->start();
         ui->btnSearch->setText(tr("StopSearch"));
         ui->listWidget->setEnabled(false);

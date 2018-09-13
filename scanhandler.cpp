@@ -37,12 +37,12 @@ bool ScanHandler::doWork()
         emit scanResult(SCAN_PROGRASS,m_addr);
         if(_rtu)
         {
-            quint16 state;
+            quint16 state = 0;
 
             _rtu->setDeviceAddr(m_addr);
             int len = _rtu->read_registers(m_reg_addr,m_reg_size,&state);
-            qDebug() << "addr=" << m_addr << " len=" << len;
-            if(len == m_reg_size)
+            qDebug() << "salve addr=" << m_addr << " reg_addr=" << m_reg_addr << "value=" << state;
+            if(len == m_reg_size && state == m_addr)
             {
                 emit scanResult(SCAN_FIND,m_addr);
                 if(m_findOnce)

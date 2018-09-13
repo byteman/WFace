@@ -14,13 +14,17 @@
 #include <arpa/inet.h>
 #endif
 #define NB_CONNECTION    5
+
 MbServer::MbServer():
     QThread(NULL),
     ctx(NULL),
-    mb_mapping(NULL),
     server_socket(-1)
 {
     m_port = config->m_server_port;
+    for(int i = 0; i < NB_SLAVE; i++)
+    {
+        mb_mapping[i] = NULL;
+    }
 }
 
 MbServer::~MbServer()
@@ -29,17 +33,25 @@ MbServer::~MbServer()
 }
 int MbServer::Init(int port)
 {
-
+    if(ctx != NULL)
+    {
+        modbus_free(ctx);
+        ctx = NULL;
+    }
      ctx = modbus_new_tcp("127.0.0.1", port);
 
-     mb_mapping = modbus_mapping_new(MODBUS_MAX_READ_BITS, 0,
-                                     MODBUS_MAX_READ_REGISTERS, 0);
-     if (mb_mapping == NULL) {
-         fprintf(stderr, "Failed to allocate the mapping: %s\n",
-                 modbus_strerror(errno));
-         modbus_free(ctx);
-         return -1;
+     for(int i = 0; i < NB_SLAVE; i++)
+     {
+         mb_mapping[i] = modbus_mapping_new(MODBUS_MAX_READ_BITS, 0,
+                                         MODBUS_MAX_READ_REGISTERS, 0);
+         if (mb_mapping[i] == NULL) {
+             fprintf(stderr, "Failed to allocate the mapping: %s\n",
+                     modbus_strerror(errno));
+             modbus_free(ctx);
+             return -1;
+         }
      }
+
 
      server_socket = modbus_tcp_listen(ctx, NB_CONNECTION);
      if (server_socket == -1) {
@@ -80,7 +92,11 @@ void MbServer::close_sigint(int dummy)
         closesocket(server_socket);
     }
     modbus_free(ctx);
-    modbus_mapping_free(mb_mapping);
+    for(int i = 0; i < NB_SLAVE; i++)
+    {
+        modbus_mapping_free(mb_mapping[i]);
+
+    }
 
     exit(dummy);
 }
@@ -127,7 +143,13 @@ bool MbServer::doWork()
             modbus_set_socket(ctx, master_socket);
             rc = modbus_receive(ctx, query);
             if (rc > 0) {
-                modbus_reply(ctx, query, rc, mb_mapping);
+                int offset = modbus_get_header_length(ctx);
+                int slave = query[offset - 1] - 1;
+                if(slave >=0 && slave < NB_SLAVE)
+                {
+                   modbus_reply(ctx, query, rc, mb_mapping[slave]);
+                }
+
             } else if (rc == -1) {
                 /* This example server in ended on connection closing or
                  * any errors. */

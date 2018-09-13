@@ -3,6 +3,7 @@
 #include <QThread>
 #include "modbus.h"
 #include "myconfig.h"
+#define NB_SLAVE 33
 class MbServer:public QThread
 {
     Q_OBJECT
@@ -19,7 +20,7 @@ private:
     MyConfig *config;
     int m_port;
     modbus_t *ctx;
-    modbus_mapping_t *mb_mapping;
+    modbus_mapping_t *mb_mapping[NB_SLAVE];
     int server_socket;
     int master_socket;
     int fdmax;
