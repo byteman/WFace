@@ -23,14 +23,17 @@ public:
     void  setTimeOut(int startUs, int stopUs);
     void  setReadInterval(int ms);
     void  showAD(bool en);
+    void  setSumNum(int num);
 signals:
 
     void weightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
+    void weightSumResult(int num ,int sum);
     void timeout(int addr);
 private:
     bool paraRead();
     bool WriteCtrlCmd(int reg, quint8 value);
     int  m_dot;
+    int  m_num;
     qint8  m_start,m_end;
     bool m_quit;
     int m_start_us,m_stop_us;

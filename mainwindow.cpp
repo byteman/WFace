@@ -73,6 +73,7 @@ void MainWindow::initUI()
 
     connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),this,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
     connect(poller,SIGNAL(timeout(int)),this,SLOT(onPollTimeout(int)));
+    connect(poller,SIGNAL(weightSumResult(int,int)),this,SLOT(onPollWeightSumResult(int,int)));
 
 
     devices = new MyDevices(33,ui->gbDevices);
@@ -175,6 +176,11 @@ void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16
 //        }
         //rtwaveWidget->DisplayAllChannel(true);
     }
+}
+
+void MainWindow::onPollWeightSumResult(int num, int weight)
+{
+    ui->edtSumKg->setText(QString("%1").arg(weight));
 }
 
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
@@ -586,3 +592,13 @@ void MainWindow::on_btnSet_clicked()
 }
 
 
+
+void MainWindow::on_edtSumNum_textChanged(const QString &arg1)
+{
+    bool ok = false;
+
+    int num = arg1.toInt(&ok);
+    if(ok){
+        poller->setSumNum(num);
+    }
+}

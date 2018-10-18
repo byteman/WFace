@@ -12,6 +12,7 @@ PollerHandler::PollerHandler(RtuReader *rtu):
     m_stop_us(1000000),
     m_read_delay_ms(10),
     m_show_ad(false),
+    m_num(0),
     m_quit(false)
 {
 
@@ -42,7 +43,8 @@ bool PollerHandler::readWgt()
 
         outArr.remove(0,2);
         quint8 num = outArr.size() / 4;
-
+        qint32 sum = 0;
+        int sum_num = m_num;
         for(int i= 0; i < num; i++)
         {
             quint8  addr   = outArr[i*4+0];
@@ -54,14 +56,21 @@ bool PollerHandler::readWgt()
             quint16 ad = value;
             if(m_show_ad){
                 state |= 0x80;
+
                 emit weightResult(addr,ad,state,0,0,0 );
 
             }else{
                 state &= 0x7F;
+                if(i < sum_num){
+                    sum+=value;
+                }
                 emit weightResult(addr,value,state,0,0,0 );
             }
 
 
+        }
+        if(!m_show_ad){
+            weightSumResult(m_num, sum);
         }
     }
     else
@@ -145,6 +154,11 @@ void PollerHandler::setReadInterval(int ms)
 void PollerHandler::showAD(bool en)
 {
     m_show_ad = en;
+}
+
+void PollerHandler::setSumNum(int num)
+{
+    m_num = num;
 }
 
 //最大超时时间100ms,

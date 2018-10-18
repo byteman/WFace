@@ -37,6 +37,7 @@ private slots:
     void onScanResult(int type,int addr);
     void onPollTimeout(int addr);
     void onPollWeightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
+    void onPollWeightSumResult(int num,int weight);
 
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
 
@@ -82,6 +83,8 @@ private slots:
     void on_btnChange_clicked();
 
     void on_btnSet_clicked();
+
+    void on_edtSumNum_textChanged(const QString &arg1);
 
 private:
 
