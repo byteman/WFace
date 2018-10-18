@@ -95,7 +95,7 @@ void MbServer::close_sigint(int dummy)
     for(int i = 0; i < NB_SLAVE; i++)
     {
         modbus_mapping_free(mb_mapping[i]);
-
+        mb_mapping[i] = NULL;
     }
 
     exit(dummy);
