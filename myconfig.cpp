@@ -22,7 +22,17 @@ MyConfig::MyConfig():
     m_admin       = config->value("/config/admin",false).toBool();
     m_title       = config->value("/config/title","Measure").toString();
     m_delay_ms     = config->value("/config/delay_ms",30).toInt();
+    m_is_debug     = config->value("/config/debug",false).toBool();
 
+    m_modules["measure"] = config->value("modules/measure",true).toBool();
+    m_modules["param"] = config->value("modules/param",true).toBool();
+    m_modules["calibrate"] = config->value("modules/calibrate",true).toBool();
+    m_modules["cornfix"] = config->value("modules/cornfix",true).toBool();
+    m_modules["realtime_wave"] = config->value("modules/realtime_wave",true).toBool();
+    m_modules["history_wave"] = config->value("modules/history_wave",true).toBool();
+
+    QString items = config->value("params/hidden","").toString();
+    m_params = items.split(",");
     m_commu_type = config->value("/config/commu",0).toInt();
     if( (m_commu_type < 0) || (m_commu_type >= COMMU_MAX)){
         m_commu_type = COMMU_RTU;
@@ -98,6 +108,14 @@ bool MyConfig::SaveUartsInfo(QStringList &ports)
 {
    config->setValue("uart/com", ports.join(","));
    return true;
+}
+
+bool MyConfig::IsModulesEnable(QString name)
+{
+    if(m_modules.contains(name)){
+        return m_modules[name];
+    }
+    return false;
 }
 
 QString MyConfig::Unit()

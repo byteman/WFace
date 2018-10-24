@@ -143,7 +143,7 @@
                  <string notr="true"/>
                 </property>
                 <property name="title">
-                 <string>串口通讯配置</string>
+                 <string>SerialPort</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -219,7 +219,7 @@
                  </font>
                 </property>
                 <property name="title">
-                 <string>网络通讯配置</string>
+                 <string>Network</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_16">
                  <item>
@@ -231,7 +231,7 @@
                     </font>
                    </property>
                    <property name="text">
-                    <string>IP地址</string>
+                    <string>IP</string>
                    </property>
                   </widget>
                  </item>
@@ -251,7 +251,7 @@
                  <item>
                   <widget class="QLabel" name="label_12">
                    <property name="text">
-                    <string>端口</string>
+                    <string>Port</string>
                    </property>
                   </widget>
                  </item>
@@ -269,23 +269,43 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="font">
+                 <font>
+                  <family>黑体</family>
+                  <weight>50</weight>
+                  <bold>false</bold>
+                 </font>
+                </property>
                 <property name="title">
-                 <string>扫描选项</string>
+                 <string>Operation</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_17">
                  <item>
                   <layout class="QHBoxLayout" name="layoutType">
                    <item>
                     <widget class="QRadioButton" name="rbRTU">
+                     <property name="font">
+                      <font>
+                       <family>Arial</family>
+                       <weight>50</weight>
+                       <bold>false</bold>
+                      </font>
+                     </property>
                      <property name="text">
-                      <string>串口</string>
+                      <string>Uart</string>
                      </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QRadioButton" name="rbTCP">
+                     <property name="font">
+                      <font>
+                       <weight>50</weight>
+                       <bold>false</bold>
+                      </font>
+                     </property>
                      <property name="text">
-                      <string>网络</string>
+                      <string>Net</string>
                      </property>
                     </widget>
                    </item>
@@ -330,6 +350,12 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="font">
+                    <font>
+                     <weight>50</weight>
+                     <bold>false</bold>
+                    </font>
+                   </property>
                    <property name="text">
                     <string>ADR 1..32</string>
                    </property>
@@ -354,6 +380,12 @@
                      <width>400</width>
                      <height>32</height>
                     </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <weight>50</weight>
+                     <bold>false</bold>
+                    </font>
                    </property>
                    <property name="styleSheet">
                     <string notr="true"/>
@@ -619,7 +651,7 @@
               </font>
              </property>
              <property name="text">
-              <string>牛</string>
+              <string>N</string>
              </property>
             </widget>
            </item>
@@ -1023,7 +1055,7 @@
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QLabel" name="label_15">
+            <widget class="QLabel" name="lblSerial">
              <property name="text">
               <string>Serial</string>
              </property>
@@ -1037,13 +1069,16 @@
            </item>
            <item row="1" column="4">
             <widget class="QLineEdit" name="edtSerial">
+             <property name="whatsThis">
+              <string/>
+             </property>
              <property name="readOnly">
               <bool>true</bool>
              </property>
             </widget>
            </item>
            <item row="1" column="6">
-            <widget class="QLabel" name="label_16">
+            <widget class="QLabel" name="lblVersion">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1252,9 +1287,12 @@
             </widget>
            </item>
            <item row="6" column="0">
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="lblAlarmSetting">
+             <property name="statusTip">
+              <string/>
+             </property>
              <property name="text">
-              <string>报警设定</string>
+              <string>AlarmSetting</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1262,9 +1300,9 @@
             </widget>
            </item>
            <item row="6" column="6">
-            <widget class="QLabel" name="label_7">
+            <widget class="QLabel" name="lblAlarmValue">
              <property name="text">
-              <string>设定值</string>
+              <string>AlarmValue</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

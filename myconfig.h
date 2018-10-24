@@ -51,6 +51,7 @@ public:
     bool SaveHostInfo(QString host, int port);
     bool SetModbusType(bool rtu);
     bool SaveUartsInfo(QStringList &ports);
+    bool IsModulesEnable(QString name);
     QString Unit();
     bool isAdmin();
 public:
@@ -68,9 +69,12 @@ public:
     QString m_host;
     QStringList m_port_names;
     bool m_admin;
+    bool m_is_debug;
     //AlarmInfoMap m_info_map;
     QString m_unit;
     QString m_title;
+    QMap<QString,bool> m_modules;
+    QStringList m_params;
 private:
     QSettings *config;
 };

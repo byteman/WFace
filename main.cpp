@@ -5,6 +5,7 @@
 #include <QSettings>
 #include <QSplashScreen>
 #include <QTextCodec>
+#include <QBreakpadHandler.h>
 void loadLang(QTranslator& translator)
 {
 
@@ -24,7 +25,7 @@ void loadLang(QTranslator& translator)
 int main(int argc, char *argv[])
 {
 
-
+    //QBreakpadInstance.setDumpPath(QLatin1String("crashes"));
     QApplication a(argc, argv);
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 //    QPixmap pixmap("splash.jpg");

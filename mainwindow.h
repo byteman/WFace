@@ -34,6 +34,7 @@ public:
     ~MainWindow();
 
 
+    void EnableParams();
 private slots:
     void onReadCalibParam(quint32 sensorMv, quint32 sensorFullSpan);
     void on_actionChagne_triggered();
@@ -174,7 +175,7 @@ private:
     QString formatfloat(float wf, int dot);
     int ReadWaveList();
     void SetReadTimeout(int index, int count);
-    void hideForGuest();
+    void EnableModules();
     void loadLocalParam();
     void hideForCustom();
     void initUarts();

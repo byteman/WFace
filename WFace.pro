@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 QT +=  serialport
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -85,6 +85,21 @@ INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
 INCLUDEPATH += 3rdparty/poco/include
 win32:INCLUDEPATH += 3rdparty/poco/include\ 3rdparty/pcomm
+
+INCLUDEPATH += ./ext/qBreakpad/handler
+LIBS+=-Lext/lib
+LIBS += -Lext/qBreakpad/handler
+
+CONFIG(debug, debug|release) {
+        LIBS+=-lqBreakpadd
+
+}
+
+CONFIG(release, debug|release) {
+        LIBS+=-lqBreakpad
+        QMAKE_CXXFLAGS_RELEASE = $$QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO
+        QMAKE_LFLAGS_RELEASE = $$QMAKE_LFLAGS_RELEASE_WITH_DEBUGINFO
+}
 
 msvc:QMAKE_CXXFLAGS += -source-charset:utf-8
 QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01

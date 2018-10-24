@@ -20,7 +20,7 @@ MbServer::MbServer():
     ctx(NULL),
     server_socket(-1)
 {
-    m_port = config->m_server_port;
+    //m_port = config->m_server_port;
     for(int i = 0; i < NB_SLAVE; i++)
     {
         mb_mapping[i] = NULL;

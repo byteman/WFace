@@ -8,6 +8,7 @@
 #include <QSerialPortInfo>
 #include "pcomm.h"
 #include <QFileDialog>
+#include <QAbstractButton>
 #include <QFile>
 #include <cstdio>
 #include "utils.h"
@@ -69,7 +70,7 @@ void MainWindow::initUarts()
 
 
 }
-#include <QAbstractButton>
+
 /**
  * @brief QStringLiteral("我的祖国我") 这样来显示中文.
  * 编码方式要选择utf-8 bom
@@ -155,11 +156,15 @@ void MainWindow::initUI()
 
     initAdList();
     clearState();
-    hideForCustom();
+    EnableParams();
+
     if(!cfg.isAdmin())
     {
-        hideForGuest();
+        ui->cbxDot->setEnabled(false);
+        ui->edtUnit->setEnabled(false);
+        ui->edtFullHigh->setEnabled(false);
     }
+    EnableModules();
     loadLocalParam();
     devices = new MyDevices(36,ui->gbDevices);
     devices->SetMaxSampleNum(cfg.m_max_sample);
@@ -191,20 +196,44 @@ void MainWindow::ChangeReader(ModbusReader* reader)
 }
 void MainWindow::hideForCustom()
 {
-    ui->edtSerial->hide();
-    ui->label_15->hide();
-    ui->edtVersion->hide();
-    ui->label_16->hide();
+
+
 }
-void MainWindow::hideForGuest()
+void MainWindow::EnableParams()
 {
+    for(int i = 0; i < cfg.m_params.size(); i++)
+    {
+        if(cfg.m_params[i] == "alarm"){
+            ui->lblAlarmSetting->hide();
+            ui->lblAlarmValue->hide();
+            ui->edtAlarmValue->hide();
+            ui->cbxAlarmSetting->hide();
+        }
+        else if(cfg.m_params[i] == "serial"){
+            ui->edtSerial->hide();
+            ui->lblSerial->hide();
+        }else if(cfg.m_params[i] == "version"){
+            ui->edtVersion->hide();
+            ui->lblVersion->hide();
+        }
+    }
 
+}
+void MainWindow::EnableModules()
+{
+    if(!cfg.IsModulesEnable("calibrate")){
+        ui->tabWidget->setTabEnabled(3,false);
+    }
+    if(!cfg.IsModulesEnable("cornfix")){
+        ui->tabWidget->setTabEnabled(4,false);
+    }
+    if(!cfg.IsModulesEnable("realtime_wave")){
+        ui->tabWidget->setTabEnabled(5,false);
+    }
+    if(!cfg.IsModulesEnable("history_wave")){
+        ui->tabWidget->setTabEnabled(6,false);
+    }
 
-    ui->cbxDot->setEnabled(false);
-    ui->edtUnit->setEnabled(false);
-    ui->edtFullHigh->setEnabled(false);
-    ui->tabWidget->setTabEnabled(3,false);
-    ui->tabWidget->setTabEnabled(4,false);
     ui->tabWidget->setStyleSheet("QTabBar::tab:disabled {width: 0; color: transparent;}");
 }
 void MainWindow::initAdList()
@@ -839,11 +868,13 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     {
         if(index != 0)
         {
-            ui->tabWidget->setCurrentIndex(0);
-            QMessageBox::information(this,tr("info"),tr("please scan device first"));
-        }
+            if(!cfg.m_is_debug){
+                ui->tabWidget->setCurrentIndex(0);
+                QMessageBox::information(this,tr("info"),tr("please scan device first"));
+                return ;
+            }
 
-        return ;
+        }
     }
 
     if(index == 0)
