@@ -990,26 +990,7 @@
            <string/>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="2" column="4">
-            <widget class="QLineEdit" name="edtHandZeroSpan"/>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>ZeroTrackSpan</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
+           <item row="5" column="0">
             <widget class="QLabel" name="label_10">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1025,34 +1006,8 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>HandZeroSpan</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
            <item row="4" column="4">
-            <widget class="QLineEdit" name="edtStableSpan"/>
-           </item>
-           <item row="3" column="4">
             <widget class="QLineEdit" name="edtZeroSpan"/>
-           </item>
-           <item row="1" column="7">
-            <widget class="QLineEdit" name="edtVersion">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="lblSerial">
@@ -1064,16 +1019,29 @@
              </property>
             </widget>
            </item>
-           <item row="5" column="7">
+           <item row="6" column="7">
             <widget class="QLineEdit" name="edtFullHigh"/>
            </item>
-           <item row="1" column="4">
-            <widget class="QLineEdit" name="edtSerial">
-             <property name="whatsThis">
-              <string/>
-             </property>
+           <item row="1" column="7">
+            <widget class="QLineEdit" name="edtVersion">
              <property name="readOnly">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="6">
+            <widget class="QLabel" name="label_8">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Div1</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
@@ -1093,23 +1061,17 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="6">
-            <widget class="QLabel" name="label_8">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+           <item row="1" column="4">
+            <widget class="QLineEdit" name="edtSerial">
+             <property name="whatsThis">
+              <string/>
              </property>
-             <property name="text">
-              <string>Div1</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <property name="readOnly">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="6">
+           <item row="4" column="6">
             <widget class="QLabel" name="label_6">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1125,23 +1087,7 @@
              </property>
             </widget>
            </item>
-           <item row="5" column="6">
-            <widget class="QLabel" name="label_5">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>FullSpan1</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="6">
+           <item row="3" column="6">
             <widget class="QLabel" name="label_11">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1157,73 +1103,23 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="7">
-            <widget class="QComboBox" name="cbxDot">
-             <property name="enabled">
-              <bool>true</bool>
+           <item row="6" column="6">
+            <widget class="QLabel" name="label_5">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <item>
-              <property name="text">
-               <string>000000</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>00000.0</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>0000.00</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>000.000</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>00.0000</string>
-              </property>
-             </item>
+             <property name="text">
+              <string>FullSpan1</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
             </widget>
            </item>
-           <item row="2" column="7">
-            <widget class="QComboBox" name="cbxFilterLvl">
-             <item>
-              <property name="text">
-               <string>0</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>1</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>2</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>3</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>4</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>5</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="4" column="7">
+           <item row="5" column="7">
             <widget class="QComboBox" name="cbxDivHigh">
              <item>
               <property name="text">
@@ -1262,7 +1158,7 @@
              </item>
             </widget>
            </item>
-           <item row="5" column="4">
+           <item row="6" column="4">
             <widget class="QLineEdit" name="edtUnit">
              <property name="enabled">
               <bool>true</bool>
@@ -1272,7 +1168,73 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="4">
+           <item row="4" column="7">
+            <widget class="QComboBox" name="cbxDot">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <item>
+              <property name="text">
+               <string>000000</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>00000.0</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>0000.00</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>000.000</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>00.0000</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="3" column="7">
+            <widget class="QComboBox" name="cbxFilterLvl">
+             <item>
+              <property name="text">
+               <string>0</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>3</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>4</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>5</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="7" column="4">
             <widget class="QComboBox" name="cbxAlarmSetting">
              <item>
               <property name="text">
@@ -1286,7 +1248,17 @@
              </item>
             </widget>
            </item>
-           <item row="6" column="0">
+           <item row="7" column="6">
+            <widget class="QLabel" name="lblAlarmValue">
+             <property name="text">
+              <string>AlarmValue</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
             <widget class="QLabel" name="lblAlarmSetting">
              <property name="statusTip">
               <string/>
@@ -1299,24 +1271,7 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="6">
-            <widget class="QLabel" name="lblAlarmValue">
-             <property name="text">
-              <string>AlarmValue</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="7">
-            <widget class="QLineEdit" name="edtAlarmValue">
-             <property name="text">
-              <string>0</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
+           <item row="6" column="0">
             <widget class="QLabel" name="label_17">
              <property name="text">
               <string>Unit</string>
@@ -1324,6 +1279,98 @@
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
+            </widget>
+           </item>
+           <item row="7" column="7">
+            <widget class="QLineEdit" name="edtAlarmValue">
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>ZeroTrackSpan</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="4">
+            <widget class="QLineEdit" name="edtHandZeroSpan"/>
+           </item>
+           <item row="5" column="4">
+            <widget class="QLineEdit" name="edtStableSpan"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>HandZeroSpan</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="lblPwrZeroSpan">
+             <property name="text">
+              <string>PowerZeroSpan</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="4">
+            <widget class="QLineEdit" name="edtPwrZeroSpan"/>
+           </item>
+           <item row="2" column="6">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>AD Rate</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="7">
+            <widget class="QComboBox" name="cbxAdRate">
+             <item>
+              <property name="text">
+               <string>10</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>50</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>200</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>800</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>

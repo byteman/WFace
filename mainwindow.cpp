@@ -102,8 +102,12 @@ void MainWindow::initUI()
         //根据配置隐藏
         if(cfg.m_commu_type == COMMU_RTU)
         {
+            ui->rbRTU->setChecked(true);
+            ui->rbTCP->setChecked(false);
             ui->grpNet->hide();
         }else{
+            ui->rbRTU->setChecked(false);
+            ui->rbTCP->setChecked(true);
             ui->grpUart->hide();
 
         }
@@ -153,13 +157,13 @@ void MainWindow::initUI()
     connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),this,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
     connect(poller,SIGNAL(timeout(int)),this,SLOT(onPollTimeout(int)));
 
-
     initAdList();
     clearState();
     EnableParams();
 
     if(!cfg.isAdmin())
     {
+        //力恒那边要求客户版本 不需要设置小数点和单位和满量程
         ui->cbxDot->setEnabled(false);
         ui->edtUnit->setEnabled(false);
         ui->edtFullHigh->setEnabled(false);
@@ -441,9 +445,9 @@ void MainWindow::onParaReadResult(Para _para)
     ui->edtHandZeroSpan->setText(QString("%1").arg(_para.hand_zero_span));
 
     //ui->edtSlaveAddr->setText(QString("%1").arg(_para.slave_addr));
-    //ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
+    ui->edtPwrZeroSpan->setText(QString("%1").arg(_para.pwr_zero_span));
     ui->cbxFilterLvl->setCurrentIndex(_para.filter_level);
-    //ui->cbxAdRate->setCurrentIndex(_para.adRate);
+    ui->cbxAdRate->setCurrentIndex(_para.adRate);
 
     ui->edtVersion->setText(QString("V%1.%2.%3").arg(_para.version/10000).arg((_para.version%10000)/100).arg(_para.version%100));
 }
@@ -945,16 +949,16 @@ bool MainWindow::save_param()
     if(p.dot==-1) return false;
     p.hand_zero_span = ui->edtHandZeroSpan->text().toInt(&ok);
     if(!ok) return false;
-    p.pwr_zero_span  = 0;//ui->edtPwrZeroSpan->text().toInt(&ok);
-    //if(!ok) return false;
+    p.pwr_zero_span  = ui->edtPwrZeroSpan->text().toInt(&ok);
+    if(!ok) return false;
     p.stable_span = ui->edtStableSpan->text().toInt(&ok);
     if(!ok) return false;
     p.unit = 0;//ui->cbxUnit->currentIndex();
     if(p.unit==-1) return false;
     p.zero_track_span = ui->edtZeroSpan->text().toInt(&ok);
     if(!ok) return false;
-    p.adRate = 0;//ui->cbxAdRate->currentIndex();
-    //if(p.adRate==-1) return false;
+    p.adRate = ui->cbxAdRate->currentIndex();
+    if(p.adRate==-1) return false;
 
 
     quint8 dot = p.dot;
