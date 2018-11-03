@@ -94,7 +94,7 @@ QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
     }
     if(ss.StateBit.overflow && !ss.StateBit.bit7)
     {
-       ws = "------";
+       //ws = "------";
        //strState += " | " +tr("net ");
     }
     if(ss.StateBit.power_zero_overflow)
