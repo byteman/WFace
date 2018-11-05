@@ -92,10 +92,19 @@ win32 {
     LIBS += -lOpengl32 \
                 -lglu32
 
-    LIBS += -L3rdparty/CuteLogger/debug -lCuteLogger
+    LIBS +=  -lCuteLogger
+
+}
+CONFIG(debug, debug|release) {
+        #LIBS+=-L3rdparty/CuteLogger/debug -lCuteLoggerd
 
 }
 
+CONFIG(release, debug|release) {
+        #LIBS+=-L3rdparty/CuteLogger/release -lCuteLogger
+        QMAKE_CXXFLAGS_RELEASE = $$QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO
+        QMAKE_LFLAGS_RELEASE = $$QMAKE_LFLAGS_RELEASE_WITH_DEBUGINFO
+}
 
 FORMS    += mainwindow.ui \
     devwidget.ui \
