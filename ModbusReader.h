@@ -16,6 +16,7 @@ public:
     virtual bool hasConnected(){return m_connect;}
     virtual bool setDeviceAddr(int addr)=0;
     virtual int  getCurrentDeviceAddr(void);
+    //virtual int  getRealDeviceAddr(void);
     virtual bool setDelay(int ms)=0;
     virtual bool set_response_timeout(int us)=0;
 

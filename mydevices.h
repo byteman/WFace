@@ -16,6 +16,7 @@ public:
     MyDevices(int max=32,QGroupBox* parent=NULL );
     void SetDeviceNum(int  start, int num);
     void SetMaxSampleNum(int max);
+    void SetCenterAddr(int addr);
     void Timeout(int addr);
     void SetUnit(QString unit);
     void SetAlarmSetting(int addr,int alarmSetting, double value);
@@ -25,6 +26,8 @@ public:
     void GetNum(int &start,int &num);
     int  GetEndAddr();
     void listWaveFiles(QStringList &files);
+public slots:
+    void onDoubleClick(int addr,bool zoom);
 signals:
     void WaveFull();
 private:
@@ -49,6 +52,7 @@ private:
     void AppendItem(QString &output, QString item);
 
     void GetFileName(QString &csvFile, QString &waveFile);
+    void zoomDevice(int addr);
 };
 
 #endif // MYDEVICES_H

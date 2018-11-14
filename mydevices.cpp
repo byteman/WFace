@@ -12,12 +12,34 @@ MyDevices::MyDevices(int max,QGroupBox* parent):
     for(int i = 0; i < max; i++ )
     {
         DevWidget* widget = new DevWidget(i,parent);
+        connect(widget,SIGNAL(onDoubleClick(int,bool)),this,SLOT(onDoubleClick(int,bool)));
         widgets.push_back(widget);
         widget->hide();
     }
 }
+void MyDevices::zoomDevice(int addr)
+{
+    clearAll();
+    int w  = m_container->width();
+    int h = m_container->height();
+
+    widgets[addr]->SetUnit(m_unit);
+    widgets[addr]->setGeometry(0,0,w,h);
+    //qlayout->addWidget(widgets[i+start],row,col);
+    widgets[addr]->Show();
+}
+void MyDevices::onDoubleClick(int addr,bool zoom)
+{
+
+    if(zoom){
+       zoomDevice(addr);
+    }else{
+
+        SetDeviceNum(m_start,m_num);
+    }
 
 
+}
 void MyDevices::clearAll()
 {
     for(int i = 0; i < widgets.size();i++)
@@ -39,10 +61,11 @@ void MyDevices::SetDeviceNum(int start, int num)
     {
         int row = i/m_col ;
         int col = i%m_col;
+        widgets[i+start]->Reset();
         widgets[i+start]->SetUnit(m_unit);
         widgets[i+start]->setGeometry(col*w,row*h,w,h);
         //qlayout->addWidget(widgets[i+start],row,col);
-        widgets[i+start]->show();
+        widgets[i+start]->Show();
     }
     m_num = num;
     m_start = start;

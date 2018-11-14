@@ -15,6 +15,8 @@ int ModbusReader::getCurrentDeviceAddr()
     return m_slaveAddr;
 }
 
+
+
 bool ModbusReader::start(int interval)
 {
     m_interval = interval;

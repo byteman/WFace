@@ -755,7 +755,8 @@ void MainWindow::on_btnSearch_clicked()
                factory.GetMultiReader()->clearChannel();
                for(int i = 0; i < pboxs.size(); i++)
                {
-                   factory.GetMultiReader()->pushChannel(factory.GetRtuChannel(i),1);
+                   //多串口模式,每个串口上只接了一个设备，这个设备的地址,目前都是一样的，以后可以支持扫描.
+                   factory.GetMultiReader()->pushChannel(factory.GetRtuChannel(i),cfg.m_default_addr);
                }
                ChangeReader(factory.GetMultiReader());
                max_addr = pboxs.size()+1;
@@ -1532,7 +1533,7 @@ void MainWindow::on_btnConnect_clicked()
     if(!scan)
     {
 
-        scaner->init(3,1,1,33,!ui->cbxFindAll->isChecked());
+        scaner->init(REG_ADDR,1,1,33,!ui->cbxFindAll->isChecked());
         scaner->start();
         //ui->btnConnect->setText(tr("StopSearch"));
         ui->listWidget->setEnabled(false);

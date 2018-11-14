@@ -30,6 +30,11 @@ private:
     QVector<ModbusChannel*> channels;
     int m_current_index;
     ModbusChannel* m_current_channel;
+    int m_real_addr;
+
+    // ModbusReader interface
+public:
+    virtual int getRealDeviceAddr();
 };
 
 #endif // MULTIMODBUSREADER_H

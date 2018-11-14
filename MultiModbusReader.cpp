@@ -16,6 +16,7 @@ void MultiModbusReader::clearChannel()
 void MultiModbusReader::pushChannel(ModbusChannel *channel,int addr)
 {
     channel->setDeviceAddr(addr);
+    m_real_addr = addr;
     channels.push_back(channel);
 }
 
@@ -33,7 +34,7 @@ bool MultiModbusReader::hasConnected()
 
 bool MultiModbusReader::setDeviceAddr(int addr)
 {
-    if(addr >= channels.size() || addr <= 0 ) return false;
+    if(addr > channels.size() || addr <= 0 ) return false;
 
     m_current_index = addr;
     return true;
@@ -42,7 +43,7 @@ bool MultiModbusReader::setDeviceAddr(int addr)
 
 int MultiModbusReader::getCurrentDeviceAddr()
 {
-    return m_current_index;
+    return m_real_addr;
 }
 
 bool MultiModbusReader::setDelay(int ms)
@@ -119,4 +120,10 @@ void MultiModbusReader::flush()
     {
        channels[i]->flush();
     }
+}
+
+
+int MultiModbusReader::getRealDeviceAddr()
+{
+    return m_real_addr;
 }

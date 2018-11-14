@@ -42,6 +42,9 @@ MyConfig::MyConfig():
     m_port = config->value("/tcp/port",501).toInt();
     m_host = config->value("/tcp/ipaddr","127.0.0.1").toString();
     m_server_port= config->value("/tcp/server_port",1502).toInt();
+
+    m_default_addr = config->value("uart/addr",32).toInt();
+
     qDebug() << "title =" << m_title;
     qDebug() << "unit = " << m_unit;
 }

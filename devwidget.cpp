@@ -8,7 +8,8 @@ DevWidget::DevWidget(int addr, QWidget *parent) :
     ui(new Ui::DevWidget),
     m_addr(addr),
     m_timeout(MAX_TIMEOUT),
-    m_last_still(false)
+    m_last_still(false),
+    m_zoom(false)
 {
     ui->setupUi(this);
     ui->lbl_addr->setText(tr("Address") + ":" + QString("%1").arg(addr));
@@ -49,6 +50,23 @@ void DevWidget::SetAlarmSetting(int setting, double value)
 {
     m_alarm_index = setting;
     m_alarm_value = value;
+}
+
+void DevWidget::Show()
+{
+    if(m_zoom){
+
+       ui->lbl_weight->setStyleSheet("font-size : 128px");
+    }else{
+       ui->lbl_weight->setStyleSheet("font-size : 16pt");
+
+    }
+    this->show();
+}
+
+void DevWidget::Reset()
+{
+    m_zoom = false;
 }
 
 void DevWidget::clearState()
@@ -164,4 +182,19 @@ void DevWidget::SetOnline(bool online)
         ui->lbl_addr->setStyleSheet("background-color: red;");
     }
     m_online = online;
+}
+
+
+void DevWidget::mouseDoubleClickEvent(QMouseEvent *)
+{
+    qDebug() <<m_addr <<" double click";
+    m_zoom=!m_zoom;
+    if(m_zoom){
+
+       ui->lbl_weight->setStyleSheet("font-size : 128px");
+    }else{
+       ui->lbl_weight->setStyleSheet("font-size : 16pt");
+
+    }
+    emit onDoubleClick(m_addr,m_zoom);
 }

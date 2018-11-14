@@ -65,6 +65,7 @@ public:
     int m_port;
     int m_server_port;
     int m_commu_type; //通訊方式.
+    int m_default_addr; //多串口模式下,读取的默认设备地址.
     //bool m_isRTU;
     QString m_host;
     QStringList m_port_names;
