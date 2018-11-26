@@ -1564,7 +1564,20 @@ void MainWindow::on_rbTCP_clicked()
 
 void MainWindow::on_btnNext_clicked()
 {
-    if(weight != NULL){
-        weight->changeChan();
+    bool ok = false;
+    int addr = ui->edtAddr->text().toInt(&ok);
+    if(ok){
+        reader->setDeviceAddr(addr);
+        if(1==reader->write_register(REG_2B_CHANGE_CHAN,1))
+        {
+            QMessageBox::information(this,tr("info"),tr("change channel successful"));
+        }
+        else
+        {
+
+            QMessageBox::information(this,tr("error"),tr("change channel failed"));
+        }
     }
+
+
 }
