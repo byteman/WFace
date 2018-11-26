@@ -88,5 +88,9 @@ int WeightHandler::getDot()
 {
     return m_dot;
 }
+int WeightHandler::changeChan()
+{
+    return WriteCtrlCmd(102,1);;
+}
 
 

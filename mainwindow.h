@@ -125,6 +125,8 @@ private slots:
 
     void on_rbTCP_clicked();
 
+    void on_btnNext_clicked();
+
 private:
     void initCalibPoints();
     void ChangeReader(ModbusReader *reader);

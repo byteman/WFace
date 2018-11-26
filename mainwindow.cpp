@@ -1561,3 +1561,10 @@ void MainWindow::on_rbTCP_clicked()
     DisableGroupChildRen(ui->grpUart,false);
 
 }
+
+void MainWindow::on_btnNext_clicked()
+{
+    if(weight != NULL){
+        weight->changeChan();
+    }
+}
