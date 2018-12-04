@@ -30,6 +30,7 @@ MyConfig::MyConfig():
     m_modules["cornfix"] = config->value("modules/cornfix",true).toBool();
     m_modules["realtime_wave"] = config->value("modules/realtime_wave",true).toBool();
     m_modules["history_wave"] = config->value("modules/history_wave",true).toBool();
+    m_modules["analogfix"] = config->value("modules/analogfix",true).toBool();
 
     QString items = config->value("params/hidden","").toString();
     m_params = items.split(",");

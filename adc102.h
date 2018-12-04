@@ -24,6 +24,7 @@ enum ADC102_REGS{
     REG_2B_SENSOR_NUM=46,//传感器个数
     REG_4B_CHANNEL_AD=49, //第一路通道的AD值 整数值
     REG_2B_CHANGE_CHAN=101, //切换通道.
+    REG_2B_ALALOG_FIX_VALUE=95, //模拟量4ma-20ma标定值.
 
 };
 

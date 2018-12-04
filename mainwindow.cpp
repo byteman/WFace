@@ -219,6 +219,9 @@ void MainWindow::EnableParams()
         }else if(cfg.m_params[i] == "version"){
             ui->edtVersion->hide();
             ui->lblVersion->hide();
+        }else if(cfg.m_params[i] == "channel"){
+            //ui->btnNext->setText("wwwwww");
+            ui->btnNext->hide();
         }
     }
 
@@ -236,6 +239,9 @@ void MainWindow::EnableModules()
     }
     if(!cfg.IsModulesEnable("history_wave")){
         ui->tabWidget->setTabEnabled(6,false);
+    }
+    if(!cfg.IsModulesEnable("analogfix")){
+        ui->tabWidget->setTabEnabled(7,false);
     }
 
     ui->tabWidget->setStyleSheet("QTabBar::tab:disabled {width: 0; color: transparent;}");
@@ -919,6 +925,10 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         waveWidget->Clear();
         ReadWaveList();
     }
+    else
+    {
+        changeHandler("dumy");
+    }
 }
 int MainWindow::ReadWaveList()
 {
@@ -1580,4 +1590,22 @@ void MainWindow::on_btnNext_clicked()
     }
 
 
+}
+//修正模拟值.
+void MainWindow::on_btnAnaLogFix_clicked()
+{
+    bool ok = false;
+    quint16 value = ui->edtAnaLogValue->text().toInt(&ok);
+    if(ok)
+    {
+        if(1==reader->write_register(REG_2B_ALALOG_FIX_VALUE,value))
+        {
+            QMessageBox::information(this,tr("info"),tr("Analog Fix successful"));
+        }
+        else
+        {
+
+            QMessageBox::information(this,tr("error"),tr("Analog Fix failed"));
+        }
+    }
 }

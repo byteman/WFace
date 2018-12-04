@@ -127,6 +127,8 @@ private slots:
 
     void on_btnNext_clicked();
 
+    void on_btnAnaLogFix_clicked();
+
 private:
     void initCalibPoints();
     void ChangeReader(ModbusReader *reader);
