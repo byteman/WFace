@@ -83,6 +83,8 @@ private slots:
 
     void on_btnSet_clicked();
 
+    void on_cbxAuto_clicked();
+
 private:
 
     Ui::MainWindow *ui;
@@ -103,6 +105,7 @@ private:
     int m_select_addr;
     QTime m_time;
     MyConfig cfg;
+    bool m_query;
     bool pressed;
     // QObject interface
     void traversalControl(const QObjectList &q);

@@ -324,6 +324,7 @@ void MainWindow::timerEvent(QTimerEvent *)
     QString msg = QString("TX:%1|RX:%2 ").arg(tx).arg(rx);
 
     ui->statusBar->showMessage(msg);
+
     if(ui->tabWidget->currentIndex() == 5)
     {
         int min = m_time.elapsed() / 60000;
@@ -335,6 +336,12 @@ void MainWindow::timerEvent(QTimerEvent *)
         else if( min >= cfg.m_save_time_min )
         {
             on_btnSaveWave_clicked();
+        }
+
+    }else if(ui->tabWidget->currentIndex() == 1){
+        qDebug() << "QueryChange";
+        if(ui->cbxAuto->isChecked()){
+            on_btnQueryChange_clicked();
         }
 
     }
@@ -586,3 +593,8 @@ void MainWindow::on_btnSet_clicked()
 }
 
 
+
+void MainWindow::on_cbxAuto_clicked()
+{
+
+}

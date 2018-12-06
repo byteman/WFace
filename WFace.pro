@@ -94,6 +94,9 @@ win32 {
     CONFIG(debug, debug|release) {
         LIBS += -L3rdparty/CuteLogger/debug -lCuteLogger
     }
+    CONFIG(release, debug|release) {
+        LIBS += -L3rdparty/CuteLogger/release -lCuteLogger
+    }
 }
 
 

@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabCommu">
        <attribute name="title">
@@ -478,6 +478,13 @@
            <string>指令测试</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QCheckBox" name="cbxAuto">
+             <property name="text">
+              <string>自动查询</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QListWidget" name="listResults"/>
            </item>
