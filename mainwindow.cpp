@@ -382,6 +382,19 @@ void MainWindow::calibrate_click(int id)
         QMessageBox::information(this,tr("error"),tr("calib_fail"));
     }
 }
+void MainWindow::corn_fix_click(int id)
+{
+    qDebug() << id << "---clicked";
+    bool ok = false;
+    float k = ui->tblCornFix->item(id,1)->text().toFloat(&ok);
+    if(!ok){
+        return;
+    }
+    corn->setK(id,k);
+
+}
+
+
 void MainWindow::corn_calibrate_click(int id)
 {
     qDebug() << id << "---clicked";
@@ -658,7 +671,10 @@ void MainWindow::onRegOperResult(RegCmd cmd)
     else if(!cmd.isRead)
     {
         if( (cmd.reg_addr == REG_FULL_SPAN)||
-                (cmd.reg_addr == REG_4B_CORN_K))
+                (cmd.reg_addr == REG_4B_CORN_K) ||
+                (cmd.reg_addr == REG_4B_CORN_K+2) ||
+                (cmd.reg_addr == REG_4B_CORN_K+4)||
+                (cmd.reg_addr == REG_4B_CORN_K+6))
         {
             if(cmd.error != REG_ERROR_OK)
             {
@@ -668,7 +684,10 @@ void MainWindow::onRegOperResult(RegCmd cmd)
             {
 
                 if((cmd.reg_addr == REG_2B_SENSOR_NUM) ||
-                        (cmd.reg_addr == REG_4B_CORN_K))
+                        (cmd.reg_addr == REG_4B_CORN_K) ||
+                        (cmd.reg_addr == REG_4B_CORN_K+2) ||
+                        (cmd.reg_addr == REG_4B_CORN_K+4)||
+                        (cmd.reg_addr == REG_4B_CORN_K+6))
                 {
                     //写完参数后，重新读取一下参数
                     corn->ReadParam();
@@ -1032,19 +1051,20 @@ void MainWindow::initCornFixChan()
 {
     //ui->tblCornFix->verticalHeader()->setHidden(true);
     ui->tblCornFix->setRowCount(4);
-    ui->tblCornFix->setColumnCount(3);
+    ui->tblCornFix->setColumnCount(4);
     QStringList col_headers;
     //col_headers.push_back(tr("channel"));
     col_headers.push_back(tr("ad"));
     col_headers.push_back(tr("k"));
     col_headers.push_back(tr("Operation"));
-
+    col_headers.push_back(tr("Operation"));
 
     ui->tblCornFix->setHorizontalHeaderLabels(col_headers);
 
     QStringList row_headers;
 
     QSignalMapper *signalMapper = new QSignalMapper(this);
+    QSignalMapper *signalMapper2 = new QSignalMapper(this);
     for(int i = 0; i <=  3; i++)
     {
         QString title = QString("%1%2%3").arg(tr("calib")).arg(tr("corn")).arg(i+1);
@@ -1054,7 +1074,16 @@ void MainWindow::initCornFixChan()
         connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
         signalMapper->setMapping(button, i);
 
+        title = QString("%1%2").arg(tr("modify")).arg(tr("corn"));
+        QPushButton* button2 = new QPushButton(title,ui->tblCornFix);
+        button2->setGeometry(0,0,80,50);
+        button2->setEnabled(true);
+        connect(button2, SIGNAL(clicked()), signalMapper2, SLOT(map()));
+        signalMapper2->setMapping(button2, i);
+
+
         ui->tblCornFix->setCellWidget(i,2,button);
+        ui->tblCornFix->setCellWidget(i,3,button2);
         for(int j = 0 ; j < 2; j++)
         {
             QTableWidgetItem* item = new QTableWidgetItem("");
@@ -1068,6 +1097,8 @@ void MainWindow::initCornFixChan()
     ui->tblCornFix->setVerticalHeaderLabels(row_headers);
     connect(signalMapper, SIGNAL(mapped(int)),
                 this, SLOT(corn_calibrate_click(int)));
+    connect(signalMapper2, SIGNAL(mapped(int)),
+                this, SLOT(corn_fix_click(int)));
     ui->btnStopCalib->setEnabled(false);
 
 }
@@ -1608,4 +1639,21 @@ void MainWindow::on_btnAnaLogFix_clicked()
             QMessageBox::information(this,tr("error"),tr("Analog Fix failed"));
         }
     }
+}
+
+void MainWindow::on_tblCornFix_itemChanged(QTableWidgetItem *item)
+{
+    qDebug() << "item changed" << item->text() << "row=" << item->row() << "col="<<item->column();
+
+}
+
+void MainWindow::on_tblCornFix_itemActivated(QTableWidgetItem *item)
+{
+
+}
+
+void MainWindow::on_tblCornFix_itemDoubleClicked(QTableWidgetItem *item)
+{
+    qDebug() << "itemDoubleClicked" << item->text();
+
 }

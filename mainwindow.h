@@ -21,6 +21,7 @@
 #include "ModbusReaderFactory.h"
 #include <QComboBox>
 #include "MbServer.h"
+#include <QTableWidgetItem>
 namespace Ui {
 class MainWindow;
 }
@@ -129,6 +130,12 @@ private slots:
 
     void on_btnAnaLogFix_clicked();
 
+    void on_tblCornFix_itemChanged(QTableWidgetItem *item);
+
+    void on_tblCornFix_itemActivated(QTableWidgetItem *item);
+
+    void on_tblCornFix_itemDoubleClicked(QTableWidgetItem *item);
+
 private:
     void initCalibPoints();
     void ChangeReader(ModbusReader *reader);
@@ -189,6 +196,7 @@ protected:
 
 protected slots:
     void corn_calibrate_click(int id);
+    void corn_fix_click(int id);
 };
 
 #endif // MAINWINDOW_H

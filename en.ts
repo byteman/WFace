@@ -141,7 +141,7 @@
     </message>
     <message>
         <location filename="mainwindow.ui" line="394"/>
-        <location filename="mainwindow.cpp" line="476"/>
+        <location filename="mainwindow.cpp" line="489"/>
         <source>BusScan</source>
         <translation type="unfinished"></translation>
     </message>
@@ -193,7 +193,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="510"/>
+        <location filename="mainwindow.cpp" line="523"/>
         <source>stable</source>
         <translation type="unfinished"></translation>
     </message>
@@ -434,7 +434,8 @@
     <message>
         <location filename="mainwindow.ui" line="280"/>
         <location filename="mainwindow.ui" line="1601"/>
-        <location filename="mainwindow.cpp" line="1040"/>
+        <location filename="mainwindow.cpp" line="1053"/>
+        <location filename="mainwindow.cpp" line="1054"/>
         <source>Operation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -633,97 +634,97 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="580"/>
-        <location filename="mainwindow.cpp" line="584"/>
-        <location filename="mainwindow.cpp" line="649"/>
-        <location filename="mainwindow.cpp" line="677"/>
-        <location filename="mainwindow.cpp" line="813"/>
-        <location filename="mainwindow.cpp" line="817"/>
-        <location filename="mainwindow.cpp" line="884"/>
-        <location filename="mainwindow.cpp" line="1020"/>
-        <location filename="mainwindow.cpp" line="1139"/>
-        <location filename="mainwindow.cpp" line="1147"/>
-        <location filename="mainwindow.cpp" line="1155"/>
-        <location filename="mainwindow.cpp" line="1427"/>
-        <location filename="mainwindow.cpp" line="1583"/>
-        <location filename="mainwindow.cpp" line="1603"/>
+        <location filename="mainwindow.cpp" line="593"/>
+        <location filename="mainwindow.cpp" line="597"/>
+        <location filename="mainwindow.cpp" line="662"/>
+        <location filename="mainwindow.cpp" line="690"/>
+        <location filename="mainwindow.cpp" line="826"/>
+        <location filename="mainwindow.cpp" line="830"/>
+        <location filename="mainwindow.cpp" line="897"/>
+        <location filename="mainwindow.cpp" line="1033"/>
+        <location filename="mainwindow.cpp" line="1164"/>
+        <location filename="mainwindow.cpp" line="1172"/>
+        <location filename="mainwindow.cpp" line="1180"/>
+        <location filename="mainwindow.cpp" line="1452"/>
+        <location filename="mainwindow.cpp" line="1608"/>
+        <location filename="mainwindow.cpp" line="1628"/>
         <source>info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="580"/>
+        <location filename="mainwindow.cpp" line="593"/>
         <source>calib ok</source>
         <translation>calibrate successful</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="584"/>
+        <location filename="mainwindow.cpp" line="597"/>
         <source>calib failed</source>
         <translation>calibrate failed</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="620"/>
-        <location filename="mainwindow.cpp" line="626"/>
+        <location filename="mainwindow.cpp" line="633"/>
+        <location filename="mainwindow.cpp" line="639"/>
         <source>corn_calib_msg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="620"/>
+        <location filename="mainwindow.cpp" line="633"/>
         <source>click_next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="626"/>
+        <location filename="mainwindow.cpp" line="639"/>
         <source>click_stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="649"/>
+        <location filename="mainwindow.cpp" line="662"/>
         <source>calib_ok</source>
         <translation>calibrate successful</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="377"/>
         <location filename="mainwindow.cpp" line="382"/>
-        <location filename="mainwindow.cpp" line="654"/>
-        <location filename="mainwindow.cpp" line="665"/>
-        <location filename="mainwindow.cpp" line="752"/>
-        <location filename="mainwindow.cpp" line="780"/>
-        <location filename="mainwindow.cpp" line="991"/>
-        <location filename="mainwindow.cpp" line="1028"/>
-        <location filename="mainwindow.cpp" line="1160"/>
-        <location filename="mainwindow.cpp" line="1168"/>
-        <location filename="mainwindow.cpp" line="1182"/>
-        <location filename="mainwindow.cpp" line="1191"/>
-        <location filename="mainwindow.cpp" line="1363"/>
-        <location filename="mainwindow.cpp" line="1512"/>
-        <location filename="mainwindow.cpp" line="1588"/>
-        <location filename="mainwindow.cpp" line="1608"/>
+        <location filename="mainwindow.cpp" line="667"/>
+        <location filename="mainwindow.cpp" line="678"/>
+        <location filename="mainwindow.cpp" line="765"/>
+        <location filename="mainwindow.cpp" line="793"/>
+        <location filename="mainwindow.cpp" line="1004"/>
+        <location filename="mainwindow.cpp" line="1041"/>
+        <location filename="mainwindow.cpp" line="1185"/>
+        <location filename="mainwindow.cpp" line="1193"/>
+        <location filename="mainwindow.cpp" line="1207"/>
+        <location filename="mainwindow.cpp" line="1216"/>
+        <location filename="mainwindow.cpp" line="1388"/>
+        <location filename="mainwindow.cpp" line="1537"/>
+        <location filename="mainwindow.cpp" line="1613"/>
+        <location filename="mainwindow.cpp" line="1633"/>
         <source>error</source>
         <translation>error</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="382"/>
-        <location filename="mainwindow.cpp" line="654"/>
+        <location filename="mainwindow.cpp" line="667"/>
         <source>calib_fail</source>
         <translation>calibrate fail</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="665"/>
-        <location filename="mainwindow.cpp" line="813"/>
+        <location filename="mainwindow.cpp" line="678"/>
+        <location filename="mainwindow.cpp" line="826"/>
         <source>save_fail</source>
         <translation>save failed</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="677"/>
-        <location filename="mainwindow.cpp" line="817"/>
+        <location filename="mainwindow.cpp" line="690"/>
+        <location filename="mainwindow.cpp" line="830"/>
         <source>save_ok</source>
         <translation>save successful</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="620"/>
-        <location filename="mainwindow.cpp" line="626"/>
-        <location filename="mainwindow.cpp" line="637"/>
-        <location filename="mainwindow.cpp" line="691"/>
+        <location filename="mainwindow.cpp" line="633"/>
+        <location filename="mainwindow.cpp" line="639"/>
+        <location filename="mainwindow.cpp" line="650"/>
+        <location filename="mainwindow.cpp" line="704"/>
         <source>corn_calib_title</source>
         <translation>corn calibrate</translation>
     </message>
@@ -733,42 +734,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="515"/>
+        <location filename="mainwindow.cpp" line="528"/>
         <source>zero</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="520"/>
+        <location filename="mainwindow.cpp" line="533"/>
         <source>net</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="525"/>
+        <location filename="mainwindow.cpp" line="538"/>
         <source>upflow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="532"/>
+        <location filename="mainwindow.cpp" line="545"/>
         <source>underflow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="537"/>
+        <location filename="mainwindow.cpp" line="550"/>
         <source>highspan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="543"/>
+        <location filename="mainwindow.cpp" line="556"/>
         <source>zoom10x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="547"/>
+        <location filename="mainwindow.cpp" line="560"/>
         <source>menumode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="691"/>
+        <location filename="mainwindow.cpp" line="704"/>
         <source>corn_calib_fail_msg</source>
         <translation>corn calibrate fail</translation>
     </message>
@@ -793,165 +794,171 @@
         <translation type="vanished">forth calibrate ok,click next</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="637"/>
+        <location filename="mainwindow.cpp" line="650"/>
         <source>stop_calib_msg</source>
         <translation>stop corn calibrate successful</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="752"/>
+        <location filename="mainwindow.cpp" line="765"/>
         <source>uart open failed</source>
         <translation>serial port open failed</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="780"/>
+        <location filename="mainwindow.cpp" line="793"/>
         <source>tcp open failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="795"/>
+        <location filename="mainwindow.cpp" line="808"/>
         <source>StopSearch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="884"/>
+        <location filename="mainwindow.cpp" line="897"/>
         <source>please scan device first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1020"/>
+        <location filename="mainwindow.cpp" line="1033"/>
         <source>save ok</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1028"/>
+        <location filename="mainwindow.cpp" line="1041"/>
         <source>discard tare failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1038"/>
-        <location filename="mainwindow.cpp" line="1080"/>
+        <location filename="mainwindow.cpp" line="1051"/>
+        <location filename="mainwindow.cpp" line="1105"/>
         <source>ad</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1039"/>
+        <location filename="mainwindow.cpp" line="1052"/>
         <source>k</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1050"/>
-        <location filename="mainwindow.cpp" line="1093"/>
+        <location filename="mainwindow.cpp" line="1064"/>
+        <location filename="mainwindow.cpp" line="1118"/>
         <source>calib</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1050"/>
+        <location filename="mainwindow.cpp" line="1064"/>
+        <location filename="mainwindow.cpp" line="1071"/>
         <source>corn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1064"/>
+        <location filename="mainwindow.cpp" line="1071"/>
+        <source>modify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1087"/>
         <source>channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1081"/>
+        <location filename="mainwindow.cpp" line="1106"/>
         <source>weight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1082"/>
+        <location filename="mainwindow.cpp" line="1107"/>
         <source>calibrate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1092"/>
+        <location filename="mainwindow.cpp" line="1117"/>
         <source>calib_zero</source>
         <translation>Calib Zero</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1093"/>
+        <location filename="mainwindow.cpp" line="1118"/>
         <source>span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1139"/>
+        <location filename="mainwindow.cpp" line="1164"/>
         <source>please select one device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1147"/>
+        <location filename="mainwindow.cpp" line="1172"/>
         <source>address must in 1-32</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1155"/>
+        <location filename="mainwindow.cpp" line="1180"/>
         <source>modify address successful</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1160"/>
+        <location filename="mainwindow.cpp" line="1185"/>
         <source>modify address failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1168"/>
+        <location filename="mainwindow.cpp" line="1193"/>
         <source>change groos net failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1182"/>
+        <location filename="mainwindow.cpp" line="1207"/>
         <source>set zero failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1191"/>
+        <location filename="mainwindow.cpp" line="1216"/>
         <source>zomm10x failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1427"/>
+        <location filename="mainwindow.cpp" line="1452"/>
         <source>error addr span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1512"/>
+        <location filename="mainwindow.cpp" line="1537"/>
         <source>设备连接失败</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1516"/>
+        <location filename="mainwindow.cpp" line="1541"/>
         <source>断开</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1521"/>
+        <location filename="mainwindow.cpp" line="1546"/>
         <source>连接</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1583"/>
+        <location filename="mainwindow.cpp" line="1608"/>
         <source>change channel successful</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1588"/>
+        <location filename="mainwindow.cpp" line="1613"/>
         <source>change channel failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1603"/>
+        <location filename="mainwindow.cpp" line="1628"/>
         <source>Analog Fix successful</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1608"/>
+        <location filename="mainwindow.cpp" line="1633"/>
         <source>Analog Fix failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="991"/>
-        <location filename="mainwindow.cpp" line="1362"/>
+        <location filename="mainwindow.cpp" line="1004"/>
+        <location filename="mainwindow.cpp" line="1387"/>
         <source> format_err</source>
         <translation>input format error</translation>
     </message>
