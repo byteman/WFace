@@ -27,7 +27,7 @@ public:
 signals:
 
     void weightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
-    void weightSumResult(int num ,int sum);
+    void weightSumResult(int num ,int sum1,int sum2, int sum3, int sum4);
     void timeout(int addr);
 private:
     bool paraRead();

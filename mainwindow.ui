@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1276</width>
-    <height>687</height>
+    <width>1263</width>
+    <height>775</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tabCommu">
        <attribute name="title">
@@ -684,6 +684,19 @@
                </widget>
               </item>
               <item>
+               <widget class="QLineEdit" name="edtSum2">
+                <property name="font">
+                 <font>
+                  <family>Arial</family>
+                  <pointsize>18</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="verticalSpacer_3">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -695,6 +708,32 @@
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="edtSum3">
+                <property name="font">
+                 <font>
+                  <family>Arial</family>
+                  <pointsize>18</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="edtSum4">
+                <property name="font">
+                 <font>
+                  <family>Arial</family>
+                  <pointsize>18</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QPushButton" name="btnChange">
@@ -764,7 +803,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1276</width>
+     <width>1263</width>
      <height>30</height>
     </rect>
    </property>

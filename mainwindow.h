@@ -37,7 +37,7 @@ private slots:
     void onScanResult(int type,int addr);
     void onPollTimeout(int addr);
     void onPollWeightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross,qint32 tare);
-    void onPollWeightSumResult(int num,int weight);
+    void onPollWeightSumResult(int num,int sum1,int sum2, int sum3 ,int sum4);
 
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
 

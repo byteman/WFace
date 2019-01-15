@@ -29,7 +29,7 @@ bool PollerHandler::canRead()
     return true;
 
 }
-
+#include <vector>
 bool PollerHandler::readWgt()
 {
     QByteArray outArr;
@@ -40,11 +40,21 @@ bool PollerHandler::readWgt()
     {
         quint8 sensor_id = outArr[0];
         quint8 sensor_num= outArr[1];
-
+        std::vector<qint32> sums;
         outArr.remove(0,2);
         quint8 num = outArr.size() / 4;
         qint32 sum = 0;
-        int sum_num = m_num;
+
+        int group = 0;
+        int grpNum = 1;
+        if(m_num > 0){
+           group = (num+m_num-1) / m_num;
+        }
+        qDebug() << "group=" <<group << "grpNum=" <<grpNum;
+        if(num ==0){
+            return true;
+        }
+        bool add = false;
         for(int i= 0; i < num; i++)
         {
             quint8  addr   = outArr[i*4+0];
@@ -61,16 +71,35 @@ bool PollerHandler::readWgt()
 
             }else{
                 state &= 0x7F;
-                if(i < sum_num){
-                    sum+=value;
+                if(m_num > 0){
+                    if(i < m_num*grpNum){
+                        add = true;
+                        sum+=value;
+                    }else{
+                        sums.push_back(sum);
+                        sum = 0;
+                        sum+=value;
+                        grpNum++;
+                        add = false;
+                    }
                 }
+
                 emit weightResult(addr,value,state,0,0,0 );
             }
 
 
         }
-        if(!m_show_ad){
-            weightSumResult(m_num, sum);
+        if(!m_show_ad & m_num>0){
+            if(add){
+                sums.push_back(sum);
+
+            }
+            qint32 result[4]={0,};
+            for(int i = 0; i < sums.size() && i < 4; i++){
+                result[i] = sums[i];
+            }
+            weightSumResult(m_num, result[0], result[1], result[2], result[3]);
+
         }
     }
     else

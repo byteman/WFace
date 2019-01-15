@@ -56,7 +56,18 @@ int main(int argc, char *argv[])
 
     /*使程序在显示启动画面的同时仍能响应鼠标等其他事件*/
     a.processEvents();
+    //加载样式表
+    QFile file(":/qss/psblack.css");
+    if (file.open(QFile::ReadOnly)) {
+        QString qss = QLatin1String(file.readAll());
+        QString paletteColor = qss.mid(20, 7);
+        qApp->setPalette(QPalette(QColor(paletteColor)));
+        qApp->setStyleSheet(qss);
+        file.close();
+    }
 
+    a.setFont(QFont("Microsoft Yahei", 9));
+    AppInit::Instance()->start();
     MainWindow w(a);
     w.show();
     //splash.finish(&w);

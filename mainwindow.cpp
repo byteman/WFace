@@ -73,7 +73,7 @@ void MainWindow::initUI()
 
     connect(poller,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),this,SLOT(onPollWeightResult(int,int,quint16,quint16,qint32,qint32)));
     connect(poller,SIGNAL(timeout(int)),this,SLOT(onPollTimeout(int)));
-    connect(poller,SIGNAL(weightSumResult(int,int)),this,SLOT(onPollWeightSumResult(int,int)));
+    connect(poller,SIGNAL(weightSumResult(int,int,int,int,int)),this,SLOT(onPollWeightSumResult(int,int,int,int,int)));
 
 
     devices = new MyDevices(33,ui->gbDevices);
@@ -178,9 +178,12 @@ void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16
     }
 }
 
-void MainWindow::onPollWeightSumResult(int num, int weight)
+void MainWindow::onPollWeightSumResult(int num, int sum1,int sum2, int sum3 ,int sum4)
 {
-    ui->edtSumKg->setText(QString("%1").arg(weight));
+    ui->edtSumKg->setText(QString("%1").arg(sum1));
+    ui->edtSum2->setText(QString("%1").arg(sum2));
+    ui->edtSum3->setText(QString("%1").arg(sum3));
+    ui->edtSum4->setText(QString("%1").arg(sum4));
 }
 
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
