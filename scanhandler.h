@@ -13,6 +13,7 @@ class ScanHandler : public CmdHandler
      Q_OBJECT
 public:
     ScanHandler(ModbusReader*  rtu);
+    QVector<int>  getAddrList();
     bool init(int reg_addr,int reg_size,int min_addr=1,int max_addr=33,bool findOne=true);
 
 signals:

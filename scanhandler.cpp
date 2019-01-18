@@ -13,6 +13,11 @@ ScanHandler::ScanHandler(ModbusReader *rtu):
 {
     m_addrArr.clear();
 }
+
+QVector<int> ScanHandler::getAddrList()
+{
+    return m_addrArr;
+}
 void ScanHandler::setTimeOut(int startUs, int stopUs)
 {
     m_start_us = startUs;

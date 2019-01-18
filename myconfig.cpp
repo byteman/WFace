@@ -16,8 +16,23 @@ MyConfig::MyConfig():
     if(m_read_timeout < 500000) m_read_timeout = 500000;
     m_max_sample       = config->value("/config/max_save_sample",5000).toInt();
     if(m_max_sample < 500) m_max_sample = 500;
-    m_save_time_min       = config->value("/config/save_time_min",5).toInt();
-    if(m_max_sample > 24*60 ) m_max_sample = 24*60;
+    m_save_time       = config->value("/config/save_time_min",5).toInt();
+    QString tunit = config->value("/config/save_time_unit","min").toString();
+
+    if(tunit=="min"){
+        m_time_unit = TU_MIN;
+
+    }else if(tunit=="hour"){
+        m_time_unit = TU_HOUR;
+    }else{
+        m_time_unit = TU_MIN;
+    }
+    if(m_time_unit == TU_HOUR){
+        m_save_time_min = m_save_time*60;
+    }else{
+        m_save_time_min = m_save_time;
+    }
+    m_wave_dir       = config->value("/config/wave_dir","").toString();
     m_unit       = config->value("/config/unit","kg").toString();
     m_admin       = config->value("/config/admin",false).toBool();
     m_title       = config->value("/config/title","Measure").toString();
@@ -50,11 +65,24 @@ MyConfig::MyConfig():
     qDebug() << "unit = " << m_unit;
 }
 
+void MyConfig::SetSaveTimeUnit(TimeUnit timeunit)
+{
+     m_time_unit = timeunit;
+     if(timeunit == TU_MIN){
+         config->setValue("/config/save_time_unit","min");
+     }else{
+         config->setValue("/config/save_time_unit","hour");
+     }
+}
+
 void MyConfig::SetSaveTime(int value)
 {
     m_save_time_min = value;
+
     //QSettings config("wface.ini", QSettings::IniFormat);
     config->setValue("/config/save_time_min",value);
+
+
 }
 
 void MyConfig::SaveUnit(QString unit)
@@ -120,6 +148,12 @@ bool MyConfig::IsModulesEnable(QString name)
         return m_modules[name];
     }
     return false;
+}
+
+bool MyConfig::SaveWaveDir(QString dir)
+{
+     config->setValue("/config/wave_dir", dir);
+     return true;
 }
 
 QString MyConfig::Unit()

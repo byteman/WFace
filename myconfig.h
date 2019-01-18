@@ -38,12 +38,17 @@ enum CommuType{
     COMMU_TCP,
     COMMU_MAX
 };
+enum TimeUnit{
+    TU_MIN=0, //分钟
+    TU_HOUR=1 //小时
+};
 typedef QMap<int, AlarmInfo> AlarmInfoMap;
 class MyConfig
 {
 public:
     MyConfig();
     void SetSaveTime(int value);
+    void SetSaveTimeUnit(TimeUnit timeunit);
     void SaveUnit(QString unit);
     //void SaveAlarmSetting(int alarmIndex, double alarmValue);
     void SaveAlarmSetting(int addr, int alarmIndex, double alarmValue);
@@ -52,6 +57,8 @@ public:
     bool SetModbusType(bool rtu);
     bool SaveUartsInfo(QStringList &ports);
     bool IsModulesEnable(QString name);
+    bool SaveWaveDir(QString dir);
+
     QString Unit();
     bool isAdmin();
 public:
@@ -60,6 +67,8 @@ public:
     int m_read_timeout;
     int m_max_sample;
     int m_save_time_min;
+    int m_save_time;
+    TimeUnit m_time_unit; //时间单位.
     int m_max_channel;
     int m_delay_ms;
     int m_port;
@@ -69,6 +78,8 @@ public:
     //bool m_isRTU;
     QString m_host;
     QStringList m_port_names;
+    QString m_wave_dir;
+
     bool m_admin;
     bool m_is_debug;
     //AlarmInfoMap m_info_map;

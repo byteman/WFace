@@ -35,6 +35,10 @@ private:
     // ModbusReader interface
 public:
     virtual int getRealDeviceAddr();
+
+    // ModbusReader interface
+public:
+    virtual int getVirtualCurrentDeviceAddr();
 };
 
 #endif // MULTIMODBUSREADER_H

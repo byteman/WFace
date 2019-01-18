@@ -97,39 +97,7 @@ bool PollerHandler::doWork()
     }
     return true;
 }
-#if 0
-bool PollerHandler::doWork2()
-{
 
-    _rtu = ChangeCurrentReader(m_cur_addr);
-    if(_rtu)
-    {
-        quint16 values[8];
-        if(!canRead())
-        {
-            msleep(1);
-            return false;
-        }
-        if(4 == _rtu->read_registers(0,4,values))
-        {
-            emit weightResult(m_cur_addr,values[0]+(values[1]<<16),values[2],values[3],values[4]+(values[5]<<16),values[6] +( values[7]<<16 ) );
-            this->msleep(5);
-        }
-        else{
-            //超时.
-            qDebug() << "poll addr" << m_cur_addr << " timeout";
-            emit timeout(m_cur_addr);
-        }
-        if(m_quit)
-        {
-            qDebug() << "PollerHandler quit";
-            return true;
-        }
-        return false;
-    }
-    return true;
-}
-#endif
 bool PollerHandler::WriteCtrlCmd(int reg, quint8 value)
 {
 

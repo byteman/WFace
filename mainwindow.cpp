@@ -70,28 +70,8 @@ void MainWindow::initUarts()
 
 
 }
-
-/**
- * @brief QStringLiteral("我的祖国我") 这样来显示中文.
- * 编码方式要选择utf-8 bom
- */
-void MainWindow::initUI()
+void MainWindow::initCommMode()
 {
-
-    qDebug() << QDateTime::currentMSecsSinceEpoch();
-#if 1
-    qDebug() << "mainwindow thread-id:" << QThread::currentThreadId();
-    //QByteArray res = file.readAll();
-
-    pressed = false;
-    m_select_addr = 0;
-    m_addrs.clear();
-    ui->lblunit->setText(cfg.Unit());
-    ui->edtUnit->setText(cfg.Unit());
-    ui->edtIp->setText(cfg.m_host);
-    ui->edtHostPort->setText(QString("%1").arg(cfg.m_port));
-    initUarts();
-    ui->scanPb->hide();
     if(cfg.m_commu_type == COMMU_ALL)
     {
         //都显示出来，然用户选择
@@ -116,9 +96,38 @@ void MainWindow::initUI()
         ui->rbTCP->hide();
     }
 
+}
+void MainWindow::initSaveTime()
+{
+    ui->edtSaveTime->setValue(cfg.m_save_time);
+    ui->cbxTimeUnit->setCurrentIndex(int(cfg.m_time_unit));
+}
+/**
+ * @brief QStringLiteral("我的祖国我") 这样来显示中文.
+ * 编码方式要选择utf-8 bom
+ */
+void MainWindow::initUI()
+{
+
+    qDebug() << QDateTime::currentMSecsSinceEpoch();
+#if 1
+    qDebug() << "mainwindow thread-id:" << QThread::currentThreadId();
+    //QByteArray res = file.readAll();
+
+    pressed = false;
+    m_select_addr = 1;
+    m_addrs.clear();
+    ui->lblunit->setText(cfg.Unit());
+    ui->edtUnit->setText(cfg.Unit());
+    ui->edtIp->setText(cfg.m_host);
+    ui->edtHostPort->setText(QString("%1").arg(cfg.m_port));
+    initUarts();
+    ui->scanPb->hide();
+
     this->setWindowTitle(cfg.m_title);
     initCalibPoints();
     initCornFixChan();
+    initCommMode();
     factory.start(100);
     reader = factory.GetReader("single");
 
@@ -130,7 +139,7 @@ void MainWindow::initUI()
     poller = new PollerHandler(reader);
     scan_poller = new PollerHandler(reader);
 
-    ui->edtSaveTime->setValue(cfg.m_save_time_min);
+
     handlers["scan"] = scaner;
     handlers["scan_poll"] = scan_poller;
     handlers["weight"] = weight;
@@ -177,6 +186,7 @@ void MainWindow::initUI()
     }
     EnableModules();
     loadLocalParam();
+    initSaveTime();
     devices = new MyDevices(36,ui->gbDevices);
     devices->SetMaxSampleNum(cfg.m_max_sample);
 
@@ -627,11 +637,14 @@ void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16
 
     if(devices!=NULL){
         devices->DisplayWeight(addr,weight,state,dot);
-        rtwaveWidget->AppendData(addr,utils::int2float(weight,dot));
-        if(addr >= devices->GetEndAddr())
-        {
-            rtwaveWidget->DisplayAllChannel(true);
+        if(ui->chkShowWave->isChecked()){
+            rtwaveWidget->AppendData(addr,utils::int2float(weight,dot));
+            if(addr >= devices->GetEndAddr())
+            {
+                rtwaveWidget->DisplayAllChannel(true);
+            }
         }
+
     }
 }
 //标定过程....
@@ -962,11 +975,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
         }
     }
-    if(index != 0 && index !=6 && m_select_addr==0){
-        ui->tabWidget->setCurrentIndex(0);
-        QMessageBox::information(this,tr("info"),tr("please select device first"));
-        return ;
-    }
+//    if(index != 0 && index !=6 && m_select_addr==0){
+//        ui->tabWidget->setCurrentIndex(0);
+//        QMessageBox::information(this,tr("info"),tr("please select device first"));
+//        return ;
+//    }
     if(index == 0)
     {
 
@@ -997,6 +1010,12 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     {
 
         changeHandler("poll");
+        int count = 0;
+        QVector<int> addrs = scaner->getAddrList();
+
+        if(addrs.size() < 1) count = 1;
+        else count = addrs.size();
+        ui->edtAddrCount->setValue(count);
 
     }
     else if(index == 6)
@@ -1308,7 +1327,7 @@ void MainWindow::timerEvent(QTimerEvent *)
     int rx = 0,tx = 0;
     //adc102.getRXTX(rx,tx);
     reader->get_rx_tx(rx,tx);
-    QString msg = QString("Addr:%1 TX:%2|RX:%3 ").arg(reader->getCurrentDeviceAddr()).arg(tx).arg(rx);
+    QString msg = QString("Addr:%1 TX:%2|RX:%3 ").arg(reader->getVirtualCurrentDeviceAddr()).arg(tx).arg(rx);
 //    if(devices!=NULL){
 //        devices->DisplayWeight(2,1000,0,0);
 //        rtwaveWidget->AppendData(2,1000);
@@ -1496,11 +1515,13 @@ void MainWindow::on_tblCalib_cellPressed(int row, int column)
 void MainWindow::SetReadTimeout(int index,int count)
 {
 
-    if(index == 0) index = 1000/(count*10);
-    else if(index == 1) index = 1000/(count*5);
-    else if(index == 2) index = 1000/(count);
-    else if(index == 3) index = 1000/(count*0.2);
+    if(index == 0) index = 1000/(count*100);
+    else if(index == 1) index = 1000/(count*10);
+    else if(index == 2) index = 1000/(count*5);
+    else if(index == 3) index = 1000/(count*1);
     else if(index == 4) index = 1000/(count*0.1);
+    else if(index == 5) index = 1000/(count*0.01);
+    else if(index == 6) index = 1000/(count*0.001);
     poller->setReadInterval(index);
 
 }
@@ -1594,25 +1615,7 @@ void MainWindow::on_actionReset_triggered()
 }
 void MainWindow::on_btnNetConn_clicked()
 {
-#if 0
-    if(!reader->isConnectd())
-    {
-        //QString port = ui->cbxPort->currentText();//QString("COM%1").arg(ui->cbxPort->currentText());
 
-        if(!reader->open(ui->edtHost->text(),ui->edtPort->text()))
-        {
-            QMessageBox::information(this,tr("error"),tr("设备连接失败"));
-            return ;
-        }
-        cfg.SaveNetParam(ui->edtHost->text(),ui->edtPort->text().toInt());
-        ui->btnNetConn->setText(tr("断开"));
-    }
-    else
-    {
-        reader->close();
-        ui->btnNetConn->setText(tr("连接"));
-    }
-#endif
 }
 
 void MainWindow::on_edtSaveTime_editingFinished()
@@ -1716,5 +1719,59 @@ void MainWindow::on_tblCornFix_itemActivated(QTableWidgetItem *item)
 void MainWindow::on_tblCornFix_itemDoubleClicked(QTableWidgetItem *item)
 {
     qDebug() << "itemDoubleClicked" << item->text();
+
+}
+
+void MainWindow::on_btnSetPath_clicked()
+{
+    QString file_path = QFileDialog::getExistingDirectory(this,tr("select wave dir"),cfg.m_wave_dir);
+    if(file_path.isEmpty())
+    {
+        return;
+    }
+    else
+    {
+        qDebug() << file_path << endl;
+        cfg.SaveWaveDir(file_path);
+    }
+
+//    QFileDialog dlg;
+//    dlg.setFileMode(QFileDialog::DirectoryOnly);
+//    if(dlg.exec()){
+
+//              fileNames = dlg.get
+
+//    }
+}
+
+void MainWindow::on_comboBox_currentIndexChanged(int index)
+{
+
+}
+
+void MainWindow::on_chkShowWave_stateChanged(int arg1)
+{
+
+}
+
+void MainWindow::on_chkShowWave_clicked(bool checked)
+{
+    if(!checked){
+        rtwaveWidget->Clear();
+    }
+}
+
+void MainWindow::on_cbxTimeUnit_currentIndexChanged(int index)
+{
+     cfg.SetSaveTimeUnit((TimeUnit)index);
+}
+
+void MainWindow::on_edtAddrCount_valueChanged(int arg1)
+{
+
+}
+
+void MainWindow::on_edtAddrCount_valueChanged(const QString &arg1)
+{
 
 }

@@ -43,6 +43,8 @@ bool MultiModbusReader::setDeviceAddr(int addr)
 
 int MultiModbusReader::getCurrentDeviceAddr()
 {
+    //多路串口返回序号作为地址.
+    //return m_current_index;
     return m_real_addr;
 }
 
@@ -126,4 +128,10 @@ void MultiModbusReader::flush()
 int MultiModbusReader::getRealDeviceAddr()
 {
     return m_real_addr;
+}
+
+
+int MultiModbusReader::getVirtualCurrentDeviceAddr()
+{
+    return m_current_index;
 }

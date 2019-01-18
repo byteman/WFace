@@ -139,6 +139,20 @@ private slots:
 
     void onPollScanTimeout(int addr);
     void onPollScanWeightResult(int addr, int weight, quint16 state, quint16 dot, qint32 gross, qint32 tare);
+    void on_btnSetPath_clicked();
+
+    void on_comboBox_currentIndexChanged(int index);
+
+    void on_chkShowWave_stateChanged(int arg1);
+
+    void on_chkShowWave_clicked(bool checked);
+
+    void on_cbxTimeUnit_currentIndexChanged(int index);
+
+    void on_edtAddrCount_valueChanged(int arg1);
+
+    void on_edtAddrCount_valueChanged(const QString &arg1);
+
 private:
     void initCalibPoints();
     void ChangeReader(ModbusReader *reader);
@@ -197,6 +211,8 @@ private:
     void initUarts();
     void DisableGroupChildRen(QGroupBox *gbox,bool enable);
     ScanWidget* AllocWidget(int addr);
+    void initCommMode();
+    void initSaveTime();
 protected:
     void timerEvent(QTimerEvent *);
 
