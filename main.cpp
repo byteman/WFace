@@ -6,6 +6,7 @@
 #include <QSplashScreen>
 #include <QTextCodec>
 #include <QBreakpadHandler.h>
+#include <QFile>
 void loadLang(QTranslator& translator)
 {
 
@@ -27,6 +28,9 @@ int main(int argc, char *argv[])
 
 
     QApplication a(argc, argv);
+
+
+
     QString path = QCoreApplication::applicationDirPath()+"/crashes";
     QBreakpadInstance.setDumpPath(path);
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));

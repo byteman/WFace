@@ -22,6 +22,7 @@
 #include <QComboBox>
 #include "MbServer.h"
 #include <QTableWidgetItem>
+#include "scanwidget.h"
 namespace Ui {
 class MainWindow;
 }
@@ -136,6 +137,8 @@ private slots:
 
     void on_tblCornFix_itemDoubleClicked(QTableWidgetItem *item);
 
+    void onPollScanTimeout(int addr);
+    void onPollScanWeightResult(int addr, int weight, quint16 state, quint16 dot, qint32 gross, qint32 tare);
 private:
     void initCalibPoints();
     void ChangeReader(ModbusReader *reader);
@@ -149,6 +152,7 @@ private:
     ParaHandler* para;
     CornHandler* corn;
     PollerHandler *poller;
+    PollerHandler *scan_poller;
     QList<QComSettingWidget*> comSettings;
     ModbusReader *reader;
     ModbusReaderFactory factory;
@@ -158,6 +162,7 @@ private:
     WaveWidget*  rtwaveWidget;
     DialogWave * waveDlg;
     QVector<QComboBox*> pboxs;
+    QMap<int,ScanWidget*> m_addrs;
     int m_select_addr;
     QTime m_time;
     MyConfig cfg;
@@ -191,12 +196,15 @@ private:
     void hideForCustom();
     void initUarts();
     void DisableGroupChildRen(QGroupBox *gbox,bool enable);
+    ScanWidget* AllocWidget(int addr);
 protected:
     void timerEvent(QTimerEvent *);
 
 protected slots:
     void corn_calibrate_click(int id);
     void corn_fix_click(int id);
+    void onClearClick(int addr);
+    void onDoubleClick(int,bool);
 };
 
 #endif // MAINWINDOW_H

@@ -46,7 +46,9 @@ SOURCES += main.cpp\
     SingleModbusReader.cpp \
     MultiModbusReader.cpp \
     ModbusReaderFactory.cpp \
-    MbServer.cpp
+    MbServer.cpp \
+    scanpollhandler.cpp \
+    scanwidget.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -79,7 +81,9 @@ HEADERS  += mainwindow.h \
     SingleModbusReader.h \
     MultiModbusReader.h \
     ModbusReaderFactory.h \
-    MbServer.h
+    MbServer.h \
+    scanpollhandler.h \
+    scanwidget.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
@@ -111,10 +115,13 @@ LIBS += -lOpengl32 \
                 -lglu32
 FORMS    += mainwindow.ui \
     devwidget.ui \
-    dialogwave.ui
+    dialogwave.ui \
+    scanwidget.ui
 
 RESOURCES += \
-    myrc.qrc
+    myrc.qrc \
+    image.qrc \
+    qss.qrc
 TRANSLATIONS+=cn.ts en.ts
 RC_FILE=icon.rc
 DISTFILES +=

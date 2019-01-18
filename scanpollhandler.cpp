@@ -1,13 +1,13 @@
-#include "pollhandler.h"
+#include "scanpollhandler.h"
 #include "modbus.h"
 #include "adc102.h"
 #include <qdebug.h>
 
-PollerHandler::PollerHandler(ModbusReader *rtu):
+ScanPollerHandler::ScanPollerHandler(ModbusReader *rtu):
     CmdHandler(rtu),
     m_start(0),
     m_end(0),
-    m_cur_addr(1),
+    m_cur_index(0),
     m_start_us(30000),
     m_stop_us(1000000),
     m_read_delay_ms(10),
@@ -15,19 +15,7 @@ PollerHandler::PollerHandler(ModbusReader *rtu):
 {
 
 }
-//PollerHandler::PollerHandler(QList<RtuReader*> rtuList):
-//    CmdHandler(rtuList),
-//    m_start(0),
-//    m_end(0),
-//    m_cur_addr(1),
-//    m_start_us(30000),
-//    m_stop_us(1000000),
-//    m_read_delay_ms(10),
-//    m_quit(false)
-//{
-
-//}
-void PollerHandler::calcFps(void)
+void ScanPollerHandler::calcFps(void)
 {
     static int total = 0;
     static qint64 start = 0;
@@ -41,7 +29,7 @@ void PollerHandler::calcFps(void)
     qDebug() << "total = " <<  total;
 
 }
-bool PollerHandler::canRead()
+bool ScanPollerHandler::canRead()
 {
     qint64 now = QDateTime::currentMSecsSinceEpoch();
     if( (now - m_last_time ) < m_read_delay_ms)
@@ -53,16 +41,15 @@ bool PollerHandler::canRead()
     return true;
 
 }
-bool PollerHandler::doWork()
+bool ScanPollerHandler::doWork()
 {
-    //qDebug() << "PollerHandler doWork";
+    //qDebug() << "ScanPollerHandler doWork";
     if(_rtu)
     {
-
-
-        if( m_cur_addr < m_end)
+        if( m_cur_index < m_addrArr.size())
         {
             quint16 values[8];
+            m_cur_addr = m_addrArr[m_cur_index];
             if(!canRead())
             {
                 msleep(1);
@@ -80,73 +67,24 @@ bool PollerHandler::doWork()
                 qDebug() << "addr" << m_cur_addr << " timeout";
                 emit timeout(m_cur_addr);
             }
-            m_cur_addr++;
+            m_cur_index++;
 
+        }else{
+            m_cur_index = 0;
         }
-        if(m_cur_addr >= m_end)
-        {
-            m_cur_addr = m_start;
-            calcFps();
-        }
+
         if(m_quit)
         {
-            qDebug() << "PollerHandler quit";
+            m_cur_index = 0;
+            qDebug() << "ScanPollerHandler quit";
             return true;
         }
         return false;
     }
     return true;
 }
-#if 0
-bool PollerHandler::doWork2()
-{
 
-    _rtu = ChangeCurrentReader(m_cur_addr);
-    if(_rtu)
-    {
-        quint16 values[8];
-        if(!canRead())
-        {
-            msleep(1);
-            return false;
-        }
-        if(4 == _rtu->read_registers(0,4,values))
-        {
-            emit weightResult(m_cur_addr,values[0]+(values[1]<<16),values[2],values[3],values[4]+(values[5]<<16),values[6] +( values[7]<<16 ) );
-            this->msleep(5);
-        }
-        else{
-            //超时.
-            qDebug() << "poll addr" << m_cur_addr << " timeout";
-            emit timeout(m_cur_addr);
-        }
-        if(m_quit)
-        {
-            qDebug() << "PollerHandler quit";
-            return true;
-        }
-        return false;
-    }
-    return true;
-}
-#endif
-bool PollerHandler::WriteCtrlCmd(int reg, quint8 value)
-{
-
-    RegCmd cmd;
-    cmd.reg_addr = reg;
-    cmd.reg_num = 1;
-    cmd.reg_value[0] = value;
-    return postCmd(cmd);
-}
-
-
-int PollerHandler::getDot()
-{
-    return m_dot;
-}
-
-bool PollerHandler::setAddrSpan(qint8 startAddr, qint8 num)
+bool ScanPollerHandler::setAddrSpan(qint8 startAddr, qint8 num)
 {
 
     m_start = startAddr;
@@ -155,13 +93,13 @@ bool PollerHandler::setAddrSpan(qint8 startAddr, qint8 num)
     return true;
 }
 
-void PollerHandler::getAddrSpan(qint8 &startAddr, qint8 &num)
+void ScanPollerHandler::getAddrSpan(qint8 &startAddr, qint8 &num)
 {
     startAddr = m_start;
     num = (m_end - startAddr);
 }
 
-void PollerHandler::setTimeOut(int startUs, int stopUs)
+void ScanPollerHandler::setTimeOut(int startUs, int stopUs)
 {
     m_start_us = startUs;
     m_stop_us = stopUs;
@@ -169,19 +107,18 @@ void PollerHandler::setTimeOut(int startUs, int stopUs)
         _rtu->set_response_timeout(startUs);
     }
 }
-void PollerHandler::setReadInterval(int ms)
+void ScanPollerHandler::setReadInterval(int ms)
 {
     m_read_delay_ms = ms;
 }
 
-void PollerHandler::setAddrSpan(QVector<int> addrArr)
+void ScanPollerHandler::setAddrSpan(QVector<int> addrArr)
 {
-
     m_addrArr = addrArr;
 }
 
 //最大超时时间100ms,
-bool PollerHandler::startRun()
+bool ScanPollerHandler::startRun()
 {
     if(_rtu){
         _rtu->set_response_timeout(m_start_us);
@@ -191,7 +128,7 @@ bool PollerHandler::startRun()
     return CmdHandler::startRun();
 }
 
-bool PollerHandler::stop()
+bool ScanPollerHandler::stop()
 {
     m_quit = true;
     CmdHandler::stop();

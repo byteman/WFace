@@ -5,7 +5,7 @@
 
 void CmdHandler::run()
 {
-
+    //统一在这里做退出线程的判断.不用子类中处理了。
     while ( !QThread::currentThread()->isInterruptionRequested() ) {
         if(doWork()) // 判断是否工作已经做完.做完就退出线程.
         {
@@ -24,6 +24,7 @@ bool CmdHandler::doWork()
 
 bool CmdHandler::init()
 {
+
     return true;
 }
 void CmdHandler::processCmds()
@@ -56,7 +57,15 @@ void CmdHandler::processCmds()
 
 
 }
+bool CmdHandler::WriteCtrlCmd(int reg, quint8 value)
+{
 
+    RegCmd cmd;
+    cmd.reg_addr = reg;
+    cmd.reg_num = 1;
+    cmd.reg_value[0] = value;
+    return postCmd(cmd);
+}
 bool CmdHandler::postCmd(RegCmd cmd)
 {
     if(cmdlist.size() > 5)

@@ -1,5 +1,5 @@
-#ifndef POLL_HANDLER_H
-#define POLL_HANDLER_H
+#ifndef SCAN_POLL_HANDLER_H
+#define SCAN_POLL_HANDLER_H
 
 #include "cmdhandler.h"
 
@@ -7,13 +7,13 @@
 #include <QTime>
 #include <QVector>
 
-class PollerHandler : public CmdHandler
+class ScanPollerHandler : public CmdHandler
 {
      Q_OBJECT
 public:
-    PollerHandler(ModbusReader*  rtu);
+    ScanPollerHandler(ModbusReader*  rtu);
 
-    //PollerHandler(QList<RtuReader*> rtuList);
+    //ScanPollerHandler(QList<RtuReader*> rtuList);
 
     virtual bool doWork();
 
@@ -27,6 +27,7 @@ signals:
 
     void weightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
     void timeout(int addr);
+
 private:
     bool paraRead();
     bool WriteCtrlCmd(int reg, quint8 value);
@@ -35,9 +36,11 @@ private:
     bool m_quit;
     int m_start_us,m_stop_us;
     int m_read_delay_ms;
+    int m_cur_index;
     int m_cur_addr;
     qint64 m_last_time;
     QVector<int> m_addrArr;
+    QMutex m_mutex;
     // CmdHandler interface
     bool canRead();
     void calcFps();

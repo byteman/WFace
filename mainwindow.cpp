@@ -84,7 +84,8 @@ void MainWindow::initUI()
     //QByteArray res = file.readAll();
 
     pressed = false;
-    m_select_addr = 1;
+    m_select_addr = 0;
+    m_addrs.clear();
     ui->lblunit->setText(cfg.Unit());
     ui->edtUnit->setText(cfg.Unit());
     ui->edtIp->setText(cfg.m_host);
@@ -127,10 +128,11 @@ void MainWindow::initUI()
     para = new ParaHandler(reader);
     corn = new CornHandler(reader);
     poller = new PollerHandler(reader);
-
+    scan_poller = new PollerHandler(reader);
 
     ui->edtSaveTime->setValue(cfg.m_save_time_min);
     handlers["scan"] = scaner;
+    handlers["scan_poll"] = scan_poller;
     handlers["weight"] = weight;
     handlers["calib"] = calib;
     handlers["para"] = para;
@@ -138,7 +140,12 @@ void MainWindow::initUI()
 
     handlers["poll"] = poller;
 
+
     connect(scaner,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
+    connect(scaner,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),this,SLOT(onPollScanWeightResult(int,int,quint16,quint16,qint32,qint32)));
+    connect(scaner,SIGNAL(timeout(int)),this,SLOT(onPollScanTimeout(int)));
+
+
     connect(weight,SIGNAL(weightResult(int,quint16,quint16,qint32,qint32)),this,SLOT(onWeightResult(int,quint16,quint16,qint32,qint32)));
     connect(weight,SIGNAL(weightParaReadResult(quint16,quint16,quint32,quint32,int)),this,SLOT(onWeightParaRead(quint16,quint16,quint32,quint32,int)));
 
@@ -338,7 +345,6 @@ void MainWindow::changeHandler(QString name,bool start)
     while (i.hasNext()) {
         i.next();
         i.value()->stop();
-        //cout << i.key() << ": " << i.value() << endl;
     }
     if(start)
     {
@@ -392,6 +398,22 @@ void MainWindow::corn_fix_click(int id)
     }
     corn->setK(id,k);
 
+}
+
+void MainWindow::onClearClick(int addr)
+{
+    qDebug() << addr << " clicked";
+    if(scaner){
+        scaner->setZero(addr);
+    }
+}
+
+void MainWindow::onDoubleClick(int addr, bool zoom)
+{
+    //跳转到对应的通道.
+    m_select_addr = addr;
+    reader->setDeviceAddr(m_select_addr);
+    ui->tabWidget->setCurrentIndex(1);
 }
 
 
@@ -470,16 +492,34 @@ void MainWindow::onParaReadResult(Para _para)
 
     ui->edtVersion->setText(QString("V%1.%2.%3").arg(_para.version/10000).arg((_para.version%10000)/100).arg(_para.version%100));
 }
+//动态控件池.
+ScanWidget* MainWindow::AllocWidget(int addr){
+    if( m_addrs.contains(addr)){
+        return m_addrs[addr];
+    }
+    ScanWidget* widget = new ScanWidget(addr);
+    connect(widget,SIGNAL(onClearClick(int)),this,SLOT(onClearClick(int)));
+    connect(widget,SIGNAL(onDoubleClick(int,bool)),this,SLOT(onDoubleClick(int,bool)));
 
-
+    m_addrs[addr] = widget;
+    return widget;
+}
 
 void MainWindow::onScanResult(int type,int addr)
 {
     if(type == SCAN_FIND)
     {
         QString title = QString("%1").arg(addr);
-        QListWidgetItem* item = new QListWidgetItem(QIcon(":/monitor.png"),title);
+        QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
+        //QListWidgetItem* item = new QListWidgetItem(QIcon(":/monitor.png"),title);
         ui->listWidget->addItem(item);
+        ScanWidget* widget = AllocWidget(addr);
+        if(widget!=NULL){
+            widget->EnableZoom(false);
+            widget->EnableClear(true);
+            item->setSizeHint(QSize(200,150));
+            ui->listWidget->setItemWidget(item,widget);
+        }
 
         scan = true;
     }
@@ -490,15 +530,22 @@ void MainWindow::onScanResult(int type,int addr)
         //ui->btnConnect->setText(tr("BusScan"));
         ui->listWidget->setEnabled(true);
         scan = false;
+        //重新扫描的完成的时候选中地址清空.
+        //m_select_addr = 0;
         ui->scanPb->hide();
     }
     else if(type == SCAN_PROGRASS)
     {
         ui->scanPb->show();
         ui->scanPb->setValue(addr);
+
     }
 }
 
+void MainWindow::onPollScanTimeout(int addr)
+{
+
+}
 void MainWindow::onPollTimeout(int addr)
 {
     if(devices!=NULL)
@@ -568,7 +615,13 @@ void MainWindow::onWeightResult(int weight, quint16 state,quint16 dot, qint32 gr
     ui->lblunit->setText(cfg.Unit());
     ui->lbl_display_wet->setText(ws);
 }
-
+void MainWindow::onPollScanWeightResult(int addr, int weight, quint16 state, quint16 dot, qint32 gross, qint32 tare)
+{
+    //收到重量，写入
+    if(m_addrs.contains(addr)){
+        m_addrs[addr]->DisplayWeight(weight,state,dot);
+    }
+}
 void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16 dot, qint32 gross, qint32 tare)
 {
 
@@ -616,6 +669,7 @@ void MainWindow::onReadCalibPointResult(int index, int weight, int ad ,int dot)
 
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
+    qDebug() << "on_listWidget_itemDoubleClicked";
     m_select_addr = item->text().toInt();
     reader->setDeviceAddr(m_select_addr);
     ui->tabWidget->setCurrentIndex(1);
@@ -766,6 +820,7 @@ void MainWindow::on_btnSearch_clicked()
            for(int i = 0; i < pboxs.size(); i++)
            {
                QString port = pboxs.at(i)->currentText();
+               scaner->stop();
                if(!factory.GetRtuChannel(i)->open(port.toStdString().c_str(),ui->cbxBaud->currentText().toInt(),'N',8,1))
                {
                    QMessageBox::information(this,tr("error"),tr("uart open failed"));
@@ -815,11 +870,12 @@ void MainWindow::on_btnSearch_clicked()
         ui->listWidget->setEnabled(false);
         ui->listWidget->clear();
         ui->listWidget->setIconSize(QSize(64,64));
+        m_addrs.clear();
         scan = true;
     }
     else
     {
-        scaner->stop();
+        scaner->stopScan();
     }
 
 
@@ -906,10 +962,15 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
         }
     }
-
+    if(index != 0 && index !=6 && m_select_addr==0){
+        ui->tabWidget->setCurrentIndex(0);
+        QMessageBox::information(this,tr("info"),tr("please select device first"));
+        return ;
+    }
     if(index == 0)
     {
-        changeHandler("scan",false);
+
+        changeHandler("scan");
     }
     else if(index == 1)
     {

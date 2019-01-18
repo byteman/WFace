@@ -1,20 +1,20 @@
-#ifndef DEVWIDGET_H
-#define DEVWIDGET_H
+#ifndef SCAN_WIDGET_H
+#define SCAN_WIDGET_H
 
 #include <QWidget>
 #include <QTime>
 namespace Ui {
-class DevWidget;
+class ScanWidget;
 }
 
-class DevWidget : public QWidget
+class ScanWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit DevWidget(int addr,QWidget *parent = 0);
+    explicit ScanWidget(int addr,QWidget *parent = 0);
 
-    ~DevWidget();
+    ~ScanWidget();
     void Timeout();
     void SetUnit(QString unit);
     void SetAlarmSetting(int setting, double value);
@@ -30,7 +30,7 @@ signals:
 
 private:
     void SetOnline(bool online);
-    Ui::DevWidget *ui;
+    Ui::ScanWidget *ui;
     int m_addr;
     int m_timeout;
     bool m_en_alarm;
@@ -55,4 +55,4 @@ private slots:
     void on_btnZero_clicked();
 };
 
-#endif // DEVWIDGET_H
+#endif // ScanWidget_H

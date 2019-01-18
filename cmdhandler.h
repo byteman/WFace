@@ -58,6 +58,7 @@ public:
     virtual bool init();
 
     //void SetReaderList(QList<RtuReader *> rtuList);
+    bool WriteCtrlCmd(int reg, quint8 value);
 signals:
     void OperationResult(RegCmd value);
 protected:

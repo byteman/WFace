@@ -1,11 +1,11 @@
-#include "devwidget.h"
-#include "ui_devwidget.h"
+#include "scanwidget.h"
+#include "ui_ScanWidget.h"
 #include "utils.h"
 #include <QDebug>
 #define MAX_TIMEOUT 3
-DevWidget::DevWidget(int addr, QWidget *parent) :
+ScanWidget::ScanWidget(int addr, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::DevWidget),
+    ui(new Ui::ScanWidget),
     m_addr(addr),
     m_timeout(MAX_TIMEOUT),
     m_last_still(false),
@@ -24,12 +24,12 @@ DevWidget::DevWidget(int addr, QWidget *parent) :
 
 
 
-DevWidget::~DevWidget()
+ScanWidget::~ScanWidget()
 {
     delete ui;
 }
 
-void DevWidget::Timeout()
+void ScanWidget::Timeout()
 {
     if(m_timeout > 0)
     {
@@ -43,19 +43,19 @@ void DevWidget::Timeout()
     }
 }
 
-void DevWidget::SetUnit(QString unit)
+void ScanWidget::SetUnit(QString unit)
 {
     m_unit = unit;
     ui->lbl_unit->setText(unit);
 }
 
-void DevWidget::SetAlarmSetting(int setting, double value)
+void ScanWidget::SetAlarmSetting(int setting, double value)
 {
     m_alarm_index = setting;
     m_alarm_value = value;
 }
 
-void DevWidget::Show()
+void ScanWidget::Show()
 {
     if(m_zoom){
 
@@ -67,37 +67,37 @@ void DevWidget::Show()
     this->show();
 }
 
-void DevWidget::Reset()
+void ScanWidget::Reset()
 {
     m_zoom = false;
 }
 
-void DevWidget::EnableAlarm(bool en)
+void ScanWidget::EnableAlarm(bool en)
 {
     m_en_alarm = en;
 }
 
-void DevWidget::EnableZoom(bool en)
+void ScanWidget::EnableZoom(bool en)
 {
     m_en_zoom = en;
 }
 
-void DevWidget::EnableClear(bool en)
+void ScanWidget::EnableClear(bool en)
 {
     ui->btnZero->show();
 }
 
-void DevWidget::clearState()
+void ScanWidget::clearState()
 {
     ui->lbl_ng->clear();
     ui->lbl_still->clear();
     ui->lbl_zero->clear();
 }
-void DevWidget::resetTimeout()
+void ScanWidget::resetTimeout()
 {
     m_timeout = MAX_TIMEOUT;
 }
-QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
+QString ScanWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
 {
     double wf = (double)weight;
 
@@ -197,7 +197,7 @@ QString DevWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
 
 }
 
-void DevWidget::SetOnline(bool online)
+void ScanWidget::SetOnline(bool online)
 {
     if(online){
         ui->lbl_addr->setStyleSheet("background-color: green;");
@@ -208,9 +208,10 @@ void DevWidget::SetOnline(bool online)
 }
 
 
-void DevWidget::mouseDoubleClickEvent(QMouseEvent *)
+void ScanWidget::mouseDoubleClickEvent(QMouseEvent *)
 {
     qDebug() <<m_addr <<" double click";
+    emit onDoubleClick(m_addr,m_zoom);
     if(!m_en_zoom){
         return;
     }
@@ -222,16 +223,16 @@ void DevWidget::mouseDoubleClickEvent(QMouseEvent *)
        ui->lbl_weight->setStyleSheet("font-size : 16pt");
 
     }
-    emit onDoubleClick(m_addr,m_zoom);
+    //emit onDoubleClick(m_addr,m_zoom);
 }
 
-void DevWidget::on_btnZero_triggered(QAction *arg1)
+void ScanWidget::on_btnZero_triggered(QAction *arg1)
 {
     qDebug() << "click----" << m_addr;
     emit onClearClick(m_addr);
 }
 
-void DevWidget::on_btnZero_clicked()
+void ScanWidget::on_btnZero_clicked()
 {
     qDebug() << "click----" << m_addr;
     emit onClearClick(m_addr);
