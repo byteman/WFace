@@ -13,3 +13,12 @@ output-release
 *.wave
 *.csv
 膨胀力测试工装
+WFace.pro.user.20
+ui_devwidget.h
+ui_scanwidget.h
+*.log
+*.pdb
+ui_dialogwave.h
+ui_QComSettingWidget.h
+*.8-pre1
+wface2.ini
