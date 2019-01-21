@@ -17,6 +17,21 @@ MyDevices::MyDevices(int max,QGroupBox* parent):
         widget->hide();
     }
 }
+//创建目录失败
+bool MyDevices::SetWaveDir(QString path)
+{
+    //创建目录看能否成功
+    QDir dir(path);
+    if(!dir.exists())
+    {
+        if(!dir.mkpath(path)){
+            m_wave_dir=QDir::currentPath();
+            return false;
+        }
+    }
+    m_wave_dir = path;
+    return true;
+}
 void MyDevices::zoomDevice(int addr)
 {
     clearAll();
@@ -118,14 +133,17 @@ void MyDevices::DisplayWeight(int addr, int weight, quint16 state, quint16 dot)
         AppendWave(addr, utils::int2float(weight,dot));
     }
 }
+//获取保存的目录
 QString MyDevices::CreateDir(QString type)
 {
 
-    QString target_dir=QString("%1/%2").arg(QDir::currentPath()).arg(type);
+    QString target_dir=QString("%1/%2").arg(m_wave_dir).arg(type);
     QDir dir(target_dir);
     if(!dir.exists())
     {
-        dir.mkpath(target_dir);
+        if(!dir.mkpath(target_dir)){
+
+        }
     }
     return target_dir;
 }

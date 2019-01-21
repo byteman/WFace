@@ -102,6 +102,16 @@ void MainWindow::initSaveTime()
     ui->edtSaveTime->setValue(cfg.m_save_time);
     ui->cbxTimeUnit->setCurrentIndex(int(cfg.m_time_unit));
 }
+void MainWindow::SetHold(bool hold)
+{
+    isHold  = hold;
+    if(hold){
+        ui->btnHold->setText(tr("Hold"));
+    }else{
+        ui->btnHold->setText(tr("Unhold"));
+    }
+
+}
 /**
  * @brief QStringLiteral("我的祖国我") 这样来显示中文.
  * 编码方式要选择utf-8 bom
@@ -115,6 +125,7 @@ void MainWindow::initUI()
     //QByteArray res = file.readAll();
 
     pressed = false;
+    SetHold(false);
     m_select_addr = 1;
     m_addrs.clear();
     ui->lblunit->setText(cfg.Unit());
@@ -153,6 +164,8 @@ void MainWindow::initUI()
     connect(scaner,SIGNAL(scanResult(int,int)),this,SLOT(onScanResult(int,int)));
     connect(scaner,SIGNAL(weightResult(int,int,quint16,quint16,qint32,qint32)),this,SLOT(onPollScanWeightResult(int,int,quint16,quint16,qint32,qint32)));
     connect(scaner,SIGNAL(timeout(int)),this,SLOT(onPollScanTimeout(int)));
+    connect(scaner,SIGNAL(modifyAddrResult(int ,int , bool )),this,SLOT(modifyAddrResult(int ,int , bool )));
+
 
 
     connect(weight,SIGNAL(weightResult(int,quint16,quint16,qint32,qint32)),this,SLOT(onWeightResult(int,quint16,quint16,qint32,qint32)));
@@ -188,6 +201,7 @@ void MainWindow::initUI()
     loadLocalParam();
     initSaveTime();
     devices = new MyDevices(36,ui->gbDevices);
+    devices->SetWaveDir(cfg.m_wave_dir);
     devices->SetMaxSampleNum(cfg.m_max_sample);
 
     waveWidget = new WaveWidget(ui->widget);
@@ -201,6 +215,26 @@ void MainWindow::initUI()
     }
 
 #endif
+}
+
+void MainWindow::modifyAddrResult(int old ,int newAddr, bool result )
+{
+//修改地址的结果.
+    if(result)
+    {
+        QMessageBox::information(this,tr("info"),tr("modify address successful"));
+    }
+    else
+    {
+
+        QMessageBox::information(this,tr("error"),tr("modify address failed"));
+    }
+}
+
+void MainWindow::onModifyDevAddr(int oldAddr, int newAddr)
+{
+    qDebug() << "onModifyDevAddr old->" << oldAddr << "new->" << newAddr;
+    scaner->ModifyAddr(oldAddr,newAddr);
 }
 void MainWindow::ChangeReader(ModbusReader* reader)
 {
@@ -240,6 +274,16 @@ void MainWindow::EnableParams()
             //ui->btnNext->setText("wwwwww");
             ui->btnNext->hide();
         }
+        else if(cfg.m_params[i] == "modifyAddr"){
+                    //ui->btnNext->setText("wwwwww");
+            ui->grpAddr->hide();
+        }
+        else if(cfg.m_params[i] == "changeView"){
+                    //ui->btnNext->setText("wwwwww");
+            ui->btnChangeView->hide();
+        }
+        //这个选项默认关闭了.
+        ui->grpAddr->hide();
     }
 
 }
@@ -418,6 +462,11 @@ void MainWindow::onClearClick(int addr)
     }
 }
 
+void MainWindow::onDeviceClick(int addr)
+{
+    ui->edtAddr->setText(QString("%1").arg(addr));
+}
+
 void MainWindow::onDoubleClick(int addr, bool zoom)
 {
     //跳转到对应的通道.
@@ -510,6 +559,7 @@ ScanWidget* MainWindow::AllocWidget(int addr){
     ScanWidget* widget = new ScanWidget(addr);
     connect(widget,SIGNAL(onClearClick(int)),this,SLOT(onClearClick(int)));
     connect(widget,SIGNAL(onDoubleClick(int,bool)),this,SLOT(onDoubleClick(int,bool)));
+    connect(widget,SIGNAL(onModifyDevAddr(int,int)),this,SLOT(onModifyDevAddr(int,int)));
 
     m_addrs[addr] = widget;
     return widget;
@@ -641,7 +691,14 @@ void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16
             rtwaveWidget->AppendData(addr,utils::int2float(weight,dot));
             if(addr >= devices->GetEndAddr())
             {
-                rtwaveWidget->DisplayAllChannel(true);
+                static qint64 ts = QDateTime::currentMSecsSinceEpoch();
+                qint64 ms = QDateTime::currentMSecsSinceEpoch() - ts;
+                qDebug() << "ms=" <<ms;
+                if(ms > 50){
+                      rtwaveWidget->DisplayAllChannel(true);
+                      ts = QDateTime::currentMSecsSinceEpoch() ;
+                }
+
             }
         }
 
@@ -1732,7 +1789,12 @@ void MainWindow::on_btnSetPath_clicked()
     else
     {
         qDebug() << file_path << endl;
-        cfg.SaveWaveDir(file_path);
+        if(devices->SetWaveDir(file_path)){
+            cfg.SaveWaveDir(file_path);
+        }else{
+
+        }
+
     }
 
 //    QFileDialog dlg;
@@ -1774,4 +1836,23 @@ void MainWindow::on_edtAddrCount_valueChanged(int arg1)
 void MainWindow::on_edtAddrCount_valueChanged(const QString &arg1)
 {
 
+}
+
+void MainWindow::on_btnChange_clicked()
+{
+    static int index = 1;
+    if(index==0)index=1;
+    else index=0;
+    ui->tabWaveWidget->setCurrentIndex(index);
+}
+
+void MainWindow::on_btnHold_clicked()
+{
+    //默认是true,
+    if(!weight->setHold(isHold))
+    {
+        QMessageBox::information(this,tr("error"),tr("change groos net failed"));
+        return;
+    }
+    SetHold(!isHold);
 }

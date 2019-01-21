@@ -1,8 +1,9 @@
-#ifndef SCAN_WIDGET_H
+﻿#ifndef SCAN_WIDGET_H
 #define SCAN_WIDGET_H
 
 #include <QWidget>
 #include <QTime>
+#include <QMenu>
 namespace Ui {
 class ScanWidget;
 }
@@ -27,7 +28,7 @@ public:
 signals:
     void onDoubleClick(int addr,bool zoom);
     void onClearClick(int addr);
-
+    void onModifyDevAddr(int oldAddr,int newAddr);
 private:
     void SetOnline(bool online);
     Ui::ScanWidget *ui;
@@ -43,6 +44,7 @@ private:
     QTime m_still_time;
     QString m_unit;
     QFont font;
+    QMenu menu;
     // QObject interface
     void clearState();
     void resetTimeout();
@@ -53,6 +55,12 @@ protected:
 private slots:
     void on_btnZero_triggered(QAction *arg1);
     void on_btnZero_clicked();
+    void OnModifyAddr();
+    // QWidget interface
+
+protected slots:
+    void on_lbl_addr_customContextMenuRequested(const QPoint &pos);
+    void on_ScanWidget_customContextMenuRequested(const QPoint &pos);
 };
 
 #endif // ScanWidget_H

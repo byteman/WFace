@@ -1,4 +1,4 @@
-#include "qcustomchart.h"
+﻿#include "qcustomchart.h"
 #include "qcustomplotchannel.h"
 QCustomChart::QCustomChart(QCustomPlot *parent, int num):
     m_plot(parent)
@@ -20,7 +20,7 @@ QCustomChart::QCustomChart(QCustomPlot *parent, int num):
 
    m_plot->yAxis->setScaleRatio(m_plot->yAxis,1.3);
      //ui.ImgQCustomPlot->yAxis->setScaleRatio(ui.ImgQCustomPlot->xAxis, 1);
-   m_plot->setOpenGl(true);
+   //m_plot->setOpenGl(true);
    //SetChannel(0,num);
 }
 
@@ -45,6 +45,7 @@ void QCustomChart::DisplayChannel(int chan,bool show)
 {
     ILineChart::DisplayChannel(chan,show);
     m_plot->rescaleAxes();
+    m_plot->yAxis->scaleRange(1.2);
     m_plot->replot();
 }
 
@@ -54,9 +55,10 @@ void QCustomChart::DisplayAllChannel(bool show)
     ILineChart::DisplayAllChannel(show);
 
     m_plot->rescaleAxes();
+    m_plot->yAxis->scaleRange(1.2);
     //如果数值一直不变，会导致Y轴持续变大.
     //m_plot->yAxis->setScaleRatio(m_plot->yAxis,1.3);
-    m_plot->replot();
+    m_plot->replot(QCustomPlot::rpQueuedReplot);
 }
 
 

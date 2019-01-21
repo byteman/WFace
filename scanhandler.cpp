@@ -1,7 +1,7 @@
-#include "scanhandler.h"
+﻿#include "scanhandler.h"
 
 #include <qdebug.h>
-
+#include "adc102.h"
 ScanHandler::ScanHandler(ModbusReader *rtu):
     CmdHandler(rtu),
     m_addr(1),
@@ -40,7 +40,7 @@ bool ScanHandler::init(int reg_addr,int reg_size,int min_addr,int max_addr,bool 
 
 bool ScanHandler::poll()
 {
-    qDebug() << "poll";
+    //qDebug() << "poll";
     if(_rtu && m_addrArr.size() > 0)
     {
         if( m_cur_index < m_addrArr.size() && m_cur_index>=0)
@@ -79,7 +79,7 @@ bool ScanHandler::poll()
 }
 bool ScanHandler::scan()
 {
-    qDebug() << "scan";
+    //qDebug() << "scan";
     if(m_addr < m_end_addr )
     {
         emit scanResult(SCAN_PROGRASS,m_addr);
@@ -148,10 +148,42 @@ void ScanHandler::clear()
         _rtu->write_registers(2,1,&v);
     }
 }
+void ScanHandler::doModify()
+{
+
+    ModifyCmd cmd;
+    bool need = false;
+    mutex2.lock();
+    if(m_modify_addr.size() > 0){
+        cmd = m_modify_addr.first();
+        need = true;
+        m_modify_addr.pop_front();
+    }
+    mutex2.unlock();
+
+    if(need && _rtu){
+        quint16 addr = 0;
+        _rtu->setDeviceAddr(cmd.oldAddr);
+        _rtu->write_registers(REG_ADDR,1,&cmd.newAddr);
+        _rtu->setDeviceAddr(cmd.newAddr);
+        if(1==_rtu->read_registers(REG_ADDR,1,&addr))
+        {
+            emit modifyAddrResult(cmd.oldAddr,cmd.newAddr,true);
+            //QMessageBox::information(this,tr("info"),tr("modify address successful"));
+        }
+        else
+        {
+            emit modifyAddrResult(cmd.oldAddr,cmd.newAddr,false);
+            //QMessageBox::information(this,tr("error"),tr("modify address failed"));
+        }
+
+    }
+}
 bool ScanHandler::doWork()
 {
-    qDebug() << "scan thread-id:" << QThread::currentThreadId();
+    //qDebug() << "scan thread-id:" << QThread::currentThreadId();
     clear();
+    doModify();
     if(!m_find_done)
     {
         //扫描状态就扫描.
@@ -179,6 +211,17 @@ bool ScanHandler::stopScan(){
     m_addr = m_end_addr;
     emit scanResult(SCAN_COMPLETE,m_addr);
     _rtu->set_response_timeout(m_stop_us);
+    return true;
+}
+
+bool ScanHandler::ModifyAddr(int old, int newAddr)
+{
+    ModifyCmd cmd;
+    cmd.oldAddr = old;
+    cmd.newAddr = newAddr;
+    mutex2.lock();
+    m_modify_addr.push_back(cmd);
+    mutex2.unlock();
     return true;
 }
 //需要子类化停止函数,因为需要传递扫描完成的消息.

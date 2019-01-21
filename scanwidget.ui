@@ -10,14 +10,15 @@
     <height>271</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::CustomContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(163, 163, 163);
-font: 12pt &quot;微软雅黑&quot;;
-color: rgb(255, 255, 255);
-</string>
+   <string notr="true">font: 12pt &quot;微软雅黑&quot;;
+background-color: rgb(255, 255, 255);</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,3,1">
    <property name="spacing">
@@ -44,7 +45,8 @@ color: rgb(255, 255, 255);
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: green;</string>
+      <string notr="true">background-color: #26A65B;
+color: rgb(255, 255, 255);</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>

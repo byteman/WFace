@@ -25,6 +25,7 @@ public:
     bool changeGN();
     int  getDot();
     int changeChan();
+    bool setHold(bool hold);
 signals:
     void weightParaReadResult(quint16 div_high,quint16 div_low, quint32 full_high, quint32 full_low,int dot);
     void weightResult(int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);

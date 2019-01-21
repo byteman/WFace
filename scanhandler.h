@@ -8,6 +8,10 @@ enum SCAN_EVENT{
     SCAN_FIND, //找到一个
     SCAN_COMPLETE //全部地址搜索完成.
 };
+struct ModifyCmd{
+    quint16 oldAddr;
+    quint16 newAddr;
+};
 class ScanHandler : public CmdHandler
 {
      Q_OBJECT
@@ -20,7 +24,7 @@ signals:
     void scanResult(int type, int addr);
     void weightResult(int addr,int weight, quint16 state,quint16 dot, qint32 gross, qint32 tare);
     void timeout(int addr);
-
+    void modifyAddrResult(int old,int newAddr, bool result);
 private:
     int m_cur_index;
     int m_cur_addr;
@@ -35,18 +39,23 @@ private:
     bool m_findOnce; //只搜索最先找到的第一个.
     QVector<int> m_addrArr; //搜索出来的设备地址.
     QVector<int> m_clear_addr; //清零地址.
+    QVector<ModifyCmd> m_modify_addr; //修改地址列表
     QMutex mutex;
+    QMutex mutex2;
+
     // CmdHandler interface
     bool poll();
     bool scan();
     bool SetQuit();
     void clear();
+    void doModify();
 public:
     virtual bool doWork();
     bool stop();
     void setTimeOut(int startUs, int stopUs);
     bool setZero(int addr);
     bool stopScan();
+    bool ModifyAddr(int old, int newAddr);
 };
 
 #endif // SCANHANDLER_H

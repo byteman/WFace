@@ -50,9 +50,13 @@ private:
     // QWidget interface
 protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *);
+signals:
+    void on_select(int addr);
 private slots:
     void on_btnZero_triggered(QAction *arg1);
     void on_btnZero_clicked();
+
+    // QWidget interface
 };
 
 #endif // DEVWIDGET_H

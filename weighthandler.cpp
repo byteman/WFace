@@ -83,7 +83,15 @@ bool WeightHandler::changeGN()
 {
     return WriteCtrlCmd(2,5);
 }
+bool WeightHandler::setHold(bool hold)
+{
+    if(hold){
+        return WriteCtrlCmd(2,15);
+    }else{
+        return WriteCtrlCmd(2,16);
+    }
 
+}
 int WeightHandler::getDot()
 {
     return m_dot;

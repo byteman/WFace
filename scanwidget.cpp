@@ -1,4 +1,4 @@
-#include "scanwidget.h"
+﻿#include "scanwidget.h"
 #include "ui_ScanWidget.h"
 #include "utils.h"
 #include <QDebug>
@@ -19,10 +19,22 @@ ScanWidget::ScanWidget(int addr, QWidget *parent) :
     SetOnline(true);
     ui->btnZero->hide();
     ui->lbl_weight->setText("");
-    ui->lbl_still_time->hide();
+    menu.addAction(QIcon(":/images/modify.png"), tr("ModifyAddr"),this,SLOT(OnModifyAddr()));
+    menu.addSeparator();
+    menu.addAction(QIcon(":/images/zero.png"), tr("ResetZero"),this,SLOT(on_btnZero_clicked()));
+   // ui->lbl_still_time->hide();
 }
 
+void ScanWidget::on_lbl_addr_customContextMenuRequested(const QPoint &pos)
+{
+    qDebug() <<"wwwwwww";
+}
 
+void ScanWidget::on_ScanWidget_customContextMenuRequested(const QPoint &pos)
+{
+    qDebug() <<"wwwwwww";
+    menu.exec(QCursor::pos());
+}
 
 ScanWidget::~ScanWidget()
 {
@@ -200,7 +212,7 @@ QString ScanWidget::DisplayWeight(int weight, quint16 state, quint16 dot)
 void ScanWidget::SetOnline(bool online)
 {
     if(online){
-        ui->lbl_addr->setStyleSheet("background-color: green;");
+       // ui->lbl_addr->setStyleSheet("background-color: green;");
     }else{
         ui->lbl_addr->setStyleSheet("background-color: red;");
     }
@@ -237,3 +249,35 @@ void ScanWidget::on_btnZero_clicked()
     qDebug() << "click----" << m_addr;
     emit onClearClick(m_addr);
 }
+#include <QInputDialog>
+#include <QMessageBox>
+void ScanWidget::OnModifyAddr()
+{
+    qDebug() << "modify addr----" << m_addr;
+    bool ok = false;
+
+    QString title = tr( "ModifyAddr" )+QString(" %1").arg(m_addr);
+    int newAddr = QInputDialog::getInt(this,
+                        title,
+                        tr( "Please enter New Address" ),
+                        m_addr,1,32, 1, &ok );
+      if ( ok && newAddr!= m_addr)
+      {
+         qDebug() << "input " << newAddr;
+
+             if(newAddr > 32 || newAddr < 1)
+             {
+                 //新地址范围 1-32 之间
+                 QMessageBox::information(this,tr("info"),tr("address must in 1-32"));
+                 return;
+             }
+              emit onModifyDevAddr(m_addr, newAddr);
+       }
+
+}
+
+//void ScanWidget::mouseReleaseEvent(QMouseEvent *)
+//{
+//    qDebug() << "mouseReleaseEvent----" << m_addr;
+//    emit on_select(m_addr);
+//}

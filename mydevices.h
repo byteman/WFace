@@ -14,6 +14,7 @@ class MyDevices:public QObject
     Q_OBJECT
 public:
     MyDevices(int max=32,QGroupBox* parent=NULL );
+    bool SetWaveDir(QString path);
     void SetDeviceNum(int  start, int num);
     void SetMaxSampleNum(int max);
     void SetCenterAddr(int addr);
@@ -37,6 +38,7 @@ private:
     int m_row,m_col;
     int m_max;
     int m_max_sample;
+    QString m_wave_dir;
     QGroupBox* m_container;
     QGridLayout* qlayout;
     QMap<int,QByteArray > m_values;

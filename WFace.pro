@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = WFace
 TEMPLATE = app
 
-DEFINES += QCUSTOMPLOT_USE_OPENGL
+#DEFINES += QCUSTOMPLOT_USE_OPENGL
 SOURCES += main.cpp\
         mainwindow.cpp \
         3rdparty/libmodbus/src/modbus.c \
@@ -111,8 +111,8 @@ win32:DEFINES += _TTY_WIN_  WINVER=0x0501
 win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
 win32:LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32
 win32:LIBS += -L./3rdparty/poco/lib
-LIBS += -lOpengl32 \
-                -lglu32
+#LIBS += -lOpengl32 \
+#                -lglu32
 FORMS    += mainwindow.ui \
     devwidget.ui \
     dialogwave.ui \

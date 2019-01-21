@@ -236,3 +236,5 @@ void DevWidget::on_btnZero_clicked()
     qDebug() << "click----" << m_addr;
     emit onClearClick(m_addr);
 }
+
+

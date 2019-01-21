@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -37,6 +37,7 @@ public:
 
 
     void EnableParams();
+    void SetHold(bool hold);
 private slots:
     void onReadCalibParam(quint32 sensorMv, quint32 sensorFullSpan);
     void on_actionChagne_triggered();
@@ -153,6 +154,10 @@ private slots:
 
     void on_edtAddrCount_valueChanged(const QString &arg1);
 
+    void on_btnChange_clicked();
+
+    void on_btnHold_clicked();
+
 private:
     void initCalibPoints();
     void ChangeReader(ModbusReader *reader);
@@ -181,6 +186,7 @@ private:
     QTime m_time;
     MyConfig cfg;
     bool pressed;
+    bool isHold;
     // QObject interface
     void traversalControl(const QObjectList &q);
     void clearCalib();
@@ -220,7 +226,10 @@ protected slots:
     void corn_calibrate_click(int id);
     void corn_fix_click(int id);
     void onClearClick(int addr);
+    void onDeviceClick(int addr);
     void onDoubleClick(int,bool);
+    void modifyAddrResult(int old, int newAddr, bool result);
+    void onModifyDevAddr(int oldAddr,int newAddr);
 };
 
 #endif // MAINWINDOW_H
