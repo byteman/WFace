@@ -9,7 +9,7 @@ QCustomChart::QCustomChart(QCustomPlot *parent, int num):
    m_plot->xAxis->scaleRange(0,200);
    m_plot->yAxis->scaleRange(0,2000);
 
-   m_plot->xAxis->setLabel("时间");
+   m_plot->xAxis->setLabel(QObject::tr("time"));
    //m_plot->yAxis->setLabel("牛顿");
 
    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);

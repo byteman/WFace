@@ -996,6 +996,14 @@
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <location filename="qcustomchart.cpp" line="12"/>
+        <source>time</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ScanWidget</name>
     <message>
         <location filename="scanwidget.ui" line="17"/>
@@ -1039,7 +1047,7 @@
     </message>
     <message>
         <location filename="scanwidget.cpp" line="22"/>
-        <location filename="scanwidget.cpp" line="258"/>
+        <location filename="scanwidget.cpp" line="259"/>
         <source>ModifyAddr</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1065,17 +1073,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="scanwidget.cpp" line="261"/>
+        <location filename="scanwidget.cpp" line="262"/>
         <source>Please enter New Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="scanwidget.cpp" line="272"/>
+        <location filename="scanwidget.cpp" line="271"/>
         <source>info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="scanwidget.cpp" line="272"/>
+        <location filename="scanwidget.cpp" line="271"/>
         <source>address must in 1-32</source>
         <translation type="unfinished"></translation>
     </message>
