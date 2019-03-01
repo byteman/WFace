@@ -282,7 +282,7 @@ void MainWindow::EnableParams()
                     //ui->btnNext->setText("wwwwww");
             ui->btnChangeView->hide();
         }
-        //这个选项默认关闭了.
+        //这个选项默认关闭了.现在用右键菜单来修改
         ui->grpAddr->hide();
     }
 

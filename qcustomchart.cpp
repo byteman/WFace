@@ -18,7 +18,7 @@ QCustomChart::QCustomChart(QCustomPlot *parent, int num):
    m_plot->axisRect()->setupFullAxesBox();
    //customPlot->yAxis->setRange(-1.2, 1.2);
 
-   m_plot->yAxis->setScaleRatio(m_plot->yAxis,1.3);
+   //m_plot->yAxis->setScaleRatio(m_plot->yAxis,1.3);
      //ui.ImgQCustomPlot->yAxis->setScaleRatio(ui.ImgQCustomPlot->xAxis, 1);
    //m_plot->setOpenGl(true);
    //SetChannel(0,num);
@@ -55,7 +55,7 @@ void QCustomChart::DisplayAllChannel(bool show)
     ILineChart::DisplayAllChannel(show);
 
     m_plot->rescaleAxes();
-    m_plot->yAxis->scaleRange(1.2);
+    //m_plot->yAxis->scaleRange(1.2);
     //如果数值一直不变，会导致Y轴持续变大.
     //m_plot->yAxis->setScaleRatio(m_plot->yAxis,1.3);
     m_plot->replot(QCustomPlot::rpQueuedReplot);
