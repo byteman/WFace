@@ -51,10 +51,11 @@ bool ParaHandler::paraRead(Para &_para)
         _para.result = 1;
         return false;
     }
-    if(outArr.size() < 8) return false;
+    if(outArr.size() < 9) return false;
     _para.sensor_num = getU16(outArr,2);
     _para.read_time_out = getU16(outArr,4);
     _para.limit = getU16(outArr,6);
+    _para.slaveAddr = outArr[8];
     _para.result = 0;
     emit paraReadResult(_para);
     return true;

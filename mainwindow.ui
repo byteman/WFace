@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabCommu">
        <attribute name="title">
@@ -411,19 +411,6 @@
              <string>集散器设置</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_2">
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>读取超时时间(毫秒)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" colspan="2">
-              <widget class="QLineEdit" name="edtReadTime"/>
-             </item>
-             <item row="0" column="1" colspan="2">
-              <widget class="QLineEdit" name="edtSensorNum"/>
-             </item>
              <item row="0" column="0">
               <widget class="QLabel" name="label_2">
                <property name="text">
@@ -431,7 +418,23 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
+             <item row="1" column="1" colspan="2">
+              <widget class="QLineEdit" name="edtReadTime"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>读取超时时间(毫秒)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" colspan="2">
+              <widget class="QLineEdit" name="edtSensorNum"/>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="edtLimit"/>
+             </item>
+             <item row="4" column="0">
               <widget class="QPushButton" name="btnRead">
                <property name="minimumSize">
                 <size>
@@ -444,7 +447,14 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="1" colspan="2">
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>变化阀值</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1" colspan="2">
               <widget class="QPushButton" name="btnSave">
                <property name="minimumSize">
                 <size>
@@ -457,15 +467,19 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_4">
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_8">
                <property name="text">
-                <string>变化阀值</string>
+                <string>集散器地址</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="edtLimit"/>
+             <item row="3" column="1">
+              <widget class="QSpinBox" name="sbNewAddr">
+               <property name="value">
+                <number>1</number>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>

@@ -16,6 +16,7 @@ public:
     bool setByteTimeout(int us);
     bool set_response_timeout(int us);
     void setDeviceAddr(int _addr);
+    void setDeviceId(int id);
     int  write_register(int reg_addr, int value);
     int  write_registers(int reg_addr, int nb,quint16* value);
     void flush();
@@ -28,6 +29,7 @@ public:
 private:
     int m_port_num;
     int m_slave_addr;
+    int m_slave_id;
     int m_byte_timeout_ms;
     QString m_port;
     int m_tx_cout;

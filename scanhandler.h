@@ -12,7 +12,12 @@ class ScanHandler : public CmdHandler
      Q_OBJECT
 public:
     ScanHandler(RtuReader*  rtu);
-    bool init(int reg_addr,int reg_size,int min_addr=1,int max_addr=33,bool findOne=true);
+    bool init(int reg_addr,
+              int reg_size,
+              int slave_id=1,
+              int min_addr=1,
+              int max_addr=33,
+              bool findOne=true);
 
 signals:
     void scanResult(int type, int addr);
@@ -20,6 +25,7 @@ private:
     int m_addr;
     int m_reg_addr;
     int m_reg_size;
+    int m_slave_id;
     int m_start_addr;
     int m_end_addr;
     int m_start_us,m_stop_us;

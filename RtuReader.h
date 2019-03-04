@@ -16,6 +16,7 @@ public:
     bool start(int interval=500);
     bool hasConnected(){return m_connect;}
     bool setDeviceAddr(int addr);
+    void setDeviceId(int id);
     bool set_response_timeout(int us);
 
     int  write_register(int reg_addr, int value);

@@ -8,6 +8,7 @@ public:
     quint16 sensor_num; //小数点位数 0 - 4
     quint16 read_time_out; //分度值[高位量程] 1，2，5，10，20，50，100。
     quint16 limit; //分度值[低位量程] 1，2，5，10，20，50，100。
+    quint8  slaveAddr;
     int result; // 读取成功失败与否 0 成功 1读取超时.
     QByteArray toByteArray()
     {
@@ -18,6 +19,7 @@ public:
         out.append(read_time_out&0xff);
         out.append(limit>>8);
         out.append(limit&0xff);
+        out.append(slaveAddr);
         return out;
     }
 

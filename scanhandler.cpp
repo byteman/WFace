@@ -16,7 +16,12 @@ void ScanHandler::setTimeOut(int startUs, int stopUs)
     m_start_us = startUs;
     m_stop_us = stopUs;
 }
-bool ScanHandler::init(int reg_addr,int reg_size,int min_addr,int max_addr,bool findOne)
+bool ScanHandler::init(int reg_addr,
+                       int reg_size,
+                       int slave_id,
+                       int min_addr,
+                       int max_addr,
+                       bool findOne)
 {
     m_addr = 1;
     m_findOnce = findOne;
@@ -24,6 +29,8 @@ bool ScanHandler::init(int reg_addr,int reg_size,int min_addr,int max_addr,bool 
     m_reg_size = reg_size;
     m_end_addr = max_addr;
     m_start_addr = min_addr;
+    m_slave_id = slave_id;
+    _rtu->setDeviceAddr(slave_id);
     _rtu->set_response_timeout(m_start_us);
     return true;
 }
@@ -49,7 +56,7 @@ bool ScanHandler::doWork()
         if(_rtu)
         {
 
-            _rtu->setDeviceAddr(m_addr);
+            _rtu->setDeviceId(m_addr);
             if(read_sensor_num())
             {
                 emit scanResult(SCAN_FIND,m_addr);

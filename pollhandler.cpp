@@ -35,7 +35,7 @@ bool PollerHandler::readWgt()
     QByteArray outArr;
     quint8 cmd = m_show_ad?CMD_CUSTOM_READ_AD:CMD_READ_WGT;
 
-    int result = _rtu->send_then_recv(cmd,QByteArray(),outArr,136);
+    int result = _rtu->send_then_recv(cmd,QByteArray(),outArr,138);
     if(result > 0)
     {
         quint8 sensor_id = outArr[0];
@@ -104,6 +104,7 @@ bool PollerHandler::readWgt()
     }
     else
     {
+        qDebug() << "timeout";
         emit timeout(0);
     }
 

@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     }
 
     a.setFont(QFont("Microsoft Yahei", 9));
-    AppInit::Instance()->start();
+    //AppInit::Instance()->start();
     MainWindow w(a);
     w.show();
     //splash.finish(&w);

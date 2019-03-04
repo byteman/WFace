@@ -5,6 +5,7 @@
 #include "crc16.h"
 DCS_Channel::DCS_Channel():
     m_slave_addr(0),
+    m_slave_id(0),
     m_tx_cout(0),
     m_rx_cout(0)
 {
@@ -71,6 +72,11 @@ void DCS_Channel::setDeviceAddr(int _addr)
     m_slave_addr = _addr;
 
 }
+
+void DCS_Channel::setDeviceId(int id)
+{
+    m_slave_id = id;
+}
 int  DCS_Channel::write_registers(int reg_addr, int nb,quint16* value)
 {
     m_tx_cout+=nb;
@@ -100,6 +106,7 @@ int  DCS_Channel::send_then_recv(
     send(cmd,send_data);
     QByteArray all_data;
 
+
     int res = recv(all_data,want);
     if(res <= 0)
     {
@@ -108,7 +115,7 @@ int  DCS_Channel::send_then_recv(
     }
 
     LOG_DEBUG() <<"recv----<" <<  all_data.toHex();
-    if(all_data.size() < 8){
+    if(all_data.size() < 9){
         LOG_ERROR() << "err: send_then_recv count=" << all_data.size();
         return 0;
     }
@@ -139,7 +146,7 @@ int  DCS_Channel::send_then_recv(
         LOG_ERROR("crc err crc= %02x crc2=%02x hi=%02x low=%02x",crc,target_crc,crc_hi,crc_low);
         return -3;
     }
-    recv_data.push_back(all_data.mid(4,all_data.size() - 6));
+    recv_data.push_back(all_data.mid(5,all_data.size() - 7));
     return res;
 
 }
@@ -174,11 +181,12 @@ int  DCS_Channel::send(quint8 cmd,QByteArray &data)
     buf.append(0xFE);
     //buf.append(0x0);
     //buf.append(0x0);
+    buf.append(m_slave_id); //集散器地址
     buf.append(cmd);
-    buf.append(m_slave_addr);
+    buf.append(m_slave_addr); //传感器地址.
     buf.append(data);
-    //包长度(2bytes) + 命令(1) + 称台编号(1) + 内容(N) + crc16(2)
-    quint16 len = 6 + data.size(); // 从长度字段开始到结束的长度，包含CRC16
+    //包长度(2bytes) + 集散器地址(1) + 命令(1) + 称台编号(1) + 内容(N) + crc16(2)
+    quint16 len = 7 + data.size(); // 从长度字段开始到结束的长度，包含CRC16
 
     buf.insert(1,(len>>8)&0xff);
     buf.insert(2,(len&0xff));
@@ -188,7 +196,7 @@ int  DCS_Channel::send(quint8 cmd,QByteArray &data)
     buf.append(crc>>8);
     buf.append(crc&0xff);
 
-    qDebug() << "send----->" << buf.toHex();
+    qDebug() << "send 1----->" << buf.toHex();
     return sio_write(m_port_num,buf.data(),buf.size());
 
 }

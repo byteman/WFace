@@ -122,6 +122,7 @@ void MainWindow::onParaReadResult(Para _para)
     ui->edtSensorNum->setText(QString("%1").arg(_para.sensor_num));
     ui->edtReadTime->setText(QString("%1").arg(_para.read_time_out));
     ui->edtLimit->setText(QString("%1").arg(_para.limit));
+    ui->sbNewAddr->setValue(_para.slaveAddr);
 
 }
 
@@ -190,6 +191,7 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
     m_select_addr = item->text().toInt();
     reader.setDeviceAddr(m_select_addr);
+    reader.setDeviceId(m_select_addr);
     ui->tabWidget->setCurrentIndex(1);
 }
 
@@ -204,7 +206,8 @@ void MainWindow::on_btnSearch_clicked()
             QMessageBox::information(this,tr("error"),tr("uart open failed"));
             return ;
         }
-        scaner->init(3,1,1,33,!ui->cbxFindAll->isChecked());
+        //int id = ui->sbId->text().toInt();
+        scaner->init(3,1,1,1,33,!ui->cbxFindAll->isChecked());
         scaner->start();
         ui->btnSearch->setText(tr("StopSearch"));
         ui->listWidget->setEnabled(false);
@@ -463,6 +466,7 @@ void MainWindow::on_btnSave_clicked()
     par.sensor_num = ui->edtSensorNum->text().toInt();
     par.limit = ui->edtLimit->text().toInt();
     par.read_time_out = ui->edtReadTime->text().toInt();
+    par.slaveAddr = ui->sbNewAddr->value();
 
     para->paraSave(par);
 
