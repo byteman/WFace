@@ -12,7 +12,7 @@ DCS_Channel::DCS_Channel():
 
 }
 
-bool DCS_Channel::open(const char* port, int baud, char parity, char databit, char stopbit)
+bool DCS_Channel::open(const char* port, int baud2, char parity, char databit, char stopbit)
 {
 
     QString tmp = port;
@@ -35,7 +35,22 @@ bool DCS_Channel::open(const char* port, int baud, char parity, char databit, ch
         LOG_ERROR() << "sio_open " << m_port_num << "failed";
         return false;
     }
-    if(err != sio_ioctl(m_port_num,B19200,  P_NONE | BIT_8 | STOP_1 ))
+    int baud = B19200;
+    switch(baud2){
+        case 19200:
+            baud=B19200;
+            break;
+        case 38400:
+            baud=B38400;
+            break;
+        case 57600:
+            baud=B57600;
+            break;
+        case 115200:
+            baud=B115200;
+            break;
+    }
+    if(err != sio_ioctl(m_port_num,baud,  P_NONE | BIT_8 | STOP_1 ))
     {
         LOG_ERROR() << "sio_ioctl failed";
         return false;

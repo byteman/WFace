@@ -79,6 +79,7 @@ bool RtuReader::start(int interval)
 }
 bool RtuReader::open(QString port, int baud, char parity, char databit, char stopbit)
 {
+    qDebug() << "baud=" << baud;
     if(!m_rtu.open(port.toStdString().c_str(),baud,parity,databit,stopbit))
     {
 
