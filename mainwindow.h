@@ -158,6 +158,18 @@ private slots:
 
     void on_btnHold_clicked();
 
+    void on_spinBox_valueChanged(int arg1);
+
+    void on_sbLo_valueChanged(int arg1);
+
+    void on_edtAnaLogValue_editingFinished();
+
+    void on_sbLo_editingFinished();
+
+    void on_edtAnaLogValue_valueChanged(int arg1);
+
+    void on_sbHi_valueChanged(int arg1);
+
 private:
     void initCalibPoints();
     void ChangeReader(ModbusReader *reader);

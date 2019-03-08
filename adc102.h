@@ -23,6 +23,8 @@ enum ADC102_REGS{
     REG_2B_AUTO_CORN=44, //自动角差控制：0：启动标定；1：标定传感器1；2：标定传感器2；3：标定传感器3；4：标定传感器4；5：结束标定
     REG_2B_SENSOR_NUM=46,//传感器个数
     REG_4B_CHANNEL_AD=49, //第一路通道的AD值 整数值
+    REG_2B_ALALOG_LO=59, //第一路通道的AD值 整数值
+    REG_2B_ALALOG_HI=60, //第一路通道的AD值 整数值
     REG_2B_CHANGE_CHAN=101, //切换通道.
     REG_2B_ALALOG_FIX_VALUE=95, //模拟量4ma-20ma标定值.
 

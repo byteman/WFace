@@ -83,7 +83,8 @@ HEADERS  += mainwindow.h \
     ModbusReaderFactory.h \
     MbServer.h \
     scanpollhandler.h \
-    scanwidget.h
+    scanwidget.h \
+    restools.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
@@ -107,7 +108,7 @@ CONFIG(release, debug|release) {
 
 msvc:QMAKE_CXXFLAGS += -source-charset:utf-8
 QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01
-win32:DEFINES += _TTY_WIN_  WINVER=0x0501
+win32:DEFINES += _TTY_WIN_  WINVER=0x0500 _WIN32_WINNT=0x0600
 win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
 win32:LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32
 win32:LIBS += -L./3rdparty/poco/lib

@@ -15,6 +15,23 @@
 //#pragma execution_character_set("utf-8")
 static QString unit="g";
 static bool scan = false;
+extern "C"{
+ __int64 _GetSysTickCount64();
+}
+ __int64 _GetSysTickCount64()
+{
+        LARGE_INTEGER TicksPerSecond = { 0 };
+        LARGE_INTEGER Tick;
+        if (!TicksPerSecond.QuadPart)
+            QueryPerformanceFrequency(&TicksPerSecond);
+        QueryPerformanceCounter(&Tick);
+        __int64 Seconds = Tick.QuadPart / TicksPerSecond.QuadPart;
+        __int64 LeftPart = Tick.QuadPart - (TicksPerSecond.QuadPart*Seconds);
+        __int64 MillSeconds = LeftPart * 1000 / TicksPerSecond.QuadPart;
+        __int64 Ret = Seconds * 1000 + MillSeconds;
+        return Ret;
+}
+
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QMainWindow(parent),
     _app(app),
@@ -126,7 +143,7 @@ void MainWindow::initUI()
 
     pressed = false;
     SetHold(false);
-    m_select_addr = 1;
+    m_select_addr = 0;
     m_addrs.clear();
     ui->lblunit->setText(cfg.Unit());
     ui->edtUnit->setText(cfg.Unit());
@@ -593,6 +610,7 @@ void MainWindow::onScanResult(int type,int addr)
         //重新扫描的完成的时候选中地址清空.
         //m_select_addr = 0;
         ui->scanPb->hide();
+
     }
     else if(type == SCAN_PROGRASS)
     {
@@ -1020,7 +1038,7 @@ void MainWindow::clearCalib()
 }
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    if(!reader->hasConnected() && index != 6)
+    if(!reader->hasConnected() && index != 6 )
     {
         if(index != 0)
         {
@@ -1032,11 +1050,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
         }
     }
-//    if(index != 0 && index !=6 && m_select_addr==0){
-//        ui->tabWidget->setCurrentIndex(0);
-//        QMessageBox::information(this,tr("info"),tr("please select device first"));
-//        return ;
-//    }
+    if(index != 0 && index !=6 && m_select_addr==0){
+        ui->tabWidget->setCurrentIndex(0);
+        QMessageBox::information(this,tr("info"),tr("please select device first"));
+        return ;
+    }
     if(index == 0)
     {
 
@@ -1083,6 +1101,13 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     }
     else
     {
+        quint16 value;
+        if(1==reader->read_registers(REG_2B_ALALOG_LO,1,&value)){
+            ui->sbLo->setValue(value);
+        }
+        if(1==reader->read_registers(REG_2B_ALALOG_HI,1,&value)){
+             ui->sbHi->setValue(value);
+        }
         changeHandler("dumy");
     }
 }
@@ -1687,7 +1712,7 @@ void MainWindow::on_edtSaveTime_valueChanged(const QString &arg1)
 
 void MainWindow::on_pushButton_clicked()
 {
-
+   on_btnAnaLogFix_clicked();
 }
 
 void MainWindow::on_btnConnect_clicked()
@@ -1855,4 +1880,52 @@ void MainWindow::on_btnHold_clicked()
         return;
     }
     SetHold(!isHold);
+}
+
+void MainWindow::on_spinBox_valueChanged(int arg1)
+{
+    //0x60 0x61
+}
+
+void MainWindow::on_sbLo_valueChanged(int arg1)
+{
+    qDebug() <<"change=" << arg1;
+    if(1==reader->write_register(REG_2B_ALALOG_LO,arg1))
+    {
+        //QMessageBox::information(this,tr("info"),tr("Analog Fix successful"));
+    }
+    else
+    {
+
+        QMessageBox::information(this,tr("error"),QStringLiteral("修改失败"));
+    }
+}
+
+void MainWindow::on_edtAnaLogValue_editingFinished()
+{
+
+}
+
+void MainWindow::on_sbLo_editingFinished()
+{
+    qDebug() <<"finished=" << ui->sbLo->value();
+}
+
+void MainWindow::on_edtAnaLogValue_valueChanged(int arg1)
+{
+
+}
+
+void MainWindow::on_sbHi_valueChanged(int arg1)
+{
+    qDebug() << "arg=" << arg1;
+    if(1==reader->write_register(REG_2B_ALALOG_HI,arg1))
+    {
+        //QMessageBox::information(this,tr("info"),tr("Analog Fix successful"));
+    }
+    else
+    {
+
+        QMessageBox::information(this,tr("error"),QStringLiteral("修改失败"));
+    }
 }
