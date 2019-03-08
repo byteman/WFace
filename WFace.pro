@@ -48,7 +48,8 @@ SOURCES += main.cpp\
     ModbusReaderFactory.cpp \
     MbServer.cpp \
     scanpollhandler.cpp \
-    scanwidget.cpp
+    scanwidget.cpp \
+    dialogconfig.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \
@@ -84,7 +85,8 @@ HEADERS  += mainwindow.h \
     MbServer.h \
     scanpollhandler.h \
     scanwidget.h \
-    restools.h
+    restools.h \
+    dialogconfig.h
 
 INCLUDEPATH += 3rdparty/libmodbus 3rdparty/libmodbus/src
 
@@ -102,22 +104,28 @@ CONFIG(debug, debug|release) {
 
 CONFIG(release, debug|release) {
         LIBS+=-lqBreakpad
+#支持在release模式下还能够调试
         QMAKE_CXXFLAGS_RELEASE = $$QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO
         QMAKE_LFLAGS_RELEASE = $$QMAKE_LFLAGS_RELEASE_WITH_DEBUGINFO
 }
 
 msvc:QMAKE_CXXFLAGS += -source-charset:utf-8
 QMAKE_LFLAGS_WINDOWS = /SUBSYSTEM:WINDOWS,5.01
-win32:DEFINES += _TTY_WIN_  WINVER=0x0500 _WIN32_WINNT=0x0600
+win32:DEFINES += _TTY_WIN_
+#Windows XP compatability
+win32:DEFINES += "WINVER=0x0501"
+win32:DEFINES += "_WIN32_WINNT=0x0501"
+
 win32:LIBS += -L$$PWD/3rdparty/pcomm/ -lPCOMM
 win32:LIBS += -lsetupapi -lwsock32 -lws2_32 -lAdvapi32
-win32:LIBS += -L./3rdparty/poco/lib
+#win32:LIBS += -L./3rdparty/poco/lib
 #LIBS += -lOpengl32 \
 #                -lglu32
 FORMS    += mainwindow.ui \
     devwidget.ui \
     dialogwave.ui \
-    scanwidget.ui
+    scanwidget.ui \
+    dialogconfig.ui
 
 RESOURCES += \
     myrc.qrc \

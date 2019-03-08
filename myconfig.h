@@ -80,6 +80,7 @@ public:
     QStringList m_port_names;
     QString m_wave_dir;
 
+    bool m_uart_auto;
     bool m_admin;
     bool m_is_debug;
     //AlarmInfoMap m_info_map;
@@ -87,6 +88,7 @@ public:
     QString m_title;
     QMap<QString,bool> m_modules;
     QStringList m_params;
+    QString m_lang;//语言
 private:
     QSettings *config;
 };

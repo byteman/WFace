@@ -32,7 +32,8 @@ void QCustomChart::SetChannel(int start,int num)
     for(int i = 0; i < num; i++)
     {
         QCustomPlotChannel* chan = new QCustomPlotChannel(i,m_plot->addGraph());
-        chan->SetName(QString("addr:%1").arg(start+i));
+		QString name = QString("addr:%1").arg(start + i);
+        chan->SetName(name);
         channels.push_back(chan);
     }
 

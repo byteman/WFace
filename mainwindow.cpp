@@ -15,22 +15,7 @@
 //#pragma execution_character_set("utf-8")
 static QString unit="g";
 static bool scan = false;
-extern "C"{
- __int64 _GetSysTickCount64();
-}
- __int64 _GetSysTickCount64()
-{
-        LARGE_INTEGER TicksPerSecond = { 0 };
-        LARGE_INTEGER Tick;
-        if (!TicksPerSecond.QuadPart)
-            QueryPerformanceFrequency(&TicksPerSecond);
-        QueryPerformanceCounter(&Tick);
-        __int64 Seconds = Tick.QuadPart / TicksPerSecond.QuadPart;
-        __int64 LeftPart = Tick.QuadPart - (TicksPerSecond.QuadPart*Seconds);
-        __int64 MillSeconds = LeftPart * 1000 / TicksPerSecond.QuadPart;
-        __int64 Ret = Seconds * 1000 + MillSeconds;
-        return Ret;
-}
+
 
 MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     QMainWindow(parent),
@@ -213,6 +198,9 @@ void MainWindow::initUI()
         ui->cbxDot->setEnabled(false);
         ui->edtUnit->setEnabled(false);
         ui->edtFullHigh->setEnabled(false);
+        ui->lblAnalogFix->hide();
+        ui->edtAnaLogValue->hide();
+        ui->btnAnalogFix->hide();
     }
     EnableModules();
     loadLocalParam();
@@ -1928,4 +1916,17 @@ void MainWindow::on_sbHi_valueChanged(int arg1)
 
         QMessageBox::information(this,tr("error"),QStringLiteral("修改失败"));
     }
+}
+
+#include "dialogconfig.h"
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->modifiers() & Qt::ControlModifier)
+       {
+           if (event->key() == Qt::Key_C){
+               DialogConfig dlg;
+               int result = dlg.exec();
+
+           }
+       }
 }

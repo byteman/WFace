@@ -32,11 +32,9 @@ int main(int argc, char *argv[])
 
 
     QString path = QCoreApplication::applicationDirPath()+"/crashes";
-    QBreakpadInstance.setDumpPath(path);
+   // QBreakpadInstance.setDumpPath(path);
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-//    QPixmap pixmap("splash.jpg");
-//    QSplashScreen splash(pixmap);
-//    splash.show();
+
     QTranslator translator;
     loadLang(translator);
     a.installTranslator(&translator);

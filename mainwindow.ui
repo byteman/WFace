@@ -2208,7 +2208,7 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_6">
            <item row="0" column="0">
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="lblAnalogFix">
              <property name="text">
               <string>Value</string>
              </property>
@@ -2242,7 +2242,7 @@
             </widget>
            </item>
            <item row="0" column="3">
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="btnAnalogFix">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -2257,7 +2257,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="label_13">
              <property name="text">
-              <string>变送低端</string>
+              <string>零点输出</string>
              </property>
             </widget>
            </item>
@@ -2285,7 +2285,7 @@
            <item row="2" column="0">
             <widget class="QLabel" name="label_14">
              <property name="text">
-              <string>变送高端</string>
+              <string>满量程输出</string>
              </property>
             </widget>
            </item>

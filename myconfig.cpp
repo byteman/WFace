@@ -8,6 +8,10 @@ MyConfig::MyConfig():
 
     config->setIniCodec("UTF-8");//添上这句就不会出现乱码了);
 
+    m_uart_auto= config->value("/uart/auto",false).toBool();
+
+    m_lang      = config->value("/config/lang","zh").toString();
+
     m_poll_timeout       = config->value("/config/poll_timeout",30000).toInt();
     //if(m_poll_timeout < 10000) m_poll_timeout = 10000;
     m_scan_timeout       = config->value("/config/scan_timeout",100000).toInt();

@@ -242,6 +242,10 @@ protected slots:
     void onDoubleClick(int,bool);
     void modifyAddrResult(int old, int newAddr, bool result);
     void onModifyDevAddr(int oldAddr,int newAddr);
+
+    // QWidget interface
+protected:
+    virtual void keyReleaseEvent(QKeyEvent *);
 };
 
 #endif // MAINWINDOW_H
