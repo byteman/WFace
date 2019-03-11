@@ -58,7 +58,7 @@ public:
     bool SaveUartsInfo(QStringList &ports);
     bool IsModulesEnable(QString name);
     bool SaveWaveDir(QString dir);
-
+    bool SaveAll();
     QString Unit();
     bool isAdmin();
 public:

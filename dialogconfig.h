@@ -20,6 +20,8 @@ private slots:
 
     void on_btnCancel_clicked();
 
+    void on_groupBox_4_clicked();
+
 private:
     Ui::DialogConfig *ui;
     MyConfig config;

@@ -160,6 +160,15 @@ bool MyConfig::SaveWaveDir(QString dir)
      return true;
 }
 
+bool MyConfig::SaveAll()
+{
+
+    config->setValue("/config/lang",m_lang);
+    config->setValue("/config/title",m_title);
+    config->setValue("/config/commu_type",m_commu_type);
+    return true;
+}
+
 QString MyConfig::Unit()
 {
     return m_unit;

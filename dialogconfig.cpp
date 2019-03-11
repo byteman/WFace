@@ -26,6 +26,30 @@ DialogConfig::DialogConfig(QWidget *parent) :
     ui->chkDebug->setChecked(config.m_is_debug);
     ui->chkAdmin->setChecked(config.m_admin);
     ui->chkUartAuto->setChecked(config.m_uart_auto);
+
+    for(int i = 0; i < config.m_params.size(); i++)
+    {
+        if(config.m_params[i] == "alarm"){
+            ui->chkAlarm->setChecked(true);
+        }
+        else if(config.m_params[i] == "serial"){
+
+            ui->chkSerial->setChecked(true);
+
+        }else if(config.m_params[i] == "version"){
+            ui->chkVersion->setChecked(true);
+        }else if(config.m_params[i] == "channel"){
+            ui->chkChannel->setChecked(true);
+        }
+        else if(config.m_params[i] == "modifyAddr"){
+
+        }
+        else if(config.m_params[i] == "changeView"){
+            ui->chkView->setChecked(true);
+        }
+
+    }
+
 }
 
 DialogConfig::~DialogConfig()
@@ -35,10 +59,16 @@ DialogConfig::~DialogConfig()
 
 void DialogConfig::on_btnOk_clicked()
 {
+    config.SaveAll();
     this->accept();
 }
 
 void DialogConfig::on_btnCancel_clicked()
 {
     this->reject();
+}
+
+void DialogConfig::on_groupBox_4_clicked()
+{
+
 }
