@@ -159,12 +159,12 @@
                   <widget class="QComboBox" name="cbxBaud">
                    <item>
                     <property name="text">
-                     <string>19200</string>
+                     <string>38400</string>
                     </property>
                    </item>
                    <item>
                     <property name="text">
-                     <string>38400</string>
+                     <string>19200</string>
                     </property>
                    </item>
                    <item>

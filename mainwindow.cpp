@@ -443,7 +443,15 @@ void MainWindow::on_btnZero_clicked()
         return;
     }
     int addr = ui->sbAddr->value();
-    calib->clearZero(addr);
+
+    if(calib->clearZero(addr)){
+        QMessageBox::information(this,"提示","清零成功");
+    }
+    else
+    {
+        QMessageBox::information(this,"错误","清零失败");
+    }
+
 }
 
 void MainWindow::on_btnRead_clicked()
@@ -457,7 +465,14 @@ void MainWindow::on_btnCalibZero_clicked()
         return;
     }
     quint8 addr = ui->sbAddr->value();
-    calib->calibZero(addr);
+
+    if(calib->calibZero(addr)){
+        QMessageBox::information(this,"提示","标零成功");
+    }
+    else
+    {
+        QMessageBox::information(this,"错误","标零失败");
+    }
 }
 
 void MainWindow::on_btnSave_clicked()
@@ -478,7 +493,15 @@ void MainWindow::on_btnCalibWgt_clicked()
         return;
     }
     quint8 addr = ui->sbAddr->value();
-    calib->calibWgt(addr);
+
+    if(calib->calibWgt(addr)){
+        QMessageBox::information(this,"提示","标重成功");
+    }
+    else
+    {
+        QMessageBox::information(this,"错误","标重失败");
+    }
+
 }
 QString MainWindow::formatState(SensorState& state)
 {
