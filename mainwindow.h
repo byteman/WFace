@@ -197,6 +197,7 @@ private:
     int m_select_addr;
     QTime m_time;
     MyConfig cfg;
+    bool press_ctrl_c;
     bool pressed;
     bool isHold;
     // QObject interface

@@ -28,7 +28,7 @@ MainWindow::MainWindow(QApplication &app,QWidget *parent) :
     //qRegisterMetaType<QList<int>>("ads");
     qRegisterMetaType<QList<float>>("ks");
 
-    this->startTimer(500);
+    this->startTimer(1000);
     initUI();
 }
 void MainWindow::loadLocalParam()
@@ -1398,12 +1398,7 @@ void MainWindow::timerEvent(QTimerEvent *)
     //adc102.getRXTX(rx,tx);
     reader->get_rx_tx(rx,tx);
     QString msg = QString("Addr:%1 TX:%2|RX:%3 ").arg(reader->getVirtualCurrentDeviceAddr()).arg(tx).arg(rx);
-//    if(devices!=NULL){
-//        devices->DisplayWeight(2,1000,0,0);
-//        rtwaveWidget->AppendData(2,1000);
-//        rtwaveWidget->DisplayAllChannel(true);
-//        //waveDlg->onPollWeightResult(2,1000,0,0,0,0);
-//    }
+    press_ctrl_c=false;
     ui->statusBar->showMessage(msg);
     if(ui->tabWidget->currentIndex() == 5)
     {
@@ -1921,12 +1916,24 @@ void MainWindow::on_sbHi_valueChanged(int arg1)
 #include "dialogconfig.h"
 void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
+
     if (event->modifiers() & Qt::ControlModifier)
        {
            if (event->key() == Qt::Key_C){
+               press_ctrl_c = true;
+
+
+           }
+           else if(event->key() == Qt::Key_P){
+               if(!press_ctrl_c){
+                   return;
+               }
+
                DialogConfig dlg;
                int result = dlg.exec();
+               if(result == QDialog::Accepted){
 
+               }
            }
        }
 }

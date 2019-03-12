@@ -165,7 +165,23 @@ bool MyConfig::SaveAll()
 
     config->setValue("/config/lang",m_lang);
     config->setValue("/config/title",m_title);
-    config->setValue("/config/commu_type",m_commu_type);
+    config->setValue("/config/commu",m_commu_type);
+    config->setValue("/config/admin",m_admin);
+    config->setValue("/config/debug",m_is_debug);
+    config->setValue("/uart/auto",m_uart_auto);
+
+    //保存hidden.
+
+    config->setValue("/params/hidden",m_params.join(','));
+
+    QMapIterator<QString,bool> i(m_modules);
+    while (i.hasNext()) {
+        i.next();
+        //cout << i.key() << ": " << i.value() << endl;
+        config->setValue(QString("/modules/%1").arg(i.key()),i.value());
+    }
+
+
     return true;
 }
 
