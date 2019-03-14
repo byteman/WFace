@@ -130,23 +130,25 @@ int  DCS_Channel::send_then_recv(
     }
 
     LOG_DEBUG() <<"recv----<" <<  all_data.toHex();
-    if(all_data.size() < 9){
+    if(all_data.size() < 11){
         LOG_ERROR() << "err: send_then_recv count=" << all_data.size();
         return 0;
     }
-    quint8 head = all_data[0];
-    if(head != quint8(0x7F)) {
-        LOG_ERROR("header = %02x",head);
+    quint8 head1 = all_data[0];
+    quint8 head2 = all_data[1];
+    quint8 head3 = all_data[2];
+    if(head1 != quint8(0xAA) || head2 != quint8(0x7F) || head3 != quint8(0x55)) {
+        LOG_ERROR("header = %02x %02x %02x ",head1,head2,head3);
         return -1;
 
     }
-    quint8 s_h = all_data[1];
-    quint8 s_l = all_data[2];
+    quint8 s_h = all_data[3];
+    quint8 s_l = all_data[4];
 
     int size = ( s_h << 8) + s_l;
-    if((size+1) != all_data.size())
+    if((size+3) != all_data.size())
     {
-        LOG_ERROR("err size = %d data=%d",size,all_data.size());
+        LOG_ERROR("err size = %d data=%d",size+3,all_data.size());
         return -2;
     }
 
@@ -161,7 +163,7 @@ int  DCS_Channel::send_then_recv(
         LOG_ERROR("crc err crc= %02x crc2=%02x hi=%02x low=%02x",crc,target_crc,crc_hi,crc_low);
         return -3;
     }
-    recv_data.push_back(all_data.mid(5,all_data.size() - 7));
+    recv_data.push_back(all_data.mid(7,all_data.size() - 9));
     return res;
 
 }
@@ -193,9 +195,9 @@ int  DCS_Channel::recv(QByteArray &data,quint32 want)
 int  DCS_Channel::send(quint8 cmd,QByteArray &data)
 {
     QByteArray buf;
+    buf.append(0x55);
     buf.append(0xFE);
-    //buf.append(0x0);
-    //buf.append(0x0);
+    buf.append(0xAA);
     buf.append(m_slave_id); //集散器地址
     buf.append(cmd);
     buf.append(m_slave_addr); //传感器地址.
@@ -203,8 +205,8 @@ int  DCS_Channel::send(quint8 cmd,QByteArray &data)
     //包长度(2bytes) + 集散器地址(1) + 命令(1) + 称台编号(1) + 内容(N) + crc16(2)
     quint16 len = 7 + data.size(); // 从长度字段开始到结束的长度，包含CRC16
 
-    buf.insert(1,(len>>8)&0xff);
-    buf.insert(2,(len&0xff));
+    buf.insert(3,(len>>8)&0xff);
+    buf.insert(4,(len&0xff));
 
     quint16 crc = ycm_crc16((uint8_t*)buf.data() ,buf.size());
 
