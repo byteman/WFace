@@ -86,6 +86,7 @@ void MyDevices::SetDeviceNum(int start, int num)
     m_start = start;
     m_end = start+num ;
     m_values.clear();
+    m_csv.Clear();
 }
 
 void MyDevices::SetMaxSampleNum(int max)

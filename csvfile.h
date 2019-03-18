@@ -14,6 +14,7 @@ public:
     bool Append(QMap<int,QString> &values,int maxAddr);
     bool Append(int addr,QString value,int maxAddr,bool flush=false);
     bool SaveFile(QString name);
+    void Clear();
 private:
     int m_index; //存储序号.
     QFile m_file;

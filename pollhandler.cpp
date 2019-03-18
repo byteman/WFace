@@ -27,6 +27,7 @@ PollerHandler::PollerHandler(ModbusReader *rtu):
 //{
 
 //}
+//
 void PollerHandler::calcFps(void)
 {
     static int total = 0;
@@ -37,8 +38,9 @@ void PollerHandler::calcFps(void)
 
     }
     total++;
-    //int fps = (QDateTime::currentMSecsSinceEpoch() - start) / total;
-    qDebug() << "total = " <<  total;
+    int fps = (QDateTime::currentMSecsSinceEpoch() - start) / total;
+    qDebug("%s total=%d fps=%d",QTime::currentTime().toString("hh:mm:ss").toStdString().c_str()
+           ,total,fps);
 
 }
 bool PollerHandler::canRead()
@@ -77,7 +79,7 @@ bool PollerHandler::doWork()
             }
             else{
                 //超时.
-                qDebug() << "addr" << m_cur_addr << " timeout";
+                //qDebug() << "addr" << m_cur_addr << " timeout";
                 emit timeout(m_cur_addr);
             }
             m_cur_addr++;

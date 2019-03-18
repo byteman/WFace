@@ -556,12 +556,21 @@ void MainWindow::onParaReadResult(Para _para)
 
     ui->edtVersion->setText(QString("V%1.%2.%3").arg(_para.version/10000).arg((_para.version%10000)/100).arg(_para.version%100));
 }
+void MainWindow::SetScanWidgitUnit()
+{
+    QMapIterator<int,ScanWidget*> iter(m_addrs);
+    while(iter.hasNext()){
+        iter.next();
+        iter.value()->SetUnit(cfg.Unit());
+    }
+}
 //动态控件池.
 ScanWidget* MainWindow::AllocWidget(int addr){
     if( m_addrs.contains(addr)){
         return m_addrs[addr];
     }
     ScanWidget* widget = new ScanWidget(addr);
+    widget->SetUnit(cfg.Unit());
     connect(widget,SIGNAL(onClearClick(int)),this,SLOT(onClearClick(int)));
     connect(widget,SIGNAL(onDoubleClick(int,bool)),this,SLOT(onDoubleClick(int,bool)));
     connect(widget,SIGNAL(onModifyDevAddr(int,int)),this,SLOT(onModifyDevAddr(int,int)));
@@ -699,7 +708,7 @@ void MainWindow::onPollWeightResult(int addr, int weight, quint16 state, quint16
             {
                 static qint64 ts = QDateTime::currentMSecsSinceEpoch();
                 qint64 ms = QDateTime::currentMSecsSinceEpoch() - ts;
-                qDebug() << "ms=" <<ms;
+                //qDebug() << "ms=" <<ms;
                 if(ms > 50){
                       rtwaveWidget->DisplayAllChannel(true);
                       ts = QDateTime::currentMSecsSinceEpoch() ;
@@ -1179,6 +1188,7 @@ void MainWindow::on_btnSave_clicked()
     cfg.SaveAlarmSetting(addr, index, value);
     devices->SetAlarmSetting(addr,index,value);
     devices->SetUnit(cfg.Unit());
+    SetScanWidgitUnit();
 
 }
 
@@ -1580,7 +1590,7 @@ void MainWindow::on_tblCalib_cellPressed(int row, int column)
 void MainWindow::SetReadTimeout(int index,int count)
 {
 
-    if(index == 0) index = 1000/(count*100);
+    if(index == 0) index = 1000/(count*30);
     else if(index == 1) index = 1000/(count*10);
     else if(index == 2) index = 1000/(count*5);
     else if(index == 3) index = 1000/(count*1);

@@ -44,7 +44,7 @@
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1985,7 +1985,7 @@
                 </property>
                 <item>
                  <property name="text">
-                  <string>100HZ</string>
+                  <string>30HZ</string>
                  </property>
                 </item>
                 <item>

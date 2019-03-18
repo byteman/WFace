@@ -41,12 +41,8 @@ CSVFile::CSVFile():
 //    m_values.push_back("\r\n");
     //m_header.clear();
     //m_header.append( m_values.join(','));
+    Clear();
 
-    for(int i=0; i < 34; i++)
-    {
-        m_values.push_back("");
-        //m_values[i] = "";
-    }
 
 }
 bool CSVFile::writeHeader(QString name)
@@ -81,7 +77,9 @@ bool CSVFile::Append(QMap<int, QString> &values, int maxAddr)
 bool CSVFile::Append(int addr, QString value, int maxAddr,bool flush)
 {
 
+
     m_values[addr+1] = value;
+
     if((addr+1) >= maxAddr)
     {
         m_values[0] = QString("%1").arg(m_index++);
@@ -113,6 +111,15 @@ bool CSVFile::SaveFile(QString name)
     m_output.clear();
 
     return true;
+}
+
+void CSVFile::Clear()
+{
+    for(int i=0; i < 34; i++)
+    {
+        m_values.push_back("");
+        //m_values[i] = "";
+    }
 }
 
 

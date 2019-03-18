@@ -232,6 +232,7 @@ private:
     ScanWidget* AllocWidget(int addr);
     void initCommMode();
     void initSaveTime();
+    void SetScanWidgitUnit();
 protected:
     void timerEvent(QTimerEvent *);
 
