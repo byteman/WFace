@@ -170,6 +170,12 @@ private slots:
 
     void on_sbHi_valueChanged(int arg1);
 
+    void on_btnTedsRead_clicked();
+
+    void on_btnAnalogFix_clicked();
+
+    void on_btnTedsSave_clicked();
+
 private:
     void initCalibPoints();
     void ChangeReader(ModbusReader *reader);

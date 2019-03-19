@@ -125,7 +125,10 @@ void MainWindow::initUI()
 #if 1
     qDebug() << "mainwindow thread-id:" << QThread::currentThreadId();
     //QByteArray res = file.readAll();
-
+    //QDate sdt=QDate::fromString("1998/1/1","yyyy/M/d");
+    //qDebug() << "sdt=" << sdt.toString("yyyy-M-d");
+    //qint32 days = qint32(sdt.daysTo(QDate::currentDate()));
+   // qDebug() << "days=" << days;
     pressed = false;
     SetHold(false);
     m_select_addr = 0;
@@ -308,6 +311,9 @@ void MainWindow::EnableModules()
     }
     if(!cfg.IsModulesEnable("analogfix")){
         ui->tabWidget->setTabEnabled(7,false);
+    }
+    if(!cfg.IsModulesEnable("teds")){
+        ui->tabWidget->setTabEnabled(8,false);
     }
 
     ui->tabWidget->setStyleSheet("QTabBar::tab:disabled {width: 0; color: transparent;}");
@@ -1096,8 +1102,9 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         waveWidget->Clear();
         ReadWaveList();
     }
-    else
+    else if(index == 7)
     {
+        //模拟量标定，先读取模拟值出来.
         quint16 value;
         if(1==reader->read_registers(REG_2B_ALALOG_LO,1,&value)){
             ui->sbLo->setValue(value);
@@ -1105,6 +1112,11 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         if(1==reader->read_registers(REG_2B_ALALOG_HI,1,&value)){
              ui->sbHi->setValue(value);
         }
+        changeHandler("dumy");
+    }
+    else
+    {
+
         changeHandler("dumy");
     }
 }
@@ -1946,4 +1958,95 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
                }
            }
        }
+}
+
+void MainWindow::on_btnTedsRead_clicked()
+{
+    //读取TEDS参数，先发送加载指令，设备从teds芯片加载参数到内存.
+    //写入的值要为1.
+    ui->edtTedsCap->clear();
+    ui->edtTedsNo->clear();
+    ui->edtTedsSen->clear();
+    ui->edtTedsTime->clear();
+    if(1==reader->write_register(REG_TEDS_LOAD,1))
+    {
+        quint16 teds[8];
+        if(8==reader->read_registers(REG_4B_TEDS_SERIAL_NO,8,teds)){
+            ui->edtTedsNo->setText(QString("%1").arg((teds[1]<<16)+teds[0]));
+            //TEDS中存储的时间是上次的标定时间，也就是离1998/1/1号的天数.
+            ui->edtTedsTime->setText(QDate::fromString("1998/1/1","yyyy/M/d").addDays((teds[3]<<16)+teds[2]).toString("yyyy-M-d"));
+            float cap = modbus_get_float(teds+4);
+
+            ui->edtTedsCap->setText(QString("%1").arg(cap));
+            float sen = modbus_get_float(teds+6);
+
+            ui->edtTedsSen->setText(QString("%1").arg(sen));
+
+        }
+    }
+    else
+    {
+
+        QMessageBox::information(this,tr("error"),QStringLiteral("TEDS加载失败"));
+
+    }
+}
+
+void MainWindow::on_btnAnalogFix_clicked()
+{
+
+}
+bool ConvFloatStringToUInt16(QString &str,quint16* buf)
+{
+    bool ok=false;
+    float v = str.toFloat(&ok);
+    if(!ok)return false;
+    modbus_set_float(v,buf);
+    return true;
+}
+bool ConvInt32StringToUInt16(QString &str,quint16* buf)
+{
+    bool ok=false;
+    int v = str.toInt(&ok);
+    if(!ok)return false;
+    buf[0] = v&0xffff;
+    buf[1] = (v>>16)&0xffff;
+
+    return true;
+}
+void MainWindow::on_btnTedsSave_clicked()
+{
+    //读取TEDS参数，先发送加载指令，设备从teds芯片加载参数到内存.
+    //写入的值要为1.
+
+    quint16 teds[8];
+    if(!ConvInt32StringToUInt16(ui->edtTedsNo->text(),teds)){
+        QMessageBox::information(this,tr("error"),QStringLiteral("序列号必须整数"));
+        return;
+    }
+    qint32 days = qint32(QDate::fromString("1998/1/1","yyyy/M/d").daysTo(QDate::currentDate()));
+    qDebug() << "days=" << days;
+    teds[2] = (days)&0xffff;
+    teds[3] = (days>>16)&0xffff;
+
+    if(!ConvFloatStringToUInt16(ui->edtTedsCap->text(),teds+4)){
+        QMessageBox::information(this,tr("error"),QStringLiteral("满量程必须小数"));
+        return;
+    }
+    if(!ConvFloatStringToUInt16(ui->edtTedsSen->text(),teds+6)){
+        QMessageBox::information(this,tr("error"),QStringLiteral("灵敏度必须小数"));
+        return;
+    }
+
+
+    if(8==reader->write_registers(REG_4B_TEDS_SERIAL_NO,8,teds)){
+         if(1==reader->write_register(REG_TEDS_SAVE,1)){
+            QMessageBox::information(this,tr("info"),QStringLiteral("写入成功"));
+            return;
+         }
+
+    }
+    QMessageBox::information(this,tr("error"),QStringLiteral("TEDS写入失败"));
+
+
 }

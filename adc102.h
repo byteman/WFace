@@ -25,6 +25,12 @@ enum ADC102_REGS{
     REG_4B_CHANNEL_AD=49, //第一路通道的AD值 整数值
     REG_2B_ALALOG_LO=59, //第一路通道的AD值 整数值
     REG_2B_ALALOG_HI=60, //第一路通道的AD值 整数值
+    REG_TEDS_SAVE =79, //保存teds参数
+    REG_TEDS_LOAD=80, //加载TEDS参数
+    REG_4B_TEDS_SERIAL_NO =87,
+    REG_4B_TEDS_DATE=89, //时间日期.
+    REG_4B_TEDS_CAP_F32=91, //满量程
+    REG_4B_TEDS_SEN_F32=93, //灵敏度
     REG_2B_CHANGE_CHAN=101, //切换通道.
     REG_2B_ALALOG_FIX_VALUE=95, //模拟量4ma-20ma标定值.
 

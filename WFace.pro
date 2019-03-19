@@ -49,7 +49,8 @@ SOURCES += main.cpp\
     MbServer.cpp \
     scanpollhandler.cpp \
     scanwidget.cpp \
-    dialogconfig.cpp
+    dialogconfig.cpp \
+    restools.cpp
 
 HEADERS  += mainwindow.h \
     3rdparty/libmodbus/src/modbus.h \

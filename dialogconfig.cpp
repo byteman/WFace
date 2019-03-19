@@ -1,6 +1,10 @@
 #include "dialogconfig.h"
 #include "ui_dialogconfig.h"
-
+#include <QFileDialog>
+#include <QPicture>
+#include <QCoreApplication>
+#include "restools.h"
+#include <QDebug>
 DialogConfig::DialogConfig(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogConfig)
@@ -11,6 +15,7 @@ DialogConfig::DialogConfig(QWidget *parent) :
     ui->chkCornFix->setChecked(config.IsModulesEnable("cornfix"));
     ui->chkWave->setChecked(config.IsModulesEnable("realtime_wave"));
     ui->chkWaveData->setChecked(config.IsModulesEnable("history_wave"));
+    ui->chkTeds->setChecked(config.IsModulesEnable("teds"));
     ui->edtTitle->setText(config.m_title);
     if(config.m_lang=="zh"){
         ui->rbZh->setChecked(true);
@@ -50,6 +55,9 @@ DialogConfig::DialogConfig(QWidget *parent) :
 
     }
 
+    QString exe = QCoreApplication::applicationFilePath();
+
+    ui->lblIcon->setPixmap(GetFileIcon(exe,"."));
 }
 
 DialogConfig::~DialogConfig()
@@ -95,6 +103,7 @@ void DialogConfig::on_btnOk_clicked()
     config.m_modules["realtime_wave"]=ui->chkWave->isChecked();
     config.m_modules["history_wave"]=ui->chkWaveData->isChecked();
     config.m_modules["analogfix"]=ui->chkAnalog->isChecked();
+    config.m_modules["teds"]=ui->chkTeds->isChecked();
 
     config.SaveAll();
     this->accept();
@@ -108,4 +117,19 @@ void DialogConfig::on_btnCancel_clicked()
 void DialogConfig::on_groupBox_4_clicked()
 {
 
+}
+
+void DialogConfig::on_pushButton_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Open Image"), ".", tr("Image Files (*.ico)"));
+
+
+    QString exe = QCoreApplication::applicationFilePath();
+    if(!ChangeExeIcon(fileName.toStdString().c_str(),exe.toStdString().c_str())){
+        qDebug() << "ChangeExeIcon failed";
+    }else{
+        qDebug() << "ok";
+    }
+    ui->lblIcon->setPixmap(GetFileIcon(fileName,"."));
 }

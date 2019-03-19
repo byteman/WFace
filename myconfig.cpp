@@ -50,6 +50,7 @@ MyConfig::MyConfig():
     m_modules["realtime_wave"] = config->value("modules/realtime_wave",true).toBool();
     m_modules["history_wave"] = config->value("modules/history_wave",true).toBool();
     m_modules["analogfix"] = config->value("modules/analogfix",true).toBool();
+    m_modules["teds"] = config->value("modules/teds",true).toBool();
 
     QString items = config->value("params/hidden","").toString();
     m_params = items.split(",");

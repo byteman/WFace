@@ -22,6 +22,8 @@ private slots:
 
     void on_groupBox_4_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::DialogConfig *ui;
     MyConfig config;
