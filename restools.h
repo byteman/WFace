@@ -9,5 +9,6 @@ public:
 };
 bool ChangeExeIcon(LPCSTR IconFile, LPCSTR ExeFile);
 QPixmap GetFileIcon(QString path,QString savePath);
+bool copyFileToPath(QString sourceDir ,QString toDir, bool coverFileIfExist);
 
 #endif // RESTOOLS_H

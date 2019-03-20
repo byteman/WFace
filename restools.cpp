@@ -62,7 +62,49 @@ struct GRPICONDIR {
     WORD idCount;
     GRPICONDIRENTRY idEntries;
 };
+BOOL EnableDebugPrivilge(LPCSTR lpName, BOOL fEnable)
+{
+        HANDLE hObject;
+        LUID Luid;
+        TOKEN_PRIVILEGES NewStatus;
+        if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES, &hObject))
+                return FALSE;
+        if (LookupPrivilegeValueA(NULL, lpName, &Luid))
+        {
+                NewStatus.Privileges[0].Luid = Luid;
+                NewStatus.PrivilegeCount = 1;
+                NewStatus.Privileges[0].Attributes = fEnable ? SE_PRIVILEGE_ENABLED : 0;
+                AdjustTokenPrivileges(hObject, FALSE, &NewStatus, 0, 0, 0);
 
+                CloseHandle(hObject);
+                return TRUE;
+        }
+
+        return FALSE;
+}
+bool copyFileToPath(QString sourceDir ,QString toDir, bool coverFileIfExist)
+{
+    toDir.replace("\\","/");
+    if (sourceDir == toDir){
+        return true;
+    }
+    if (!QFile::exists(sourceDir)){
+        return false;
+    }
+    QDir *createfile     = new QDir;
+    bool exist = createfile->exists(toDir);
+    if (exist){
+        if(coverFileIfExist){
+            createfile->remove(toDir);
+        }
+    }//end if
+
+    if(!QFile::copy(sourceDir, toDir))
+    {
+        return false;
+    }
+    return true;
+}
 //////////////////////////////////////////////
 //函数说明：修改EXE图标
 //
@@ -80,7 +122,7 @@ bool ChangeExeIcon(LPCSTR IconFile, LPCSTR ExeFile) {
     HANDLE hUpdate;
     PBYTE pIcon, pGrpIcon;
     BOOL ret;
-
+    EnableDebugPrivilge((LPCSTR)SE_DEBUG_NAME,TRUE);
     hFile = CreateFileA(IconFile, GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) {
         return false;
@@ -88,10 +130,10 @@ bool ChangeExeIcon(LPCSTR IconFile, LPCSTR ExeFile) {
 
     ZeroMemory(&stID, sizeof(ICONDIR));
     ret = ReadFile(hFile, &stID, sizeof(ICONDIR), &dwReserved, NULL);
-
+    if(ret == false ) return false;
     ZeroMemory(&stIDE, sizeof(ICONDIRENTRY));
     ret = ReadFile(hFile, &stIDE, sizeof(ICONDIRENTRY), &dwReserved, NULL);
-
+    if(ret == false ) return false;
     nSize = stIDE.dwBytesInRes;
     pIcon = (PBYTE) malloc(nSize);
     SetFilePointer(hFile, stIDE.dwImageOffset, NULL, FILE_BEGIN);
@@ -113,6 +155,9 @@ bool ChangeExeIcon(LPCSTR IconFile, LPCSTR ExeFile) {
     CopyMemory(pGrpIcon, &stGID, nGSize);
 
     hUpdate = BeginUpdateResourceA(ExeFile, false);
+    if(hUpdate==INVALID_HANDLE_VALUE){
+        return false;
+    }
     ret = UpdateResource(hUpdate, RT_GROUP_ICON, MAKEINTRESOURCE(1), 0, (LPVOID) pGrpIcon, nGSize);
     ret = UpdateResource(hUpdate, RT_ICON, MAKEINTRESOURCE(1), 0, (LPVOID) pIcon, nSize);
     EndUpdateResource(hUpdate, false);

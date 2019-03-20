@@ -118,7 +118,8 @@ void DialogConfig::on_groupBox_4_clicked()
 {
 
 }
-
+#include <QDateTime>
+#include <QMessageBox>
 void DialogConfig::on_pushButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
@@ -126,10 +127,28 @@ void DialogConfig::on_pushButton_clicked()
 
 
     QString exe = QCoreApplication::applicationFilePath();
-    if(!ChangeExeIcon(fileName.toStdString().c_str(),exe.toStdString().c_str())){
+    QString exeNewName = QString("%1-%2.exe").arg(
+                QCoreApplication::applicationName()).arg(QDateTime::currentDateTime().toString("yyyy-M-d"));
+    QString exeNew = QString("%1/%2-%3.exe").
+            arg(QCoreApplication::applicationDirPath()).
+            arg(QCoreApplication::applicationName()).arg(QDateTime::currentDateTime().toString("yyyy-M-d"));
+
+
+    qDebug() << "exeNew=" << exeNew;
+
+    copyFileToPath(exe,exeNew,true);
+
+    //QString exe = "C:/works/WFace/release/WFace0318.exe";
+    if(!ChangeExeIcon(fileName.toStdString().c_str(),exeNew.toStdString().c_str())){
         qDebug() << "ChangeExeIcon failed";
+
+        //copyFileToPath(exeNew,exe,true);
     }else{
-        qDebug() << "ok";
+         //copyFileToPath(exeNew,exe,true);
+        ui->lblIcon->setPixmap(GetFileIcon(exeNew,"."));
+//        QMessageBox::information(this,"提示",
+//         QStringLiteral("修改成功"));
+        qDebug() << "ChangeExeIcon ok";
     }
-    ui->lblIcon->setPixmap(GetFileIcon(fileName,"."));
+
 }
