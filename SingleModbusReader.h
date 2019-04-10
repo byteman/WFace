@@ -13,6 +13,8 @@ private:
 
     // ModbusReader interface
 public:
+    virtual int  getChannelNum();
+    virtual int  getChannelType();
     virtual void setChannel(ModbusChannel* channel);
     virtual bool hasConnected();
     virtual bool setDeviceAddr(int addr);

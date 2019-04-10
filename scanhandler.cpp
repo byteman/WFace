@@ -85,24 +85,34 @@ bool ScanHandler::scan()
         emit scanResult(SCAN_PROGRASS,m_addr);
         if(_rtu)
         {
-            quint16 state = 0;
-
-            _rtu->setDeviceAddr(m_addr);
-            int len = _rtu->read_registers(m_reg_addr,m_reg_size,&state);
-            _rtu->getCurrentDeviceAddr();
-            qDebug() << "salve addr=" << m_addr << " reg_addr=" << m_reg_addr << "value=" << state;
-            if(len == m_reg_size && state==_rtu->getCurrentDeviceAddr())
+            int retry = 1;
+            if(_rtu->getChannelNum()==1 && _rtu->getChannelType() ==1)
             {
-                emit scanResult(SCAN_FIND,m_addr);
-                m_addrArr.push_back(m_addr);
-                if(m_findOnce)
-                {
-                    m_addr = m_start_addr;
-                    emit scanResult(SCAN_COMPLETE,m_addr);
-                    return true;
-                }
-
+                retry = 3;
             }
+            quint16 state = 0;
+            for(int i = 0; i < retry; i++)
+            {
+                _rtu->setDeviceAddr(m_addr);
+                int len = _rtu->read_registers(m_reg_addr,m_reg_size,&state);
+
+                qDebug() << "salve addr=" << m_addr << " reg_addr=" << m_reg_addr << "value=" << state;
+                if(len == m_reg_size )
+                {
+                    emit scanResult(SCAN_FIND,m_addr);
+                    m_addrArr.push_back(m_addr);
+                    if(m_findOnce)
+                    {
+                        m_addr = m_start_addr;
+                        emit scanResult(SCAN_COMPLETE,m_addr);
+                        return true;
+                    }
+                    break;
+
+                }
+                //msleep(100);
+            }
+
             _rtu->flush();
         }
 

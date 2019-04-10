@@ -297,6 +297,9 @@ void MainWindow::EnableParams()
 }
 void MainWindow::EnableModules()
 {
+    if(!cfg.IsModulesEnable("param")){
+        ui->tabWidget->setTabEnabled(2,false);
+    }
     if(!cfg.IsModulesEnable("calibrate")){
         ui->tabWidget->setTabEnabled(3,false);
     }
@@ -315,6 +318,7 @@ void MainWindow::EnableModules()
     if(!cfg.IsModulesEnable("teds")){
         ui->tabWidget->setTabEnabled(8,false);
     }
+
 
     ui->tabWidget->setStyleSheet("QTabBar::tab:disabled {width: 0; color: transparent;}");
 }
@@ -1293,7 +1297,7 @@ void MainWindow::initCalibPoints()
     {
         QString title;
         if(i == 0) title = tr("calib_zero");
-        else title = QString("%1%2%3").arg(tr("calib")).arg(i).arg(tr("span"));
+        else title = QString("%1").arg(tr("calib"));
         QPushButton* button = new QPushButton(title,ui->tblCalib);
         button->setGeometry(0,0,80,50);
         connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));

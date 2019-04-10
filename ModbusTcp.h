@@ -9,6 +9,7 @@ public:
     ModbusTcp();
     virtual void sleep();
     bool open(const char* host,int port);
+    virtual int  getType();
 private:
     QString m_port;
 };

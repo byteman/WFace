@@ -26,6 +26,8 @@ public:
 
     virtual bool close();
     virtual void flush();
+    virtual int getChannelNum();
+    virtual int getChannelType();
 private:
     QVector<ModbusChannel*> channels;
     int m_current_index;

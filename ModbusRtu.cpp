@@ -34,10 +34,16 @@ bool ModbusRtu::open(const char *port, int baud, char parity, char databit, char
         m_modbus = NULL;
         return false;
     }
+    modbus_set_error_recovery(m_modbus,MODBUS_ERROR_RECOVERY_PROTOCOL);
     m_port = port;
     m_modbus_tcp = false;
     m_conneted = true;
     return true;
 
+}
+
+int ModbusRtu::getType()
+{
+    return 0;
 }
 

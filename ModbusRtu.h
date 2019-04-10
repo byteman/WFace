@@ -22,7 +22,7 @@ public:
 
     void get_rx_tx(int& rx, int &tx);
 
-    bool open(const char* host,int port);
+    virtual int  getType();
 private:
 
     int m_slave_addr;

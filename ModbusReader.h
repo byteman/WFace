@@ -31,6 +31,8 @@ public:
 
     virtual bool close() = 0;
     virtual void flush() = 0;
+    virtual int  getChannelType()=0;
+    virtual int  getChannelNum()=0;
 public slots:
     void doWork();
 protected:

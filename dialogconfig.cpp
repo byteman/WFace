@@ -10,6 +10,7 @@ DialogConfig::DialogConfig(QWidget *parent) :
     ui(new Ui::DialogConfig)
 {
     ui->setupUi(this);
+    ui->chkParam->setChecked(config.IsModulesEnable("param"));
     ui->chkAnalog->setChecked(config.IsModulesEnable("analogfix"));
     ui->chkCalib->setChecked(config.IsModulesEnable("calibrate"));
     ui->chkCornFix->setChecked(config.IsModulesEnable("cornfix"));
@@ -104,6 +105,7 @@ void DialogConfig::on_btnOk_clicked()
     config.m_modules["history_wave"]=ui->chkWaveData->isChecked();
     config.m_modules["analogfix"]=ui->chkAnalog->isChecked();
     config.m_modules["teds"]=ui->chkTeds->isChecked();
+    config.m_modules["param"]=ui->chkParam->isChecked();
 
     config.SaveAll();
     this->accept();
@@ -150,5 +152,10 @@ void DialogConfig::on_pushButton_clicked()
 //         QStringLiteral("修改成功"));
         qDebug() << "ChangeExeIcon ok";
     }
+
+}
+
+void DialogConfig::on_chkParam_clicked()
+{
 
 }

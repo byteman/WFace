@@ -7,6 +7,17 @@ SingleModbusReader::SingleModbusReader(QObject *parent):
 
 }
 
+int SingleModbusReader::getChannelNum()
+{
+    return 1;
+
+}
+
+int SingleModbusReader::getChannelType()
+{
+    return m_modbus->getType();
+}
+
 
 void SingleModbusReader::setChannel(ModbusChannel *channel)
 {

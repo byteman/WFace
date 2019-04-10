@@ -22,6 +22,7 @@ public:
     bool close();
     void flush();
     void get_rx_tx(int &rx, int &tx);
+    virtual int  getType()=0;
 protected:
     modbus_t * m_modbus;
     int m_slave_addr;

@@ -1,5 +1,5 @@
 #include "utils.h"
-
+#include <QDebug>
 utils::utils()
 {
 
@@ -107,4 +107,10 @@ QString utils::float2string(float wf, int dot)
             break;
     }
     return buf;
+}
+
+
+void QLog(const char *msg)
+{
+    qDebug() << msg;
 }

@@ -7,6 +7,19 @@ MultiModbusReader::MultiModbusReader(QObject *parent):
 {
 
 }
+int MultiModbusReader::getChannelNum()
+{
+    return channels.size();
+
+}
+
+int MultiModbusReader::getChannelType()
+{
+    if(getChannelNum() > 0){
+        return channels[0]->getType();
+    }
+    return -1;
+}
 
 void MultiModbusReader::clearChannel()
 {

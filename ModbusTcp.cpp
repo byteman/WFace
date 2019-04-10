@@ -26,6 +26,12 @@ bool ModbusTcp::open(const char* host,int port)
         m_modbus = NULL;
         return false;
     }
+    modbus_set_error_recovery(m_modbus,MODBUS_ERROR_RECOVERY_PROTOCOL);
     m_port = port;
     return true;
+}
+
+int ModbusTcp::getType()
+{
+    return 1;
 }

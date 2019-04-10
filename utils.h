@@ -14,5 +14,10 @@ public:
     static std::string gbk2utf8(const QString &inStr);
     static QString utf82gbk(const std::string &inStr);
 };
+#ifdef __cplusplus
+extern "C"{
+void QLog(const char* msg);
+}
+#endif
 
 #endif // UTILS_H

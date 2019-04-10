@@ -38,6 +38,7 @@ private:
     int m_read_delay_ms;
     int m_cur_index;
     int m_cur_addr;
+    int m_total_num;
     qint64 m_last_time;
     QVector<int> m_addrArr;
     QMutex m_mutex;

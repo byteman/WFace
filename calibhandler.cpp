@@ -69,9 +69,11 @@ bool CalibHandler::doWork()
             if(m_read_calib_points[i])
             {
                 quint16 index = i;
+                //msleep(300);
                 if(_rtu->write_registers(20,1,&index) == 1)
                 {
                     quint16 values[4];
+                    //msleep(300);
                     if(_rtu->read_registers(22,4,values) == 4)
                     {
                         int weight = values[0] + (values[1] << 16);

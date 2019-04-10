@@ -27,6 +27,13 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
+     <widget class="QCheckBox" name="chkParam">
+      <property name="text">
+       <string>参数设置</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QCheckBox" name="chkCalib">
       <property name="text">
        <string>标定功能</string>

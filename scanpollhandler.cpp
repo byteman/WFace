@@ -31,6 +31,7 @@ void ScanPollerHandler::calcFps(void)
 }
 bool ScanPollerHandler::canRead()
 {
+
     qint64 now = QDateTime::currentMSecsSinceEpoch();
     if( (now - m_last_time ) < m_read_delay_ms)
     {

@@ -24,6 +24,8 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_chkParam_clicked();
+
 private:
     Ui::DialogConfig *ui;
     MyConfig config;
